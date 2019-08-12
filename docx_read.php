@@ -6,8 +6,9 @@
 <body>
 
 <?php
-read_file_docx("test.docx");
-function read_file_docx($filename){
+$splitpattern = "*****************"; //Split pattern set by the document to differentiate between each of the formations
+//read_file_docx("test.docx");
+function read_file_docx($filename){  //FUNCTION to read information out of a docx and return it as a String
     //$filename = 'test.docx';
     $striped_content = '';
     $content = '';
@@ -38,15 +39,20 @@ function read_file_docx($filename){
     $content = str_replace('</w:r></w:p></w:tc><w:tc>', " ", $content);
     $content = str_replace('</w:r></w:p>', "\r\n", $content);
     $striped_content = strip_tags($content);
-
-    return $striped_content;
-}
-function convert($text) {
-    $text = trim($text);
+    $text = trim($striped_content);
     return '<p>' . preg_replace('/[\r\n]+/', '</p><p>', $text) . '</p>';
 }
+//function convert($text) { //FUNCTION to supplement the conversion of 
+   // $text = trim($text);
+  //  return '<p>' . preg_replace('/[\r\n]+/', '</p><p>', $text) . '</p>';
+//}
 $content = read_file_docx("test.docx");
-echo convert($content);
+$splitcontent = explode($splitpattern,$content);
+$x = 0;
+foreach( $splitcontent as $ministr){	
+	echo $ministr;
+}
+
 //$filename = "filepath";// or /var/www/html/file.docx
 
 //$content = read_file_docx($filename);
