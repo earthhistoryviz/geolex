@@ -68,7 +68,7 @@ if ($conn->query($sql) === TRUE) {
 } else {
     echo "Error creating table: " . $conn->error;
 }
-$conn->close();
+
 /*$sql = "CREATE TABLE formation(
 	ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name Varchar(255),
@@ -90,13 +90,6 @@ $conn->close();
 //$sql .= "TRUNCATE TABLE timeperiod";
 //$sql = "TRUNCATE TABLE formation";
 //$sql = "TRUNCATE TABLE wells";
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
-
 $sql = "INSERT INTO timeperiod(name,color)
 VALUES
 (	'Devonian',
@@ -107,7 +100,7 @@ if ($conn->query($sql) === TRUE) {
 } else {
     echo "Error insert: " . $conn->error;
 }
-$conn->close();
+
 /*$sql .= "INSERT INTO timeperiod(name,color)
 VALUES
 (	'Quaternary',
@@ -119,27 +112,27 @@ VALUES
 (	'Neogene',
 	'255/230/25'
 )";*/
-
+//$sql = "USE myDB";
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
-$sql = "SELECT * FROM timeperiod";
-$result = mysql_query($sql);
- while ($row = mysql_fetch_array($result))
-            {
+// Create connection
 
-                $Name  = $row['name'];
+
+
+$sql = "SELECT * FROM timeperiod";
+$result = mysqli_query($conn,$sql);
+ while ($row = mysqli_fetch_array($result))
+            {
+                $name  = $row['name'];
+                echo "name = $name<br>";
                 $color = $row['color'];
+                echo "color = $color";
             }
 //if ($result->num_rows > 0) {
     // output data of each row
     //while($row = $result) {
         //echo "$row";
-        echo $result['name'];
-        echo $result['color'];
+        echo $result["name"];
+        echo $result["color"];
     //}
 //} else {
     //echo "0 results";
