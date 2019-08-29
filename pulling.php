@@ -11,6 +11,24 @@ $username = "root";
 $password = "";
 $dbname = "myDB";
 
+
+// create connection
+$conn = new mysqli($servername, $username, $password);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+
+// drop database
+$sql = "DROP DATABASE myDB";
+if ($conn->query($sql) === TRUE) {
+    echo "Database dropped successfully<br>";
+} else {
+    echo "Error droping database: " . $conn->error;
+}
+
+$conn->close();
+
 // Create connection
 $conn = new mysqli($servername, $username, $password);
 // Check connection
@@ -19,10 +37,9 @@ if ($conn->connect_error) {
 } 
 
 // Create database
-$sql = "DROP DATABASE IF EXISTS myDB";
 $sql = "CREATE DATABASE myDB";
 if ($conn->query($sql) === TRUE) {
-    echo "Database created successfully";
+    echo "Database created successfully<br>";
 } else {
     echo "Error creating database: " . $conn->error;
 }
@@ -34,10 +51,11 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-} 
+
+}
 //$sql = "DROP DATABASE IF EXISTS myDB";
 //$sql = "CREATE DATABASE myDB";
-$sql = "USE  myDB";
+//$sql = "USE  myDB";
 
 $sql = "CREATE TABLE timeperiod(
 	ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -45,8 +63,13 @@ $sql = "CREATE TABLE timeperiod(
 	color Varchar(255)
 
 )";
-
-$sql = "CREATE TABLE formation(
+if ($conn->query($sql) === TRUE) {
+    echo "table create successfully<br>";
+} else {
+    echo "Error creating table: " . $conn->error;
+}
+$conn->close();
+/*$sql = "CREATE TABLE formation(
 	ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name Varchar(255),
 	period Varchar(255),
@@ -62,19 +85,30 @@ $sql = "CREATE TABLE formation(
 	depositional Text,
 	additional_info Text,
 	compiler Varchar(255)
-)";
-$sql = "USE testDB IF EXISTS";
-$sql = "TRUNCATE TABLE timeperiod";
-$sql = "TRUNCATE TABLE formation";
-$sql = "TRUNCATE TABLE wells";
+)";*/
+//$sql .= "USE myDB";
+//$sql .= "TRUNCATE TABLE timeperiod";
+//$sql = "TRUNCATE TABLE formation";
+//$sql = "TRUNCATE TABLE wells";
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
 
 $sql = "INSERT INTO timeperiod(name,color)
 VALUES
 (	'Devonian',
 	'203/140/55'
 )";
-
-$sql = "INSERT INTO timeperiod(name,color)
+if ($conn->query($sql) === TRUE) {
+    echo "Insert successfully<br>";
+} else {
+    echo "Error insert: " . $conn->error;
+}
+$conn->close();
+/*$sql .= "INSERT INTO timeperiod(name,color)
 VALUES
 (	'Quaternary',
 	'249/249/127'
@@ -84,20 +118,32 @@ $sql = "INSERT INTO timeperiod(name,color)
 VALUES
 (	'Neogene',
 	'255/230/25'
-)";
+)";*/
 
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+$sql = "SELECT * FROM timeperiod";
+$result = mysql_query($sql);
+ while ($row = mysql_fetch_array($result))
+            {
 
-$sql = "SELECT id, name, color FROM timeperiod";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
+                $Name  = $row['name'];
+                $color = $row['color'];
+            }
+//if ($result->num_rows > 0) {
     // output data of each row
-    while($row = $result->fetch_assoc()) {
-        echo "id: " . $row["id"]. " - Name: " . $row["name"]. " " . $row["color"]. "<br>";
-    }
-} else {
-    echo "0 results";
-}
+    //while($row = $result) {
+        //echo "$row";
+        echo $result['name'];
+        echo $result['color'];
+    //}
+//} else {
+    //echo "0 results";
+//}
 $conn->close();
 ?>
 </body>
