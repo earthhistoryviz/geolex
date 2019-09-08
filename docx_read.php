@@ -81,7 +81,36 @@ $addpattern ="/Additional Information\s*(.+)Compiler/";
 $compilerpattern = "/Compiler\s*(.+)/";
 
 
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "myDB";
 
+// Create connection
+$conn = new mysqli($servername, $username, $password);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+$sql = "USE myDB IF EXISTS";
+/*$sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact
+        regional_extent,fossils,age,depositional,additional_info,compiler)
+        VALUES(
+        $formname,
+        $period,
+        $age_in,
+        $province,
+        $stype,
+        $slith,
+        $slower,
+        $supper,
+        $sregional,
+        $sfossil,
+        $sage,
+        $sdepositional,
+        $sadd,
+        $scompiler)";
+*/
 foreach( $splitcontent as $ministr){	
 //	echo $ministr;
 	preg_match($formpattern,$ministr,$formname);
@@ -128,6 +157,26 @@ foreach( $splitcontent as $ministr){
     $scompiler = str_replace("(","",$scompiler);
     $scompiler = str_replace(")","",$scompiler);
     echo $scompiler;
+
+    
+
+    $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
+       VALUES(
+        $formname,
+        $period,
+        $age_in,
+        $province,
+        $stype,
+        $slith,
+        $slower,
+        $supper,
+        $sregional,
+        $sfossil,
+        $sage,
+        $sdepositional,
+        $sadd,
+        $scompiler)";
+
 }
 	$x = $x +1;
 }
