@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 } 
 
 // drop database
-$sql = "DROP DATABASE myDB";
+$sql = "DROP DATABASE IF EXISTS myDB";
 if ($conn->query($sql) === TRUE) {
     echo "Database dropped successfully<br>";
 } else {
@@ -100,7 +100,8 @@ VALUES
 	'255/230/25'
 )
 ";
-
+//$test = "shdsabdjasjdsjajdja";
+//$sql2 = "INSERT INTO formation(name) VALUES ('$test')";
 $sql2 = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,
 upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
 VALUES
