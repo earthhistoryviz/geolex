@@ -156,8 +156,7 @@ foreach( $splitcontent as $ministr){
     $scompiler = str_replace("</p><p>","",$scompiler);
     $scompiler = str_replace("(","",$scompiler);
     $scompiler = str_replace(")","",$scompiler);
-    echo $scompiler;
-
+ //   echo $scompiler;
     
 
     $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
@@ -192,7 +191,7 @@ foreach( $splitcontent as $ministr){
   //  echo 'Couldn\'t the file. Please check that file.';
 //}
 
-
+echo "Parsing is Complete!";
 
 ?>
 </body>
