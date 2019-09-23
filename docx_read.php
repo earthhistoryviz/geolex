@@ -157,7 +157,8 @@ foreach( $splitcontent as $ministr){
     $scompiler = str_replace("(","",$scompiler);
     $scompiler = str_replace(")","",$scompiler);
  //   echo $scompiler;
-    
+
+    $sql = ""
 
     $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
        VALUES(

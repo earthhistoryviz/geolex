@@ -26,7 +26,7 @@
 </select>
 
 <br><b><a href="searchFm.php">Search for Formation</a></b></br>
-
+<br><b><a href="login.php">Admin Login</a></b></br>
 <?php
     if(isset($_POST['period'])) {
         switch($_POST['period']) {
