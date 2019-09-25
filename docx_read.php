@@ -86,13 +86,83 @@ $username = "root";
 $password = "";
 $dbname = "myDB";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
 
+// create connection
+$conn = new mysqli($servername, $username, $password);
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
+} 
+
+// drop database
+$sql = "DROP DATABASE IF EXISTS myDB";
+if ($conn->query($sql) === TRUE) {
+    echo "Database dropped successfully<br>";
+} else {
+    echo "Error droping database: " . $conn->error;
 }
-$sql = "USE myDB IF EXISTS";
+
+$conn->close();
+
+// Create connection
+$conn = new mysqli($servername, $username, $password);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+
+// Create database
+$sql = "CREATE DATABASE myDB";
+if ($conn->query($sql) === TRUE) {
+    echo "Database created successfully<br>";
+} else {
+    echo "Error creating database: " . $conn->error;
+}
+
+$conn->close();
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+
+}
+//$sql = "DROP DATABASE IF EXISTS myDB";
+//$sql = "CREATE DATABASE myDB";
+//$sql = "USE  myDB";
+
+$sql = "CREATE TABLE timeperiod(
+  ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name Varchar(255),
+  color Varchar(255)
+
+)";
+$sql2 = "CREATE TABLE formation(
+  ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name Varchar(255),
+  period Varchar(255),
+  age_interval Varchar(255),
+  province Varchar(255),
+  type_locality Text,
+  lithology Text,
+  lower_contact Text,
+  upper_contact Text,
+  regional_extent Text,
+  fossils Text,
+  age Text,
+  depositional Text,
+  additional_info Text,
+  compiler Varchar(255)
+)";
+
+if ($conn->query($sql)&&$conn->query($sql2) === TRUE) {
+    echo "table create successfully<br>";
+} else {
+    echo "Error creating table: " . $conn->error;
+}
+
+//$sql = "USE myDB IF EXISTS";
 /*$sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact
         regional_extent,fossils,age,depositional,additional_info,compiler)
         VALUES(
@@ -156,26 +226,31 @@ foreach( $splitcontent as $ministr){
     $scompiler = str_replace("</p><p>","",$scompiler);
     $scompiler = str_replace("(","",$scompiler);
     $scompiler = str_replace(")","",$scompiler);
-    echo $scompiler;
+    //echo $scompiler;
 
     
 
     $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
        VALUES(
-        $formname,
-        $period,
-        $age_in,
-        $province,
-        $stype,
-        $slith,
-        $slower,
-        $supper,
-        $sregional,
-        $sfossil,
-        $sage,
-        $sdepositional,
-        $sadd,
-        $scompiler)";
+        '$formname',
+        '$period',
+        '$age_in',
+        '$province',
+        '$stype',
+        '$slith',
+        '$slower',
+        '$supper',
+        '$sregional',
+        '$sfossil',
+        '$sage',
+        '$sdepositional',
+        '$sadd',
+        '$scompiler')";
+    if ($conn->query($sql) === TRUE) {
+    echo "data inserted ";
+} else {
+    echo "Error inserted " . $conn->error;
+}
 
 }
 	$x = $x +1;

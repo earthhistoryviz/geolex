@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 } 
 
 // drop database
-$sql = "DROP DATABASE IF EXISTS myDB";
+/*$sql = "DROP DATABASE IF EXISTS myDB";
 if ($conn->query($sql) === TRUE) {
     echo "Database dropped successfully<br>";
 } else {
@@ -28,7 +28,7 @@ if ($conn->query($sql) === TRUE) {
 }
 
 $conn->close();
-
+*/
 // Create connection
 $conn = new mysqli($servername, $username, $password);
 // Check connection
