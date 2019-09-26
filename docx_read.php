@@ -226,9 +226,13 @@ foreach( $splitcontent as $ministr){
     $scompiler = str_replace("</p><p>","",$scompiler);
     $scompiler = str_replace("(","",$scompiler);
     $scompiler = str_replace(")","",$scompiler);
+<<<<<<< HEAD
     //echo $scompiler;
+=======
+ //   echo $scompiler;
+>>>>>>> f25672ab398f39d2bebb3f0a1496ae3822d21e9a
 
-    
+    $sql = ""
 
     $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
        VALUES(
@@ -267,7 +271,7 @@ foreach( $splitcontent as $ministr){
   //  echo 'Couldn\'t the file. Please check that file.';
 //}
 
-
+echo "Parsing is Complete!";
 
 ?>
 </body>

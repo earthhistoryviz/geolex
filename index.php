@@ -25,6 +25,8 @@
 <option value="ediac">Ediacaran</option>
 </select>
 
+<br><b><a href="searchFm.php">Search for Formation</a></b></br>
+<br><b><a href="login.php">Admin Login</a></b></br>
 <?php
     if(isset($_POST['period'])) {
         switch($_POST['period']) {
@@ -112,8 +114,6 @@
     </map>
     <img alt="China map small.jpg" src="China_map_small.jpg" width="800" height="625" usemap="#ImageMap_1_296616987">
     <div style="margin-left: 780px; margin-top: -20px; text-align: left;">
-
-
 
 
 
