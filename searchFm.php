@@ -13,7 +13,6 @@ if ($conn->connect_error) {
 else{
     echo 'successfully linked to Datbase';
 }
-#mysqli_select_db("myDB") or die("Could not find database");
 
 //Collect
 //Within the single quotation marks is the name of the first field within the form
@@ -22,6 +21,7 @@ if (isset($_POST['search'])) {
 
     $sql = "SELECT * FROM formation WHERE name LIKE %$searchquery%";
     $result = mysqli_query($conn, $sql);
+    echo $result;
     $count = mysqli_num_rows($result);
     
     if($count == 0){
@@ -30,13 +30,13 @@ if (isset($_POST['search'])) {
     else{
         while ($row = mysqli_fetch_array($result)){
             $name = $row['name'];
-            $output = '<h4>'.$name.'</h4>';
             $period = $row['period'];
             $age_interval = $row['age_interval'];
             $province = $row['province'];
             $type_locality = $row['type_locality'];
             $lithology = $row['lithology'];
             $lower_contact = $row['lower_contact'];
+            $output = '<h4>'.$name.'</h4>';
 
         }
     }
