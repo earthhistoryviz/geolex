@@ -1,3 +1,45 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "myDB";
+$output = '';
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+else{
+    echo 'successfully linked to Datbase';
+}
+#mysqli_select_db("myDB") or die("Could not find database");
+
+//Collect
+//Within the single quotation marks is the name of the first field within the form
+if (isset($_POST['search'])) {
+    $searchquery = $_POST['search'];
+
+    $sql = "SELECT * FROM formation WHERE name LIKE %$searchquery%";
+    $result = mysqli_query($conn, $sql);
+    $count = mysqli_num_rows($result);
+    
+    if($count == 0){
+        $output = '<h4>'.'Formation not found'.'</h4>';
+    }
+    else{
+        while ($row = mysqli_fetch_array($result)){
+            $name = $row['name'];
+            $output = '<h4>'.$name.'</h4>';
+            $period = $row['period'];
+        }
+    }
+}
+
+
+?>
+
+<!DOCTYPE <!DOCTYPE html>
 <html>
 <title>Search for Formation</title>
 
@@ -20,6 +62,11 @@
     <input id="searchbar" type="text" name="search" placeholder="Search Formation Name...">
     <input id="submitbtn" type="submit" value="Submit">
 </form>
+<div>
+<?php print("$output");?>
+</div>
 
 </body>
 </html>
+
+
