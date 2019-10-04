@@ -181,28 +181,33 @@ if ($conn->query($sql)&&$conn->query($sql2) === TRUE) {
         $sadd,
         $scompiler)";
 */
-foreach( $splitcontent as $ministr){	
-//	echo $ministr;
-	preg_match($formpattern,$ministr,$formname);
-	preg_match($periodpattern,$ministr,$period);
-	preg_Match($age_inpattern,$ministr,$age_in);
-	preg_Match($provincepattern,$ministr,$province);
-  preg_Match($typepattern,$ministr,$type);
-  preg_Match($lithpattern,$ministr,$lith);
-  preg_Match($lowerpattern,$ministr,$lower);
-	preg_Match($upperpattern,$ministr,$upper);
-	preg_Match($regionalpattern,$ministr,$regional);
-	preg_Match($fossilpattern,$ministr,$fossil);
-  preg_Match($agepattern,$ministr,$age);
-	preg_Match($depositionpattern,$ministr,$depositional);
-	preg_Match($addpattern,$ministr,$addinfo);
-	preg_Match($compilerpattern,$ministr,$compiler);
+foreach( $splitcontent as $ministr){  
+//  echo $ministr;
+  preg_match($formpattern,$ministr,$formname);
+  preg_match($periodpattern,$ministr,$period);
+  preg_match($age_inpattern,$ministr,$age_in);
+  preg_match($provincepattern,$ministr,$province);
+  preg_match($typepattern,$ministr,$type);
+  preg_match($lithpattern,$ministr,$lith);
+  preg_match($lowerpattern,$ministr,$lower);
+  preg_match($upperpattern,$ministr,$upper);
+  preg_match($regionalpattern,$ministr,$regional);
+  preg_match($fossilpattern,$ministr,$fossil);
+  preg_match($agepattern,$ministr,$age);
+  preg_match($depositionpattern,$ministr,$depositional);
+  preg_match($addpattern,$ministr,$addinfo);
+  preg_match($compilerpattern,$ministr,$compiler);
  //echo $ministr;
-  
+
+  $sformname = $formname[0];  
+  $speriod = $period[0];  
+  $sage_in = $age_in[0];  
+  $sprovince = $province[0];  
   $stype  = $type[2];
   $slith  = $lith[1];
   $slower = $lower[1];
   $supper = $upper[1];
+echo "upper = "; print_r($upper);
   $sregional = $regional[1];
   $sfossil = $fossil[1];
   $sage = $age[1];
@@ -211,8 +216,12 @@ foreach( $splitcontent as $ministr){
   $scompiler = $compiler[1];
   if($x>$y){
   //var_dump($type);
-//		var_dump($compiler);
+//    var_dump($compiler);
 
+    $sformname = str_replace("</p><p>","",$sformname);
+    $speriod = str_replace("</p><p>","",$speriod);
+    $sage_in = str_replace("</p><p>","",$sage_in);
+    $sprovince = str_replace("</p><p>","",$sprovince);
     $stype = str_replace("</p><p>","",$stype);
     $slith = str_replace("</p><p>","",$slith);
     $slower = str_replace("</p><p>","",$slower);
@@ -226,20 +235,16 @@ foreach( $splitcontent as $ministr){
     $scompiler = str_replace("</p><p>","",$scompiler);
     $scompiler = str_replace("(","",$scompiler);
     $scompiler = str_replace(")","",$scompiler);
-<<<<<<< HEAD
     //echo $scompiler;
-=======
- //   echo $scompiler;
->>>>>>> f25672ab398f39d2bebb3f0a1496ae3822d21e9a
 
-    $sql = ""
+    $sql = "";
 
     $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
        VALUES(
-        '$formname',
-        '$period',
-        '$age_in',
-        '$province',
+        '$sformname',
+        '$speriod',
+        '$sage_in',
+        '$sprovince',
         '$stype',
         '$slith',
         '$slower',
@@ -257,7 +262,7 @@ foreach( $splitcontent as $ministr){
 }
 
 }
-	$x = $x +1;
+  $x = $x +1;
 }
 //$filename = "filepath";// or /var/www/html/file.docx
 

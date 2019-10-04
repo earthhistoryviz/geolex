@@ -49,7 +49,6 @@ if (isset($_POST['search'])) {
 
 ?>
 
-< ?php header("Location: http://www.google.com ? formation=$name"); ?>
 
 <!DOCTYPE html>
 <html>
@@ -70,6 +69,7 @@ if (isset($_POST['search'])) {
 
 <body>
 <h3><b>Enter Formation Name Below: </b></h3>
+THIS IS RUNNING!
 <form action="searchFm.php" method="post">
     <input id="searchbar" type="text" name="search" placeholder="Search Formation Name...">
     <input id="submitbtn" type="submit" value="Submit">
@@ -82,10 +82,15 @@ if (isset($_POST['search'])) {
 		$output = '<h4>'.'Formation not found'.'</h4>';
 		print($output);
 	}
+        if ($count == 1) {
+          header("Location: displayInfo.php?formation=".$formation); 
+          exit(0);
+        }
 	foreach ($arr as $formation)
 	{
 		$output = '<h4>'.$formation.'</h4>';
 		print($output);
+		?><a href="displayInfo.php?formation=<?=$formation?>">Formation: <?=$formation?></a><?php
 	}
 //print($arr[0]);
 //print("$output");?>
