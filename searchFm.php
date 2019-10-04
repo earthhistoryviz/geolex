@@ -11,41 +11,47 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 else{
-    echo 'successfully linked to Datbase';
+    echo '<pre>'.'successfully linked to Datbase'.'</pre>';
 }
-
+$arr = array();
 //Collect
 //Within the single quotation marks is the name of the first field within the form
 if (isset($_POST['search'])) {
     $searchquery = $_POST['search'];
 
-    $sql = "SELECT * FROM formation WHERE name LIKE %$searchquery%";
-    $result = mysqli_query($conn, $sql);
-    echo $result;
-    $count = mysqli_num_rows($result);
+    $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%'";
     
-    if($count == 0){
-        $output = '<h4>'.'Formation not found'.'</h4>';
-    }
-    else{
+    $result = mysqli_query($conn, $sql);
+    echo '<pre>'."HERES THE SQL QUERY".'</pre>';
+    echo '<pre>'.$sql.'</pre>';
+    $count = mysqli_num_rows($result);
+    echo $count;
+    
+    //if($count == 0){
+      //  $output = '<h4>'.'Formation not found'.'</h4>';
+    //}
+    //else{
         while ($row = mysqli_fetch_array($result)){
             $name = $row['name'];
-            $period = $row['period'];
-            $age_interval = $row['age_interval'];
-            $province = $row['province'];
-            $type_locality = $row['type_locality'];
-            $lithology = $row['lithology'];
-            $lower_contact = $row['lower_contact'];
+            //$period = $row['period'];
+            //$age_interval = $row['age_interval'];
+            //$province = $row['province'];
+            //$type_locality = $row['type_locality'];
+            //$lithology = $row['lithology'];
+            //$lower_contact = $row['lower_contact'];
+            array_push($arr, $name);
             $output = '<h4>'.$name.'</h4>';
 
         }
-    }
+    //}
 }
 
 
 ?>
 
-<!DOCTYPE <!DOCTYPE html>
+< ?php header("Location: http://www.google.com ? formation=$name"); ?>
+
+<!DOCTYPE html>
 <html>
 <title>Search for Formation</title>
 
@@ -69,7 +75,21 @@ if (isset($_POST['search'])) {
     <input id="submitbtn" type="submit" value="Submit">
 </form>
 <div>
-<?php print("$output");?>
+	<hr>
+<?php 
+	//print_r(array_values($arr));
+	if($count == 0){
+		$output = '<h4>'.'Formation not found'.'</h4>';
+		print($output);
+	}
+	foreach ($arr as $formation)
+	{
+		$output = '<h4>'.$formation.'</h4>';
+		print($output);
+	}
+//print($arr[0]);
+//print("$output");?>
+</hr>
 </div>
 
 </body>
