@@ -21,7 +21,13 @@ while($row = mysqli_fetch_array($result)) {
         $type_locality = $row['type_locality'];
         $lithology = $row['lithology'];
 	$lower_contact = $row['lower_contact'];
-	// add more
+	$upper_contact = $row['upper_contact'];
+	$regional_extent = $row['regional_extent'];
+	$fossils = $row['fossils'];
+	$age = $row['age'];
+	$depositional = $row['depositional'];
+	$additional_info = $row['additional_info'];
+	$compiler = $row['compiler'];
 }
 ?>
 
@@ -48,38 +54,42 @@ while($row = mysqli_fetch_array($result)) {
     <hr>
 	<p><?=$province?></p>
     <br>
-    <h3><b>Type Locality and Naming</b></h3>
+	<h3><b>Type Locality and Naming</b></h3>
     <hr>
-    <p><?=$type_locality?> </p>
+	<p><?=$type_locality?> </p>
     <br>
-    <h3><b>Lithology and Thickness</b></h3>
+	<h3><b>Lithology and Thickness</b></h3>
     <hr>
-    <p><?=$lithology?></p>
+	<p><?=$lithology?></p>
     <br>
-    <h3><b>Relationships and Distribution</b></h3>
+	<h3><b>Relationships and Distribution</b></h3>
     <hr>
-    <h4><i>Lower contact</i></h4>
-    <p><?=$lower_contact?></p>
-    <h4><i>Upper contact</i></h4>
-    <p>Conformable or disconformable contact to the overlying Chengqianggou Fm of Lower Carboniferous.</p>
-    <h4><i>Regional extent</i></h4>
-    <p><small>No content here</small></p>
+	<h4><i>Lower contact</i></h4>
+	<p><?=$lower_contact?></p>
+	<h4><i>Upper contact</i></h4>
+	<p><?=$upper_contact?></p>
+	<h4><i>Regional extent</i></h4>
+	<p><?=$regional_extent?></p>
     <br>
-    <h3><b>Age</b></h3>
+	<h3><b>Fossils</b></h3>
     <hr>
-    <p>Late Devonian</p>
+	<p><?=$fossils?>
     <br>
-    <h3><b>Depositional setting</b></h3>
+	<h3><b>Age</b></h3>
     <hr>
-    <p><small>No content here</small></p>
+	<p><?=$age?></p>
     <br>
-    <h3><b>Additional Information</b></h3>
+	<h3><b>Depositional setting</b></h3>
     <hr>
-    <p><small>No content here</small></p>
+	<p><?=$depositional?></p>
     <br>
-    <h3><b>Compiler</b></h3>
+	<h3><b>Additional Information</b></h3>
     <hr>
-    <p>(Wang Shitao)</p>
+	<p><?=$additional_info?></p>
+    <br>
+	<h3><b>Compiler</b></h3>
+    <hr>
+	<p><?=$compiler?></p>
     <br>
 
 </body>
