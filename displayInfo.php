@@ -10,7 +10,8 @@
 <?php echo "_GET[formation]";
 print_r($_REQUEST);
 $formationName = $_REQUEST;
-$sql = "SELECT * FROM formation WHERE name LIKE '%$formationName%'";
+//echo $formationName[formation];
+$sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
 $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_array($result)) {
 	$name = $row['name'];
