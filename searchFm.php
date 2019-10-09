@@ -1,18 +1,6 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "myDB";
-$output = '';
+include("SqlConnection.php");
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-else{
-    echo '<pre>'.'successfully linked to Datbase'.'</pre>';
-}
 $arr = array();
 //Collect
 //Within the single quotation marks is the name of the first field within the form
@@ -22,10 +10,10 @@ if (isset($_POST['search'])) {
     $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%'";
     
     $result = mysqli_query($conn, $sql);
-    echo '<pre>'."HERES THE SQL QUERY".'</pre>';
-    echo '<pre>'.$sql.'</pre>';
+    //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
+    //echo '<pre>'.$sql.'</pre>';
     $count = mysqli_num_rows($result);
-    echo $count;
+
     
     //if($count == 0){
       //  $output = '<h4>'.'Formation not found'.'</h4>';
@@ -46,7 +34,6 @@ if (isset($_POST['search'])) {
     //}
 }
 
-
 ?>
 
 
@@ -54,28 +41,9 @@ if (isset($_POST['search'])) {
 <html>
 <title>Search for Formation</title>
 
-<style>
-    #searchbar {
-        border: 3px solid #CC99FF;
-        height: 40px;
-        width: 300px;
-    }
-    #submitbtn {
-        height: 40px;
-        border: 3px solid #000000;
-    }
-    
-</style>
+<?php include("SearchBar.php"); ?>
 
-<body>
-<h3><b>Enter Formation Name Below: </b></h3>
-THIS IS RUNNING!
-<form action="searchFm.php" method="post">
-    <input id="searchbar" type="text" name="search" placeholder="Search Formation Name...">
-    <input id="submitbtn" type="submit" value="Submit">
-</form>
 <div>
-	<hr>
 <?php 
 	//print_r(array_values($arr));
 	if($count == 0){
@@ -88,13 +56,11 @@ THIS IS RUNNING!
         }
 	foreach ($arr as $formation)
 	{
-		$output = '<h4>'.$formation.'</h4>';
-		print($output);
-		?><a href="displayInfo.php?formation=<?=$formation?>">Formation: <?=$formation?></a><?php
-	}
-//print($arr[0]);
-//print("$output");?>
-</hr>
+		//$output = '<h4>'.$formation.'</h4>';
+		//print($output);
+		?><b><hr><a href="displayInfo.php?formation=<?=$formation?>">Formation: <?=$formation?></a></hr></b><?php
+	}?>
+
 </div>
 
 </body>
