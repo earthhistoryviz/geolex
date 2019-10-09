@@ -4,7 +4,7 @@
 	<title>Amunik Fm</title>
 </head>
 <body>
-
+<?php echo "_GET[formation] = "; print_r($_REQUEST); ?>
 	<h1><b>Amunik Fm</b></h1>
 	<hr>
     <br>
