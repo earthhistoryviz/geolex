@@ -2,6 +2,7 @@
 include("SqlConnection.php");
 
 $arr = array();
+$count = -1;
 //Collect
 //Within the single quotation marks is the name of the first field within the form
 if (isset($_POST['search'])) {
@@ -21,12 +22,6 @@ if (isset($_POST['search'])) {
     //else{
         while ($row = mysqli_fetch_array($result)){
             $name = $row['name'];
-            //$period = $row['period'];
-            //$age_interval = $row['age_interval'];
-            //$province = $row['province'];
-            //$type_locality = $row['type_locality'];
-            //$lithology = $row['lithology'];
-            //$lower_contact = $row['lower_contact'];
             array_push($arr, $name);
             $output = '<h4>'.$name.'</h4>';
 
@@ -46,14 +41,20 @@ if (isset($_POST['search'])) {
 <div>
 <?php 
 	//print_r(array_values($arr));
-	if($count == 0){
+	//print_r($count);
+	if($count == -1){
+		
+	}
+	else if($count == 0){
 		$output = '<h4>'.'Formation not found'.'</h4>';
 		print($output);
 	}
-        if ($count == 1) {
+        else if ($count == 1) {
           header("Location: displayInfo.php?formation=".$formation); 
           exit(0);
         }
+	else{
+	}
 	foreach ($arr as $formation)
 	{
 		//$output = '<h4>'.$formation.'</h4>';
