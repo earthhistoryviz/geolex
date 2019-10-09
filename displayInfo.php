@@ -30,28 +30,20 @@ while($row = mysqli_fetch_array($result)) {
 ?>
 
 	<h1><b><?=$name?></b></h1>
-    <br>
+    <hr>
 
-	<h3><b>Period</b></h3>
-    <hr>
-	<p><?=$period?></p>
-    <br>
-	<h3><b>Age Interval (Map column)</b></h3>
-    <hr>
-	<p><?=$age_interval?></p>
-    <br>
-	<h3><b>Province</b></h3>
-    <hr>
-	<p><?=$province?></p>
-    <br>
+	<h4><?=$period?></h4>
+	<h4><?=$age_interval?></h4>
+	<h4><?=$province?></h4>
+    
 	<h3><b>Type Locality and Naming</b></h3>
     <hr>
-	<p><?=$type_locality?> </p>
-    <br>
+	<p><?=$type_locality?> <br></p>
+    
 	<h3><b>Lithology and Thickness</b></h3>
     <hr>
-	<p><?=$lithology?></p>
-    <br>
+	<p><?=$lithology?> <br></p>
+    
 	<h3><b>Relationships and Distribution</b></h3>
     <hr>
 	<h4><i>Lower contact</i></h4>
