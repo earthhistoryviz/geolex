@@ -7,10 +7,8 @@
 	<title>Amunik Fm</title>
 </head>
 <body>
-<?php echo "_GET[formation]";
-print_r($_REQUEST);
+<?php
 $formationName = $_REQUEST;
-//echo $formationName[formation];
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
 $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_array($result)) {
@@ -31,15 +29,7 @@ while($row = mysqli_fetch_array($result)) {
 }
 ?>
 
-
-
-
-
-
-
-
 	<h1><b><?=$name?></b></h1>
-    <hr>
     <br>
 
 	<h3><b>Period</b></h3>
