@@ -60,6 +60,7 @@ if (isset($_POST['search'])) {
 		//$output = '<h4>'.$formation.'</h4>';
 		//print($output);
 		?><b><hr><a href="displayInfo.php?formation=<?=$formation?>">Formation: <?=$formation?></a></hr></b><?php
+	}?>
 </div>
 
 </body>
