@@ -72,7 +72,7 @@ $provincepattern = "/Province:\s*(\w+)/";
 $typepattern = "/Type Locality and Naming:(\s*(.+))Lithology and Thickness:/";
 $lithpattern = "/Lithology and Thickness:(\s*(.+))Relationships and Distribution:/";
 $lowerpattern = "/Lower contact:(\s*(.+))Upper contact:/";
-$upperpattern = "/Upper contact:\s*(.+)Lower contact:/";
+$upperpattern = "/Upper contact:\s*(.+)Regional extent:/";
 $regionalpattern = "/Regional extent:\s*(.+)Fossils:/";
 $fossilpattern = "/Fossils:\s*(.+)Age:/";
 $agepattern = "/Age:\s*(.+)Depositional setting:/";
@@ -198,11 +198,10 @@ foreach( $splitcontent as $ministr){
   preg_match($addpattern,$ministr,$addinfo);
   preg_match($compilerpattern,$ministr,$compiler);
  //echo $ministr;
-
   $sformname = $formname[0];  
-  $speriod = $period[0];  
-  $sage_in = $age_in[0];  
-  $sprovince = $province[0];  
+  $speriod = $period[1];
+  $sage_in = $age_in[1];
+  $sprovince = $province[1];
   $stype  = $type[2];
   $slith  = $lith[1];
   $slower = $lower[1];
@@ -215,6 +214,7 @@ echo "upper = "; print_r($upper);
   $sadd = $addinfo[1];
   $scompiler = $compiler[1];
   if($x>$y){
+    echo $sage_in;
   //var_dump($type);
 //    var_dump($compiler);
 
@@ -236,9 +236,6 @@ echo "upper = "; print_r($upper);
     $scompiler = str_replace("(","",$scompiler);
     $scompiler = str_replace(")","",$scompiler);
     //echo $scompiler;
-
-    $sql = "";
-
     $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
        VALUES(
         '$sformname',

@@ -63,6 +63,22 @@ $sql = "CREATE TABLE timeperiod(
 	color Varchar(255)
 
 )";
+$sql4 = "CREATE TABLE user_info(
+    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    uname Varchar(255),
+    pasw Varchar(255),
+    admin Varchar(255)
+)";
+$rootpasw = password_hash("TSCreator",PASSWORD_DEFAULT);
+$salt = "SALT";
+$sql3 = "INSERT INTO user_info(uname,pasw,admin)
+VALUES 
+('root', '$rootpasw.$salt','True')";
+if ($conn->query($sql3)&&$conn->query($sql4) === TRUE) {
+    echo "table create successfully<br>";
+} else {
+    echo "Error creating user_info table: " . $conn->error;
+}
 $sql2 = "CREATE TABLE formation(
 	ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name Varchar(255),
