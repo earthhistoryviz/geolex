@@ -50,7 +50,7 @@ if (isset($_POST['search'])) {
 		print($output);
 	}
         else if ($count == 1) {
-          header("Location: displayInfo.php?formation=".$formation); 
+          header("Location: displayInfo.php?formation=".$arr[0]); 
           exit(0);
         }
 	else{
