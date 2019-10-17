@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
-<?php 	
+<?php 
+include("navBar.php");	
 include("SearchBar.php");
 include("SqlConnection.php");
 $formationName = $_REQUEST;
-//if($formationName[formation] == "") {
-//	header("Location: displayEmpty.php");
-//	exit(0)
-//}
+if($formationName[formation] == "") {
+	header("Location: displayEmpty.php");	
+	exit(0);
+}
 ?>
 <head>
 	<title><?=$formationName[formation]?></title>
@@ -46,8 +47,8 @@ while($row = mysqli_fetch_array($result)) {
 }
 
 if($name == "") { 
-	header("Location: displayNoMatch?foramtion=".$formationName[formation]);
-	exit(0)
+	header("Location: displayNoMatch.php?foramtion=".$formationName[formation]);
+	exit(0);
 }
 
 // display information below
