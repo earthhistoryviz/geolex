@@ -34,10 +34,20 @@ if (isset($_POST['search'])) {
 
 <!DOCTYPE html>
 <html>
+
+<style type="text/css">
+    .formation-container {
+        margin: auto;
+        width: 65%;
+        
+        padding: 5px;
+    }
+</style>
+
 <title>Search for Formation</title>
 <?php include("navBar.php"); include("SearchBar.php"); ?>
 
-<div>
+<div class="formation-container">
 <?php 
 	//print_r(array_values($arr));
 	//print_r($count);
