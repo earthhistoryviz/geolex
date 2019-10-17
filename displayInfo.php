@@ -4,7 +4,7 @@
 include("SearchBar.php");
 include("SqlConnection.php");
 $formationName = $_REQUEST;
-if($formationName[formation] == null) {
+if($formationName[formation] == "") {
 	header("Location: displayEmpty.php");
 	exit(0)
 }
@@ -44,10 +44,11 @@ while($row = mysqli_fetch_array($result)) {
 	$additional_info = $row['additional_info'];
 	$compiler = $row['compiler'];
 }
-
-if($name == null) { 
+/*
+if($name == "") { 
 	header("Location: displayNoMatch?foramtion=".$formationName[formation]);
 	exit(0)
+*/
 }
 
 // display information below
