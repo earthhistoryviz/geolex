@@ -35,8 +35,7 @@ if (isset($_POST['search'])) {
 <!DOCTYPE html>
 <html>
 <title>Search for Formation</title>
-
-<?php include("SearchBar.php"); ?>
+<?php include("navBar.php"); include("SearchBar.php"); ?>
 
 <div>
 <?php 

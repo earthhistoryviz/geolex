@@ -11,5 +11,5 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 else{
-    echo '<pre>'.'successfully linked to Database'.'</pre>';
+    //echo '<pre>'.'successfully linked to Database'.'</pre>';
 }

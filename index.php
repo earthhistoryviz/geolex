@@ -3,7 +3,7 @@
 <head>
 <title>DevonianTest</title>
 </head>
-	
+	<?php include("navBar.php");?>
 <body>
 
 <form method="post" enctype="multipart/form-data">
@@ -25,7 +25,6 @@
 <option value="ediac">Ediacaran</option>
 </select>
 
-<br><b><a href="searchFm.php">Search for Formation</a></b></br>
 <br><b><a href="login.php">Admin Login</a></b></br>
 <?php
     if(isset($_POST['period'])) {
