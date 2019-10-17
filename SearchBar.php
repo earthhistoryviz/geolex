@@ -5,7 +5,7 @@
     #searchbar {
         border: 3px solid #CC99FF;
         height: 40px;
-        width: 500px;
+        width: 700px;
         
     }
     #submitbtn {
@@ -14,10 +14,7 @@
     }
 
     .search-container{
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+	text-align: center;
         margin-top: 10px;
     }
     
