@@ -1,32 +1,51 @@
-,<!DOCTYPE html>
+<?php
+include("page1.html");
+?>
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>Dashboard(Test version)</title>
-    <link rel="stylesheet" href="page.css" />
-    <script type="text/javascript" src="jquery.min.js" ></script>
-    <script type="text/javascript" src="index.js" ></script>
-</head>
+    <meta charset="utf-8"/>
+    <title>index</title>
 
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+
+</head>
 <body>
-<div class="left">
-    <div class="bigTitle">Dashboard</div>
-    <div class="lines">
-        <div onclick="pageClick(this)" class="active">Manage Users information</div>
-        <div onclick="pageClick(this)">Manage Database</div>
+<div class="container">
+    <!-- aside left -->
+    <div class="aside-left">
+        <ul>
+            <li>
+
+                <a href="##" target="main" class="m-title">Dashboard</a>
+            </li>
+            <li>
+                <a href="page1a.html" target="main" >Manage User information</a>
+            </li>
+            <li>
+                <a href="adminDash.php" target="main" class="active">Manage Database</a>
+            </li>
+
+        </ul>
+    </div>
+    <!-- aside right -->
+    <div class="aside-right">
+        <div class="top">
+            <a href="##" class="logout">Logout</a>
+            <h1 class="fl tit">Welcome to Dashbord</h1>
+            <p class="fr user">User:Yuanhao</p>
+        </div>
+        <div class="main">
+            <div class="db">
+                <h2 class="h2">Manage Database</h2>
+            </div>
+            <?php include("SearchBar.php"); ?>
+            <div>
+            </div>
+        </div>
+
     </div>
 </div>
-<div class="top">
-    <div class="leftTiyle" id="flTitle">Welcome to Dashboard</div>
-    <div class="thisUser">User：Yuanhao</div>
-    <div class="leave">
-        <div onclick="pageClick(this)">Logout</div>
-    </div>
-    <div class="content">
-        <label for="tags">Search：</label>
-        <input id="tags" name="tags">
-    </div>
-
+</div>
 </body>
-
 </html>
