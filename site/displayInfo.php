@@ -3,7 +3,7 @@
 <?php 
 include("navBar.php");	
 include("SearchBar.php");
-include("SqlConnection.php");
+include("include/SqlConnection.php");
 $formationName = $_REQUEST;
 if($formationName[formation] == "") {
 	header("Location: displayEmpty.php");	
