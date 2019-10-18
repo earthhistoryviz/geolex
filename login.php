@@ -29,10 +29,10 @@ if ($conn->query($sql4)&&$conn->query($sql3) === TRUE) {
 }
 ?>
 <?php
-if(isset($_POST['submit_btn']))
+if(isset($_REQUEST['submit_btn']))
 {
-    $uname = $_POST['username'];
-    $pass = $_POST['password'];
+    $uname = $_REQUEST['username'];
+    $pass = $_REQUEST['password'];
     $salt = "SALT";
     $pashash = password_hash($pass,PASSWORD_DEFAULT);
     $chkpass = $pashash.$salt;
@@ -89,7 +89,7 @@ if(isset($_POST['submit_btn']))
     </style>
 </body>
 <title>Admin Login Page</title>
-<form action ='login.php'>
+<form method="POST" action='login.php'>
 
     <div class="container">
         <label for="username"><b>Username</b></label>

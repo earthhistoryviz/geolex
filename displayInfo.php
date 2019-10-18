@@ -47,7 +47,7 @@ while($row = mysqli_fetch_array($result)) {
 }
 
 if($name == "") { 
-	header("Location: displayNoMatch.php?foramtion=".$formationName[formation]);
+	header("Location: displayNoMatch.php?formation=".$formationName[formation]);
 	exit(0);
 }
 
