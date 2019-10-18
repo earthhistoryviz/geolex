@@ -10,6 +10,43 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+$sql4 = "CREATE TABLE user_info(
+    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    uname Varchar(255),
+    pasw Varchar(255),
+    admin Varchar(255)
+)";
+$res =
+$rootpasw = password_hash("TSCreator",PASSWORD_DEFAULT);
+$salt = "SALT";
+$sql3 = "INSERT INTO user_info(uname,pasw,admin)
+VALUES 
+('root', '$rootpasw.$salt','True')";
+if ($conn->query($sql4)&&$conn->query($sql3) === TRUE) {
+    echo "table create successfully<br>";
+} else {
+    echo "Error creating user_info table: " . $conn->error;
+}
+?>
+<?php
+if(isset($_POST['submit_btn']))
+{
+    $uname = $_POST['username'];
+    $pass = $_POST['password'];
+    $salt = "SALT";
+    $pashash = password_hash($pass,PASSWORD_DEFAULT);
+    $chkpass = $pashash.$salt;
+    echo '<script type = "text/javascript">alert("Hiiii")</script>';
+    $sql = "SELECT uname,pasw from user_info WHERE uname ='$uname' AND pasw='$chkpass'";
+    $result = mysqli_query($conn,$sql);
+    if(mysqli_num_rows($result)>0) {
+        echo "Login successful";
+        header('location:adminDash.php');
+    }
+    else{
+        echo '<script type = "text/javascript">alert("Incorrect Username or Password"</script>';
+    }
+}
 ?>
 <html>
 <body>
@@ -52,7 +89,7 @@ if ($conn->connect_error) {
     </style>
 </body>
 <title>Admin Login Page</title>
-<form>
+<form action ='login.php'>
 
     <div class="container">
         <label for="username"><b>Username</b></label>
@@ -67,22 +104,5 @@ if ($conn->connect_error) {
         </label>
     </div>
     </form>
-<?php
-    if(isset($_POST['submit_btn']))
-    {
-        $uname = $_POST['username'];
-        $pass = $_POST['password'];
-        $salt = "SALT";
-        $pashash = password_hash($pass,PASSWORD_DEFAULT);
-        $chkpass = $pashash.$salt;
-        $sql = "SELECT uname,pasw from user_info WHERE uname ='$uname' AND pasw='$chkpass'";
-        $result = mysqli_query($conn,$sql);
-        if(mysqli_num_rows($result)>0) {
-                header('location:adminDash.php');
-                }
-        else{
-            echo '<script type = "text/javascript">alert("Incorrect Username or Password"</script>';
-        }
-    }
-?>
+
 </html>
