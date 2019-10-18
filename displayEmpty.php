@@ -1,6 +1,7 @@
 <!DOCTYPE>
 <html>
 <?php
+include("navNar.php");
 include("SearchBar.php");
 ?>
 

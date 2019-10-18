@@ -1,6 +1,7 @@
 <!DOCTYPE>
 <html>
 <?php
+include("navBar.php");
 include("SearchBar.php");
 $formationName = $_REQUEST;
 ?>
