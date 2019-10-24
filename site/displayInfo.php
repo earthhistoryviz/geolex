@@ -3,10 +3,19 @@
 <?php 
 include("navBar.php");	
 include("SearchBar.php");
-include("SqlConnection.php");
+include("include/SqlConnection.php");
 $formationName = $_REQUEST;
 if($formationName[formation] == "") {
-	header("Location: displayEmpty.php");	
+?>
+<head>
+	<title>Empty Search</title>
+</head>
+
+<body>
+	<h3>NO FORMATION NAME ENTERED!</h3>
+</body>
+</html>
+<?php
 	exit(0);
 }
 ?>
@@ -46,8 +55,17 @@ while($row = mysqli_fetch_array($result)) {
 	$compiler = $row['compiler'];
 }
 
-if($name == "") { 
-	header("Location: displayNoMatch.php?formation=".$formationName[formation]);
+if($name == "") {
+?>
+<head>
+	<title>No Match</title>
+</head>
+
+<body>
+	<h3>Nothing found for "<?=$formationName[formation]?>". Please search again.</h3>
+</body>
+</html>
+<?php
 	exit(0);
 }
 
