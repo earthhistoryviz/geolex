@@ -1,28 +1,17 @@
-<!DOCTYPE html>
-<html>
 <?php 
 include("navBar.php");	
 include("SearchBar.php");
-include("include/SqlConnection.php");
+include("SqlConnection.php");
 $formationName = $_REQUEST;
-if($formationName[formation] == "") {
-?>
-<head>
-	<title>Empty Search</title>
-</head>
-
-<body>
-	<h3>NO FORMATION NAME ENTERED!</h3>
-</body>
-</html>
+if($formationName[formation] == "") {?>
+  <title>Empty Search</title>
+  <h3>NO FORMATION NAME ENTERED!</h3>
 <?php
-	exit(0);
+  include("footer.php");
+  exit(0);
 }
 ?>
-<head>
-	<title><?=$formationName[formation]?></title>
-</head>
-<body>
+  <title><?=$formationName[formation]?></title>
 <?php
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
 $result = mysqli_query($conn, $sql);
@@ -57,23 +46,19 @@ while($row = mysqli_fetch_array($result)) {
 
 if($name == "") {
 ?>
-<head>
-	<title>No Match</title>
-</head>
-
-<body>
-	<h3>Nothing found for "<?=$formationName[formation]?>". Please search again.</h3>
-</body>
-</html>
+  <title>No Match</title>
+  <h3>Nothing found for "<?=$formationName[formation]?>". Please search again.</h3>
 <?php
-	exit(0);
+  include("footer.php");
+  exit(0);
 }
 
 // display information below
 ?>
     <div>
 	<h1><b><?=$name?></b></h1>
-    <hr></div>
+        <hr>
+    </div>
 
 <!--
 	<h4><?=$period?></h4>
@@ -83,13 +68,13 @@ if($name == "") {
 	
     <div id="period">
 	<h3><b>Period</b></h3>
-    <hr>
+      <hr>
 	<p><?=$period?><br></p>
     </div>
 
     <div id="age_interval">
 	<h3><b>Age Interval</b></h3>
-    <hr>
+      <hr>
 	<p><?=$age_interval?><br></p>
     </div>
 
@@ -157,6 +142,7 @@ if($name == "") {
     <hr>
 	<p><?=$compiler?><br></p>
     </div>
-</body>
-</html>
 
+<?php
+include("footer.php");
+?>

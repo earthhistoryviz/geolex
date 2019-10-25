@@ -1,35 +1,6 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "myDB";
-$output = '';
-$REMAKE_TABLE = false;
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-if($REMAKE_TABLE == True) {
-    $sql = "DROP TABLE user_info";
-    $conn->query($sql);
-    $sql4 = "CREATE TABLE user_info(
-    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    uname Varchar(255),
-    pasw Varchar(255),
-    admin Varchar(255)
-)";
-    $rootpasw = password_hash("TSCreator", PASSWORD_DEFAULT);
-    $salt = "SALT";
-    $sql3 = "INSERT INTO user_info(uname,pasw,admin)
-VALUES 
-('root', '$rootpasw','True')";
-    if ($conn->query($sql4) && $conn->query($sql3) === TRUE) {
-        echo "table create successfully<br>";
-    } else {
-        echo "Error creating user_info table: " . $conn->error;
-    }
-}
+include("SqlConnection.php");
+session_start();
 ?>
 <?php
 if(isset($_REQUEST['submit_btn']))
