@@ -1,50 +1,44 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "myDB";
-$output = '';
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-$sql4 = "CREATE TABLE user_info(
-    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    uname Varchar(255),
-    pasw Varchar(255),
-    admin Varchar(255)
-)";
-$res =
-$rootpasw = password_hash("TSCreator",PASSWORD_DEFAULT);
-$salt = "SALT";
-$sql3 = "INSERT INTO user_info(uname,pasw,admin)
-VALUES 
-('root', '$rootpasw.$salt','True')";
-if ($conn->query($sql4)&&$conn->query($sql3) === TRUE) {
-    echo "table create successfully<br>";
-} else {
-    echo "Error creating user_info table: " . $conn->error;
-}
+include("SqlConnection.php");
+session_start();
 ?>
 <?php
 if(isset($_REQUEST['submit_btn']))
 {
     $uname = $_REQUEST['username'];
     $pass = $_REQUEST['password'];
-    $salt = "SALT";
-    $pashash = password_hash($pass,PASSWORD_DEFAULT);
-    $chkpass = $pashash.$salt;
-    echo '<script type = "text/javascript">alert("Hiiii")</script>';
-    $sql = "SELECT uname,pasw from user_info WHERE uname ='$uname' AND pasw='$chkpass'";
+    //$salt = "SALT";
+    //$pashash = password_hash($pass,PASSWORD_DEFAULT);
+    //$chkpass = $pashash.$salt;
+    $sql = "SELECT uname,pasw from user_info";
     $result = mysqli_query($conn,$sql);
+    //echo $pass;
+    echo nl2br("\n");
+    echo nl2br("\n");
+   // echo $result->num_rows;
+    echo '<script type = "text/javascript">alert("Login Successful"</script>';
     if(mysqli_num_rows($result)>0) {
-        echo "Login successful";
-        header('location:adminDash.php');
+        while ($row = $result->fetch_assoc()) {
+           $hsh = $row['pasw'];
+           $uname =$row['uname'];
+           //echo $uname.$hsh;
+           if(password_verify($pass,$hsh)) {
+             //  echo"I was here";
+               echo '<script type = "text/javascript">alert("Login Successful"</script>';
+               $_SESSION['loggedIn'] = True;
+               $_SESSION['username'] = $uname;
+               session_start();
+               header('location:adminDash.php');
+           }
+           else{
+               //echo"no match";
+           }
+        }
+        echo "Incorrect Username or Password";
+        echo '<script type = "text/javascript">alert("Incorrect Username or Password"</script>';
     }
     else{
-        echo '<script type = "text/javascript">alert("Incorrect Username or Password"</script>';
+        echo "Database empty or does not exist";
     }
 }
 ?>
@@ -98,7 +92,7 @@ if(isset($_REQUEST['submit_btn']))
         <label for="password"><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="password" required>
 
-        <button type="submit" name ="submit_btn">Login</button>
+        <button type="submit" name ="submit_btn" value ="submit_btn">Login</button>
         <label>
             <input type="checkbox" checked="checked" name="remember"> Remember me
         </label>

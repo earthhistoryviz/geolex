@@ -1,6 +1,3 @@
-<?php
-include("page1.html");
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,38 +11,24 @@ include("page1.html");
 <div class="container">
     <!-- aside left -->
     <div class="aside-left">
-        <ul>
+        <ul id="menus">
             <li>
 
-                <a href="##" target="main" class="m-title">Dashboard</a>
+                <a href="javascript:;" class="m-title active">Dashboard</a>
             </li>
-            <li>
-                <a href="page1a.html" target="main" >Manage User information</a>
+	    <li class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+                <a href="manageUser.php">Manage User information</a>
             </li>
-            <li>
-                <a href="adminDash.php" target="main" class="active">Manage Database</a>
+            <li class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+                <a href="displayInfo.php">Manage Database</a>
             </li>
+
+	    <li>
+	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
+	    </li>
 
         </ul>
     </div>
     <!-- aside right -->
-    <div class="aside-right">
-        <div class="top">
-            <a href="##" class="logout">Logout</a>
-            <h1 class="fl tit">Welcome to Dashbord</h1>
-            <p class="fr user">User:Yuanhao</p>
-        </div>
-        <div class="main">
-            <div class="db">
-                <h2 class="h2">Manage Database</h2>
-            </div>
-            <?php include("SearchBar.php"); ?>
-            <div>
-            </div>
-        </div>
+    <div class="mainBody aside-right" id="conts">
 
-    </div>
-</div>
-</div>
-</body>
-</html>

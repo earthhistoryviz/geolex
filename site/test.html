@@ -1,10 +1,25 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>SearchFm testing</title>
+    <link rel="stylesheet" href="/public/AutoCom/jquery-ui.css">
+    <script src="/public/AutoCom/jquery-1.91.js"></script>
+    <script src="/public/AutoCom/jquery-ui.js"></script>
+    <script>
+        $(function() {
+            $( "#tags" ).autocomplete({
+                // source: availableTags
+                source: "at.php"
+            });
+        });
+    </script>
 </head>
 <body>
+
+<div class="ui-widget">
+    <label for="tags">Search：</label>
+    <input id="tags" name="tags" >
+</div>
 
 </body>
 </html>
