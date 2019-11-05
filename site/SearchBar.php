@@ -23,8 +23,8 @@
 <body>
     <div class = "search-container">
         
-        <form action="searchFm.php" method="post">
-        <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_POST['search'])) echo $_POST['search']; ?>">
+        <form action="searchFm.php" method="request">
+        <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
          <input id="submitbtn1" type="submit" value="Submit" disabled> 
         <!--<button id="submitbtn1" type="button">Submit</button>-->
 

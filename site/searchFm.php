@@ -5,8 +5,8 @@ $arr = array();
 $count = -1;
 //Collect
 //Within the single quotation marks is the name of the first field within the form
-if (isset($_POST['search'])) {
-    $searchquery = $_POST['search'];
+if (isset($_REQUEST['search'])) {
+    $searchquery = $_REQUEST['search'];
 
     $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%'";
     
