@@ -50,17 +50,17 @@ if($name == "") {
 
     <div id="period">
 	<h3><b>Period: </b></h3>
-	<p><?=$period?><br></p>
+	<span><?=$period?><br></span>
     </div>
 
     <div id="age_interval">
 	<h3><b>Age Interval: </b></h3>
-	<p><?=$age_interval?><br></p>
+	<span><?=$age_interval?><br></span>
     </div>
 
     <div id="province">
 	<h3><b>Province: </b></h3>
-	<p><?=$province?><br></p>
+	<span><?=$province?><br></span>
     </div>
 
     <div id="type_locality">
