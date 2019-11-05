@@ -49,18 +49,18 @@ if($name == "") {
     </div>
 
     <div id="period">
-	<h3><b>Period: </b></h3>
-	<span><?=$period?><br></span>
+	<h3 style="display: inline;"><b>Period: </b></h3>
+	<span style="float: right;"><?=$period?><br></span>
     </div>
 
     <div id="age_interval">
-	<h3><b>Age Interval: </b></h3>
-	<span><?=$age_interval?><br></span>
+	<h3 style="display: inline;"><b>Age Interval: </b></h3>
+	<span style="float: right;"><?=$age_interval?><br></span>
     </div>
 
     <div id="province">
-	<h3><b>Province: </b></h3>
-	<span><?=$province?><br></span>
+	<h3 style="display: inline;"><b>Province: </b></h3>
+	<span style="float: right;"><?=$province?><br></span>
     </div>
 
     <div id="type_locality">
