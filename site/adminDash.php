@@ -8,6 +8,7 @@
 
 </head>
 <body>
+
 <div class="container">
     <!-- aside left -->
     <div class="aside-left">
@@ -22,11 +23,7 @@
             <li class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
                 <a href="displayInfo.php">Manage Database</a>
             </li>
-########################################################################################################################
-            <li class="logout" >
-                <a href="">Logout</a>
-            </li>
-########################################################################################################################
+
 	    <li>
 	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
 	    </li>
@@ -35,4 +32,6 @@
     </div>
     <!-- aside right -->
     <div class="mainBody aside-right" id="conts">
+        <div class="top">
+            <a href="##" class="logout">Logout</a>
 
