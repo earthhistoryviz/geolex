@@ -22,7 +22,11 @@
             <li class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
                 <a href="displayInfo.php">Manage Database</a>
             </li>
-
+########################################################################################################################
+            <li class="logout" >
+                <a href="">Logout</a>
+            </li>
+########################################################################################################################
 	    <li>
 	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
 	    </li>
