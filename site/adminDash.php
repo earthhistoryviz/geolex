@@ -8,6 +8,7 @@
 
 </head>
 <body>
+
 <div class="container">
     <!-- aside left -->
     <div class="aside-left">
@@ -31,4 +32,6 @@
     </div>
     <!-- aside right -->
     <div class="mainBody aside-right" id="conts">
+        <div class="top">
+            <a href="##" class="logout">Logout</a>
 
