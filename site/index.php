@@ -6,81 +6,40 @@
 	<?php include("navBar.php");?>
 <body>
 
-<form method="post" enctype="multipart/form-data">
+<form>
     Select Period :
 <select name="period" id="period" onchange="this.form.submit()">
 <option value="0" selected="selected">Select Period</option>
-<option value="quater">Quaternary</option>
-<option value="neo">Neogene</option>
-<option value="paleo">Paleogene</option>
-<option value="creta">Cretaceous</option>
-<option value="jura">Jurassic</option>
-<option value="tria">Triassic</option>
-<option value="perm">Permian</option>
-<option value="carbon">Carboniferous</option>
-<option value="devon">Devonian</option>
-<option value="silu">Silurian</option>
-<option value="ordo">Ordovician</option>
-<option value="camb">Cambrian</option>
-<option value="ediac">Ediacaran</option>
+<option value="Quaternary">Quaternary</option>
+<option value="Neogene">Neogene</option>
+<option value="Paleogene">Paleogene</option>
+<option value="Cretaceous">Cretaceous</option>
+<option value="Jurassic">Jurassic</option>
+<option value="Triassic">Triassic</option>
+<option value="Permian">Permian</option>
+<option value="Carboniferous">Carboniferous</option>
+<option value="Devonian">Devonian</option>
+<option value="Silurian">Silurian</option>
+<option value="Ordovician">Ordovician</option>
+<option value="Cambrian">Cambrian</option>
+<option value="Ediacaran">Ediacaran</option>
 </select>
+</form>
+
 
 <br><b><a href="login.php">Admin Login</a></b></br>
+</p>Select Region: </p>
 <?php
-    if(isset($_POST['period'])) {
-        switch($_POST['period']) {
-            case quater:
-                $TIME = "quater";
-                //header("Location: Quaternary.php");
-                //break;
-            case neo:
-                header("Location: Neogene.php");
-                break;
-            case paleo:
-                header("Location: Paleogene.php");
-                break;
-            case creta:
-                header("Location: Cretaceous.php");
-                break;
-            case jura:
-                header("Location: Jurassic.php");
-                break;
-            case tria:
-                header("Location: Triassic.php");
-                break;
-            case perm:
-                header("Location: Permian.php");
-                break;
-            case carbon:
-                header("Location: Carboniferous.php");
-                break;
-            case devon:
-                header("Location: Devonian.php");
-                break;
-            case silu:
-                header("Location: Silurian.php");
-                break;
-            case ordo:
-                header("Location: Ordovician.php");
-                break;
-            case camb:
-                header("Location: Cambrian.php");
-                break;
-            case ediac:
-                header("Location: Ediacaran.php");
-                break;
-
-        }
-    }
-
-    echo "</p>Select Region: </p>";
+   if(isset($_GET["period"])){
+       $period=$_GET["period"];
+       echo "select period is => ".$period;
+       include 'Mapinfo/' . $period.'_China_Map.php';
+   }
 ?>
 
 
-<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr">
-    <div class="mw-parser-output">
 
-<div class="noresize" style="height: 625px; width: 800px; ">
+<!-- <div class="noresize" style="height: 625px; width: 800px; ">
     <map name="ImageMap_1_296616987">
         <area href="/mediawiki/w/$TIME_Permian" shape="poly" coords="240,79,322,188,275,218,272,242,234,252,245,275,225,284,193,274,148,280,110,266,86,276,62,274,37,174,180,87" alt="Xinjiang Permian" title="Xinjiang Permian">
         <area href="/mediawiki/w/Xizang_Permian" shape="poly" coords="219,287,192,280,151,287,109,272,44,289,104,375,179,428,231,454,310,442,331,418,327,385,316,363,298,378,263,360,217,332,220,295" alt="Xizang Permian" title="Xizang Permian">
@@ -112,7 +71,7 @@
         <area href="/mediawiki/w/Heilongjiang_Permian" shape="poly" coords="602,27,640,22,668,60,727,85,759,72,755,137,733,145,739,165,687,152,645,134,634,132,623,123,647,96,653,64,651,53,634,55,615,48" alt="Heilongjiang Permian" title="Heilongjiang Permian"><area href="/mediawiki/w/Inner_Mongolia" shape="poly" coords="341,191,344,210,340,219,348,228,361,226,369,230,363,244,388,263,409,253,417,260,406,281,419,284,431,282,429,271,443,254,449,259,444,276,465,284,483,258,495,255,506,251,534,235,534,221,543,212,552,213,564,211,580,204,596,217,598,204,611,209,642,182,615,145,628,133,618,122,644,93,649,56,629,56,610,51,600,32,591,24,554,82,547,118,547,130,575,123,593,130,545,147,525,160,495,170,501,185,478,203,425,211" alt="Inner Mongolia" title="Inner Mongolia">
     </map>
     <img alt="China map small.jpg" src="China_map_small.jpg" width="800" height="625" usemap="#ImageMap_1_296616987">
-    <div style="margin-left: 780px; margin-top: -20px; text-align: left;">
+    <div style="margin-left: 780px; margin-top: -20px; text-align: left;"> -->
 
 
 
