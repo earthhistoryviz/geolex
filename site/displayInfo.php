@@ -43,6 +43,10 @@ if($name == "") {
 
 // display information below
 ?>
+<?php
+if (!($_SESSION["loggedIn"])) {
+
+?>
     <div id="title">
 	<h1><b><?=$name?></b></h1>
         <hr>
@@ -113,6 +117,90 @@ if($name == "") {
 	<h3><b>Compiler</b></h3>
 	<p><?=$compiler?><br></p>
     </div>
+
+    <?php
+}
+?>
+
+// edit version of display information --- Yuanhao Wang
+
+<?php
+if ($_SESSION["loggedIn"]) {
+
+    ?>
+    <div id="title">
+        <h1><b contenteditable="true"><?= $name ?></b></h1>
+        <hr>
+    </div>
+
+    <div id="period">
+        <h3 style="display: inline;"><b>Period: </b></h3>
+        <span contenteditable="true"><?= $period ?><br></span>
+    </div>
+
+    <div id="age_interval">
+        <h3 style="display: inline;"><b>Age Interval: </b></h3>
+        <span contenteditable="true"><?= $age_interval ?><br></span>
+    </div>
+
+    <div id="province">
+        <h3 style="display: inline;"><b>Province: </b></h3>
+        <span contenteditable="true"><?= $province ?><br></span>
+    </div>
+
+    <div id="type_locality">
+        <h3><b>Type Locality and Naming</b></h3>
+        <p contenteditable="true"><?= $type_locality ?><br></p>
+    </div>
+
+    <div id="lithology">
+        <h3><b>Lithology and Thickness</b></h3>
+        <p contenteditable="true"><?= $lithology ?><br></p>
+    </div>
+
+    <div id="relationships_distribution">
+        <h3><b>Relationships and Distribution</b></h3>
+        <div id="lower_contact">
+            <h4><i>Lower contact</i></h4>
+            <p contenteditable="true"><?= $lower_contact ?></p>
+        </div>
+        <div id="upper_contact">
+            <h4><i>Upper contact</i></h4>
+            <p contenteditable="true"><?= $upper_contact ?></p>
+        </div>
+        <div id="regional_extent">
+            <h4><i>Regional extent</i></h4>
+            <p contenteditable="true"><?= $regional_extent ?><br></p>
+        </div>
+    </div>
+
+    <div id="fossils">
+        <h3><b>Fossils</b></h3>
+        <p contenteditable="true"><?= $fossils ?><br></p>
+    </div>
+
+    <div id="age">
+        <h3><b>Age</b></h3>
+        <p contenteditable="true"><?= $age ?><br></p>
+    </div>
+
+    <div id="depositional">
+        <h3><b>Depositional setting</b></h3>
+        <p contenteditable="true"><?= $depositional ?><br></p>
+    </div>
+
+    <div id="additional_info">
+        <h3><b>Additional Information</b></h3>
+        <p contenteditable="true"><?= $additional_info ?><br></p>
+    </div>
+
+    <div id="compiler">
+        <h3><b>Compiler</b></h3>
+        <p contenteditable="true"><?= $compiler ?><br></p>
+    </div>
+    <?php
+}
+?>
 
 <?php
 include("footer.php");
