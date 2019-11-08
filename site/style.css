@@ -38,7 +38,6 @@ html,body,.aside-left{
     width: 20%;
     float: left;
     height: 100%;
-    position: absolute;
     background-color: #313540;
 }
 .aside-left .m-title{
