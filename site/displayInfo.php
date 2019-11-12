@@ -82,7 +82,7 @@ if (!($_SESSION["loggedIn"])) {
 	<h3><b>Relationships and Distribution</b></h3>
 	<div id="lower_contact" style="text-indent: 50px;">
 		<h4 style="display: inline;">Lower contact: </h4>
-		<span><?=$lower_contact?></p>
+		<span><?=$lower_contact?></span>
 	</div>
 	<div id="upper_contact" style="text-indent: 50px;">
 		<h4 style="display: inline;">Upper contact: </h4>
