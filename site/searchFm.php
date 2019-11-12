@@ -44,7 +44,7 @@ if (isset($_REQUEST['search'])) {
         padding: 5px;
 	
     }
-a{font-size: 30px;}
+a{font-size: 20px;}
 
 </style>
 
