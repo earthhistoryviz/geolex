@@ -49,8 +49,7 @@ if (!($_SESSION["loggedIn"])) {
 ?>
 
     <div id="title">
-	<h1><b><?=$name?></b></h1>
-        <hr>
+	<h1><b><u><?=$name?></u></b></h1>
     </div>
 
     <div id="period">
@@ -81,22 +80,22 @@ if (!($_SESSION["loggedIn"])) {
     <div id="relationships_distribution">
 	<h3><b>Relationships and Distribution</b></h3>
 	<div id="lower_contact" style="text-indent: 50px;">
-		<h4 style="display: inline;">Lower contact: </h4>
+		<h4 style="display: inline;">Lower Contact: </h4>
 		<span><?=$lower_contact?></span>
 	</div>
 	<div id="upper_contact" style="text-indent: 50px;">
-		<h4 style="display: inline;">Upper contact: </h4>
+		<h4 style="display: inline;">Upper Contact: </h4>
 		<span><?=$upper_contact?></span>
 	</div>
 	<div id="regional_extent" style="text-indent: 50px;">
-		<h4 style="display: inline;">Regional extent: </h4>
+		<h4 style="display: inline;">Regional Extent: </h4>
 		<span><?=$regional_extent?><br></span>
 	</div>
     </div>
 
     <div id="fossils">
 	<h3><b>Fossils</b></h3>
-	<p><?=$fossils?><br></p>
+	<p><?=$fossils?></p>
     </div>
 
     <div id="age">
