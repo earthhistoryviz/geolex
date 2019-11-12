@@ -46,8 +46,8 @@ if($name == "") {
 
 <?php
 if (!($_SESSION["loggedIn"])) {
-
 ?>
+
     <div id="title">
 	<h1><b><?=$name?></b></h1>
         <hr>
@@ -80,17 +80,17 @@ if (!($_SESSION["loggedIn"])) {
 
     <div id="relationships_distribution">
 	<h3><b>Relationships and Distribution</b></h3>
-	<div id="lower_contact">
-		<h4><i>Lower contact</i></h4>
-		<p><?=$lower_contact?></p>
+	<div id="lower_contact" style="text-indent: 50px;">
+		<h4 style="display: inline;">Lower contact: </h4>
+		<span><?=$lower_contact?></p>
 	</div>
-	<div id="upper_contact">
-		<h4><i>Upper contact</i></h4>
-		<p><?=$upper_contact?></p>
+	<div id="upper_contact" style="text-indent: 50px;">
+		<h4 style="display: inline;">Upper contact: </h4>
+		<span><?=$upper_contact?></span>
 	</div>
-	<div id="regional_extent">
-		<h4><i>Regional extent</i></h4>
-		<p><?=$regional_extent?><br></p>
+	<div id="regional_extent" style="text-indent: 50px;">
+		<h4 style="display: inline;">Regional extent: </h4>
+		<span><?=$regional_extent?><br></span>
 	</div>
     </div>
 
@@ -100,7 +100,7 @@ if (!($_SESSION["loggedIn"])) {
     </div>
 
     <div id="age">
-	<h3 style="display: inline;"><b>Age</b></h3>
+	<h3 style="display: inline;"><b>Age:</b></h3>
 	<span><?=$age?><br></span>
     </div>
 
@@ -115,91 +115,88 @@ if (!($_SESSION["loggedIn"])) {
     </div>
 
     <div id="compiler">
-	<h3 style="display: inline;"><b>Compiler</b></h3>
+	<h3 style="display: inline;"><b>Compiler:</b></h3>
 	<span><?=$compiler?><br></span>
     </div>
 
     <?php
 }
+
+// If the user logged in
+
+else {
 ?>
-
-// edit version of display information --- Yuanhao Wang
-
-<?php
-if ($_SESSION["loggedIn"]) {
-
-    ?>
     <div id="title">
-        <h1><b contenteditable="true"><?= $name ?></b></h1>
+        <h1><b contenteditable="true"><?=$name?></b></h1>
         <hr>
     </div>
 
     <div id="period">
         <h3 style="display: inline;"><b>Period: </b></h3>
-        <span contenteditable="true"><?= $period ?><br></span>
+        <span contenteditable="true"><?=$period?><br></span>
     </div>
 
     <div id="age_interval">
         <h3 style="display: inline;"><b>Age Interval: </b></h3>
-        <span contenteditable="true"><?= $age_interval ?><br></span>
+        <span contenteditable="true"><?=$age_interval?><br></span>
     </div>
 
     <div id="province">
         <h3 style="display: inline;"><b>Province: </b></h3>
-        <span contenteditable="true"><?= $province ?><br></span>
+        <span contenteditable="true"><?=$province?><br></span>
     </div>
 
     <div id="type_locality">
         <h3><b>Type Locality and Naming</b></h3>
-        <p contenteditable="true"><?= $type_locality ?><br></p>
+        <p contenteditable="true"><?=$type_locality?><br></p>
     </div>
 
     <div id="lithology">
         <h3><b>Lithology and Thickness</b></h3>
-        <p contenteditable="true"><?= $lithology ?><br></p>
+        <p contenteditable="true"><?=$lithology?><br></p>
     </div>
 
     <div id="relationships_distribution">
         <h3><b>Relationships and Distribution</b></h3>
         <div id="lower_contact">
             <h4><i>Lower contact</i></h4>
-            <p contenteditable="true"><?= $lower_contact ?></p>
+            <p contenteditable="true"><?=$lower_contact?></p>
         </div>
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
-            <p contenteditable="true"><?= $upper_contact ?></p>
+            <p contenteditable="true"><?=$upper_contact?></p>
         </div>
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
-            <p contenteditable="true"><?= $regional_extent ?><br></p>
+            <p contenteditable="true"><?=$regional_extent?><br></p>
         </div>
     </div>
 
     <div id="fossils">
         <h3><b>Fossils</b></h3>
-        <p contenteditable="true"><?= $fossils ?><br></p>
+        <p contenteditable="true"><?=$fossils?><br></p>
     </div>
 
     <div id="age">
-        <h3 style="display: inline;"><b>Age</b></h3>
-        <span contenteditable="true"><?= $age ?><br></span>
+        <h3 style="display: inline;"><b>Age: </b></h3>
+        <span contenteditable="true"><?=$age?><br></span>
     </div>
 
     <div id="depositional">
         <h3><b>Depositional setting</b></h3>
-        <p contenteditable="true"><?= $depositional ?><br></p>
+        <p contenteditable="true"><?=$depositional?><br></p>
     </div>
 
     <div id="additional_info">
         <h3><b>Additional Information</b></h3>
-        <p contenteditable="true"><?= $additional_info ?><br></p>
+        <p contenteditable="true"><?=$additional_info?><br></p>
     </div>
 
     <div id="compiler">
-        <h3 style="display: inline;"><b>Compiler</b></h3>
-        <span contenteditable="true"><?= $compiler ?><br></span>
+        <h3 style="display: inline;"><b>Compiler: </b></h3>
+        <span contenteditable="true"><?=$compiler?><br></span>
     </div>
-    <?php
+<?php
 }
 ?>
 
