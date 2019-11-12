@@ -49,32 +49,33 @@ if (!($_SESSION["loggedIn"])) {
 ?>
 
     <div id="title">
-	<h1><b><u><?=$name?></u></b></h1>
+	<h1><b><?=$name?></b></h1>
+	<hr>
     </div>
 
     <div id="period">
 	<h3 style="display: inline;"><b>Period: </b></h3>
-	<span><?=$period?><br></span>
+	<span><?=$period?></span>
     </div>
 
     <div id="age_interval">
 	<h3 style="display: inline;"><b>Age Interval: </b></h3>
-	<span><?=$age_interval?><br></span>
+	<span><?=$age_interval?></span>
     </div>
 
     <div id="province">
 	<h3 style="display: inline;"><b>Province: </b></h3>
-	<span><?=$province?><br></span>
+	<span><?=$province?></span>
     </div>
 
     <div id="type_locality">
 	<h3><b>Type Locality and Naming</b></h3>
-	<p><?=$type_locality?><br></p>
+	<p><?=$type_locality?></p>
     </div>
 
     <div id="lithology">
 	<h3><b>Lithology and Thickness</b></h3>
-	<p><?=$lithology?><br></p>
+	<p><?=$lithology?></p>
     </div>
 
     <div id="relationships_distribution">
@@ -89,7 +90,7 @@ if (!($_SESSION["loggedIn"])) {
 	</div>
 	<div id="regional_extent" style="text-indent: 50px;">
 		<h4 style="display: inline;">Regional Extent: </h4>
-		<span><?=$regional_extent?><br></span>
+		<span><?=$regional_extent?></span>
 	</div>
     </div>
 
@@ -100,22 +101,22 @@ if (!($_SESSION["loggedIn"])) {
 
     <div id="age">
 	<h3 style="display: inline;"><b>Age:</b></h3>
-	<span><?=$age?><br></span>
+	<span><?=$age?></span>
     </div>
 
     <div id="depositional">
 	<h3><b>Depositional setting</b></h3>
-	<p><?=$depositional?><br></p>
+	<p><?=$depositional?></p>
     </div>
 
     <div id="additional_info">
 	<h3><b>Additional Information</b></h3>
-	<p><?=$additional_info?><br></p>
+	<p><?=$additional_info?></p>
     </div>
 
     <div id="compiler">
 	<h3 style="display: inline;"><b>Compiler:</b></h3>
-	<span><?=$compiler?><br></span>
+	<span><?=$compiler?></span>
     </div>
 
     <?php
