@@ -43,6 +43,7 @@ if($name == "") {
 
 // display information below
 ?>
+
 <?php
 if (!($_SESSION["loggedIn"])) {
 
@@ -99,8 +100,8 @@ if (!($_SESSION["loggedIn"])) {
     </div>
 
     <div id="age">
-	<h3><b>Age</b></h3>
-	<p><?=$age?><br></p>
+	<h3 style="display: inline;"><b>Age</b></h3>
+	<span><?=$age?><br></span>
     </div>
 
     <div id="depositional">
@@ -114,8 +115,8 @@ if (!($_SESSION["loggedIn"])) {
     </div>
 
     <div id="compiler">
-	<h3><b>Compiler</b></h3>
-	<p><?=$compiler?><br></p>
+	<h3 style="display: inline;"><b>Compiler</b></h3>
+	<span><?=$compiler?><br></span>
     </div>
 
     <?php
@@ -180,8 +181,8 @@ if ($_SESSION["loggedIn"]) {
     </div>
 
     <div id="age">
-        <h3><b>Age</b></h3>
-        <p contenteditable="true"><?= $age ?><br></p>
+        <h3 style="display: inline;"><b>Age</b></h3>
+        <span contenteditable="true"><?= $age ?><br></span>
     </div>
 
     <div id="depositional">
@@ -195,8 +196,8 @@ if ($_SESSION["loggedIn"]) {
     </div>
 
     <div id="compiler">
-        <h3><b>Compiler</b></h3>
-        <p contenteditable="true"><?= $compiler ?><br></p>
+        <h3 style="display: inline;"><b>Compiler</b></h3>
+        <span contenteditable="true"><?= $compiler ?><br></span>
     </div>
     <?php
 }
