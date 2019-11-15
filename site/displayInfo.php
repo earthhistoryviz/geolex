@@ -12,6 +12,7 @@ if($formationName[formation] == "") {?>
 }
 ?>
 <title><?=$formationName[formation]?></title>
+
 <?php
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
 $result = mysqli_query($conn, $sql);
@@ -43,9 +44,20 @@ if($name == "") {
 
 // display information below
 ?>
-
+<script>
+    function saveText(){
+        var xr = new XMLHttpRequest();
+        var url = "saveNewText.php";
+        idname = "\""+idname+"\"";
+        var text = document.getElementById("title").innerHTML;
+        var vars = "newText="+text;
+        xr.open("POST", url, true);
+        xr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xr.send(vars);
+    }
+</script>
 <?php
-if (!($_SESSION["loggedIn"])) {
+if (($_SESSION["loggedIn"])) {
     ?>
 
     <div id="title">
@@ -126,8 +138,8 @@ if (!($_SESSION["loggedIn"])) {
 
 else {
     ?>
-    <div id="title">
-        <h1><b contenteditable="true"><?=$name?></b></h1>
+    <div id="title" contenteditable="true" onblur="saveText()">
+        <h1><b><?=$name?></b></h1>
         <hr>
     </div>
 
