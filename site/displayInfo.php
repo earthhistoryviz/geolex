@@ -44,7 +44,7 @@ if($name == "") {
 // display information below
 ?>
 <?php
-if (!($_SESSION["loggedIn"])) {
+if (($_SESSION["loggedIn"])) {
 
 ?>
     <div id="title">
@@ -125,14 +125,16 @@ if (!($_SESSION["loggedIn"])) {
 // edit version of display information --- Yuanhao Wang
 
 <?php
-if ($_SESSION["loggedIn"]) {
-
+if (!($_SESSION["loggedIn"])) {
     ?>
-    <div id="title">
-        <h1><b contenteditable="true"><?= $name ?></b></h1>
+<body onload="checkEdits()">
+<input type="button" value="save my edits" onclick="saveEdits()">
+<div id="update"> - Edit the text and click to save for next time</div>
+    <div id="title" contenteditable="true">
+        <h1><b><?= $name ?></b></h1>
         <hr>
     </div>
-
+</body>
     <div id="period">
         <h3 style="display: inline;"><b>Period: </b></h3>
         <span contenteditable="true"><?= $period ?><br></span>
@@ -198,6 +200,18 @@ if ($_SESSION["loggedIn"]) {
         <h3><b>Compiler</b></h3>
         <p contenteditable="true"><?= $compiler ?><br></p>
     </div>
+
+
+    <style>
+        #sub1{
+            height: 40px;
+            border: 3px solid #000000;
+        }
+
+    </style>
+     <body>
+     <input id="sub1" type="submit" value="Submit">
+     </body>
     <?php
 }
 ?>
