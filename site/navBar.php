@@ -29,6 +29,21 @@ if ($_SESSION["loggedIn"]) {
         background-color: #ddd;
         color: blue;
       }
+      h1 {
+        margin-bottom: 0px;
+      }
+      h2 {
+        margin-bottom: 0px;
+      }
+      h3 {
+        margin-bottom: 0px;
+      }
+      h4 {
+        margin-bottom: 0px;
+      }
+      p {
+        margin-top: 0px;
+      }
     </style>
   </head>
   <body>
