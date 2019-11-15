@@ -57,7 +57,7 @@ if($name == "") {
     }
 </script>
 <?php
-if (($_SESSION["loggedIn"])) {
+if (!($_SESSION["loggedIn"])) {
     ?>
 
     <div id="title">
