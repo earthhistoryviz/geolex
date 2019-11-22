@@ -5,7 +5,7 @@ include("SqlConnection.php");
 $formationName = $_REQUEST;
 if($formationName[formation] == "") {?>
     <title>Empty Search</title>
-    <h3>NO FORMATION NAME ENTERED!</h3>
+    <h3><center>Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</center></h3>
     <?php
     include("footer.php");
     exit(0);
