@@ -143,29 +143,29 @@ else {
         <hr>
     </div>
 
-    <div id="period">
+    <div id="period" contenteditable="true">
         <h3 style="display: inline;"><b>Period: </b></h3>
-        <span contenteditable="true"><?=$period?><br></span>
+        <span><?=$period?><br></span>
     </div>
 
-    <div id="age_interval">
+    <div id="age_interval" contenteditable="true">
         <h3 style="display: inline;"><b>Age Interval: </b></h3>
-        <span contenteditable="true"><?=$age_interval?><br></span>
+        <span><?=$age_interval?><br></span>
     </div>
 
-    <div id="province">
+    <div id="province" contenteditable="true">
         <h3 style="display: inline;"><b>Province: </b></h3>
-        <span contenteditable="true"><?=$province?><br></span>
+        <span><?=$province?><br></span>
     </div>
 
-    <div id="type_locality">
+    <div id="type_locality" contenteditable="true">
         <h3><b>Type Locality and Naming</b></h3>
-        <p contenteditable="true"><?=$type_locality?><br></p>
+        <p><?=$type_locality?><br></p>
     </div>
 
-    <div id="lithology">
+    <div id="lithology" contenteditable="true">
         <h3><b>Lithology and Thickness</b></h3>
-        <p contenteditable="true"><?=$lithology?><br></p>
+        <p><?=$lithology?><br></p>
     </div>
 
     <div id="relationships_distribution">
