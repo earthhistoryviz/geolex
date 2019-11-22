@@ -33,5 +33,5 @@
     <!-- aside right -->
     <div class="mainBody aside-right" id="conts">
         <div class="top">
-            <a href="##" class="logout">Logout</a>
+            <a href="logout.php" class="logout">Logout</a>
 
