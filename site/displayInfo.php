@@ -60,73 +60,73 @@ if($name == "") {
 if (!($_SESSION["loggedIn"])) {
     ?>
 
-    <div id="title">
+    <div id="title" style="max-width: 1024px;">
         <h1><b><?=$name?></b></h1>
         <hr>
     </div>
 
-    <div id="period">
+    <div id="period" style="max-width: 1024px;">
         <h3 style="display: inline;"><b>Period: </b></h3>
         <span><?=$period?></span>
     </div>
 
-    <div id="age_interval">
+    <div id="age_interval" style="max-width: 1024px;">
         <h3 style="display: inline;"><b>Age Interval: </b></h3>
         <span><?=$age_interval?></span>
     </div>
 
-    <div id="province">
+    <div id="province" style="max-width: 1024px;">
         <h3 style="display: inline;"><b>Province: </b></h3>
         <span><?=$province?></span>
     </div>
 
-    <div id="type_locality">
+    <div id="type_locality" style="max-width: 1024px;">
         <h3><b>Type Locality and Naming</b></h3>
         <p><?=$type_locality?></p>
     </div>
 
-    <div id="lithology">
+    <div id="lithology" style="max-width: 1024px;">
         <h3><b>Lithology and Thickness</b></h3>
         <p><?=$lithology?></p>
     </div>
 
-    <div id="relationships_distribution">
+    <div id="relationships_distribution" style="max-width: 1024px;">
         <h3><b>Relationships and Distribution</b></h3>
-        <div id="lower_contact" style="text-indent: 50px;">
+        <div id="lower_contact" style="text-indent: 50px; max-width: 1024px;">
             <h4 style="display: inline;">Lower Contact: </h4>
             <span><?=$lower_contact?></span>
         </div>
-        <div id="upper_contact" style="text-indent: 50px;">
+        <div id="upper_contact" style="text-indent: 50px; max-width: 1024px;">
             <h4 style="display: inline;">Upper Contact: </h4>
             <span><?=$upper_contact?></span>
         </div>
-        <div id="regional_extent" style="text-indent: 50px;">
+        <div id="regional_extent" style="text-indent: 50px; max-width: 1024px;">
             <h4 style="display: inline;">Regional Extent: </h4>
             <span><?=$regional_extent?></span>
         </div>
     </div>
 
-    <div id="fossils">
+    <div id="fossils" style="max-width: 1024px;">
         <h3><b>Fossils</b></h3>
         <p><?=$fossils?></p>
     </div>
 
-    <div id="age">
+    <div id="age" style="max-width: 1024px;">
         <h3 style="display: inline;"><b>Age:</b></h3>
         <span><?=$age?></span>
     </div>
 
-    <div id="depositional">
+    <div id="depositional" style="max-width: 1024px;">
         <h3><b>Depositional setting</b></h3>
         <p><?=$depositional?></p>
     </div>
 
-    <div id="additional_info">
+    <div id="additional_info" style="max-width: 1024px;">
         <h3><b>Additional Information</b></h3>
         <p><?=$additional_info?></p>
     </div>
 
-    <div id="compiler">
+    <div id="compiler" style="max-width: 1024px;">
         <h3 style="display: inline;"><b>Compiler:</b></h3>
         <span><?=$compiler?></span>
     </div>
