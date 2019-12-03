@@ -22,15 +22,34 @@ while($row = mysqli_fetch_array($result)) {
     $age_interval = trim($row['age_interval']);
     $province = $row['province'];
     $type_locality = $row['type_locality'];
+    
     $lithology = $row['lithology'];
+    $lithology = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $lithology);
+    
     $lower_contact = $row['lower_contact'];
+    $lower_contact = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $lower_contact);
+    
     $upper_contact = $row['upper_contact'];
+    $upper_contact = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $upper_contact);
+    
     $regional_extent = $row['regional_extent'];
+    $regional_extent = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $regional_extent);
+    
     $fossils = $row['fossils'];
+    $fossils = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $fossils);
+    
     $age = $row['age'];
+    
     $depositional = $row['depositional'];
+    $depositional = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $depositional);
+    
     $additional_info = $row['additional_info'];
+    $additional_info = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $additional_info);
+    
     $compiler = $row['compiler'];
+
+    //$my_array = [$lithology, $lower_contact, $upper_contact, $regional_extent, $fossils, $depositional];
+
 }
 
 if($name == "") {
