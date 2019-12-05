@@ -51,7 +51,7 @@ if ($_SESSION["loggedIn"]) {
   <div class="topnav">
     <a href="index.php">Home</a>
     <a href="searchFm.php">Search Formation</a>
-    <a href="login.php">Admin Login</a>
+    <a style="float: right;" href="login.php">Admin Login</a>
   </div>
 
     <div class="mainBody">

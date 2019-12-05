@@ -23,7 +23,7 @@
 <body>
     <div class = "search-container">
         
-        <form action="searchFm.php" method="request">
+        <form id='form' action="searchFm.php" method="request">
         <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
          <input id="submitbtn1" type="submit" value="Submit" disabled> 
         <!--<button id="submitbtn1" type="button">Submit</button>-->
@@ -38,8 +38,13 @@
 
 				}
         	}
+        	function viewAll(){
+        		document.getElementById('searchbar').value = ''; 
+        		document.getElementById('form').submit();
+
+        	}
         	</script>
-        <button id="submitbtn2" type="button" onclick="alert('Hello!')"> View All Formations </button>
+        <button id="submitbtn2" type="button" onclick="viewAll()"> View All Formations </button>
         </form>
     	
     </div>
