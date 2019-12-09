@@ -17,6 +17,7 @@ if($formationName[formation] == "") {?>
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
 $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_array($result)) {
+    $id = $row['ID'];
     $name = $row['name'];
     $period = $row['period'];
     $age_interval = trim($row['age_interval']);
@@ -69,6 +70,8 @@ if($name == "") {
         var url = "saveNewText.php";
         idname = "\""+idname+"\"";
         var text = document.getElementById("title").innerHTML;
+        var id = document.getElementById("").innerHTML;
+        console.log(text);
         var vars = "newText="+text;
         xr.open("POST", url, true);
         xr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -82,6 +85,11 @@ if (!($_SESSION["loggedIn"])) {
     <div id="title" style="max-width: 1024px;">
         <h1><b><?=$name?></b></h1>
         <hr>
+    </div>
+
+    <div id="id" style="max-width: 1024px;">
+        <h3 style="display: inline;"><b>ID: </b></h3>
+        <span><?=$id?></span>
     </div>
 
     <div id="period" style="max-width: 1024px;">
