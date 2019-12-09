@@ -169,6 +169,11 @@ else {
         <h1><b><?=$name?></b></h1>
         <hr>
     </div>
+    
+    <div id="id" style="max-width: 1024px;">
+        <h3 style="display: inline;"><b>ID: </b></h3>
+        <span><?=$id?></span>
+    </div>
 
     <div id="period" contenteditable="true">
         <h3 style="display: inline;"><b>Period: </b></h3>
