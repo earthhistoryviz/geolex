@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<title>DevonianTest</title>
+<title>Time Scale Creator</title>
 </head>
 	<?php include("navBar.php");?>
 	<h2 align="center" style="color:blue;">Welcome to the International Geology Website and Database! <br>Please enter a formation name or group to retrieve more information.</h2>
@@ -11,7 +11,7 @@
 <form>
     Select Period :
 <select name="period" id="period" onchange="this.form.submit()">
-<option value="0" selected="selected">Select Period</option>
+<option style = "backgroud-color:green" value="0" selected="selected">Select Period</option>
 <option value="Quaternary">Quaternary</option>
 <option value="Neogene">Neogene</option>
 <option value="Paleogene">Paleogene</option>
@@ -27,6 +27,9 @@
 <option value="Ediacaran">Ediacaran</option>
 </select>
 </form>
+<?php
+echo "select period is ".$period;
+?>
 <!-- 
 
 <br><b><a href="login.php">Admin Login</a></b></br> -->
@@ -34,7 +37,6 @@
 <?php
    if(isset($_GET["period"])){
        $period=$_GET["period"];
-       echo "select period is ".$period;
        include 'Mapinfo/' . $period.'_China_Map.php';
    }
 ?>

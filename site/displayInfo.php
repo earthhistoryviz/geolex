@@ -17,6 +17,7 @@ if($formationName[formation] == "") {?>
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
 $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_array($result)) {
+    $id = $row['ID'];
     $name = $row['name'];
     $period = $row['period'];
     $age_interval = trim($row['age_interval']);
@@ -63,12 +64,25 @@ if($name == "") {
 
 // display information below
 ?>
+<style>
+    #Save{
+        height: 40px;
+        border: 3px solid #000000;
+    }
+    #AddNewFile{
+        height: 40px;
+        border: 3px solid #000000;
+    }
+</style>
+
 <script>
     function saveText(){
         var xr = new XMLHttpRequest();
         var url = "saveNewText.php";
         idname = "\""+idname+"\"";
         var text = document.getElementById("title").innerHTML;
+        // var id = document.getElementById("").innerHTML;
+        console.log(text);
         var vars = "newText="+text;
         xr.open("POST", url, true);
         xr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -78,10 +92,14 @@ if($name == "") {
 <?php
 if (!($_SESSION["loggedIn"])) {
     ?>
-
     <div id="title" style="max-width: 1024px;">
         <h1><b><?=$name?></b></h1>
         <hr>
+    </div>
+
+    <div id="id" style="max-width: 1024px;">
+        <h3 style="display: inline;"><b>ID: </b></h3>
+        <span><?=$id?></span>
     </div>
 
     <div id="period" style="max-width: 1024px;">
@@ -157,9 +175,16 @@ if (!($_SESSION["loggedIn"])) {
 
 else {
     ?>
+    <input id="Save" type="submit" value="Save" disabled>
+    <input id="AddNewFile" type="submit" value="Add new files" disabled>
     <div id="title" contenteditable="true" onblur="saveText()">
         <h1><b><?=$name?></b></h1>
         <hr>
+    </div>
+    
+    <div id="id" style="max-width: 1024px;">
+        <h3 style="display: inline;"><b>ID: </b></h3>
+        <span><?=$id?></span>
     </div>
 
     <div id="period" contenteditable="true">
