@@ -81,7 +81,7 @@ if($name == "") {
         var url = "saveNewText.php";
         idname = "\""+idname+"\"";
         var text = document.getElementById("title").innerHTML;
-        var id = document.getElementById("").innerHTML;
+        // var id = document.getElementById("").innerHTML;
         console.log(text);
         var vars = "newText="+text;
         xr.open("POST", url, true);
