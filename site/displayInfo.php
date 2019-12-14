@@ -64,6 +64,17 @@ if($name == "") {
 
 // display information below
 ?>
+<style>
+    #Save{
+        height: 40px;
+        border: 3px solid #000000;
+    }
+    #AddNewFile{
+        height: 40px;
+        border: 3px solid #000000;
+    }
+</style>
+
 <script>
     function saveText(){
         var xr = new XMLHttpRequest();
@@ -81,7 +92,6 @@ if($name == "") {
 <?php
 if (!($_SESSION["loggedIn"])) {
     ?>
-
     <div id="title" style="max-width: 1024px;">
         <h1><b><?=$name?></b></h1>
         <hr>
@@ -165,6 +175,8 @@ if (!($_SESSION["loggedIn"])) {
 
 else {
     ?>
+    <input id="Save" type="submit" value="Save" disabled>
+    <input id="AddNewFile" type="submit" value="Add new files" disabled>
     <div id="title" contenteditable="true" onblur="saveText()">
         <h1><b><?=$name?></b></h1>
         <hr>
