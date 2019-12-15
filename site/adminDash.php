@@ -23,6 +23,9 @@
             <li class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
                 <a href="displayInfo.php">Manage Database</a>
             </li>
+            <li class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+                <a href="fileBrowser.php">Parse Word Document</a>
+            </li>
 
 	    <li>
 	      <p class="fr user">User: <?=$_SESSION["username"]?></p>

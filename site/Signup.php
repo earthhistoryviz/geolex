@@ -24,13 +24,14 @@ if( $pass == $rpass) {
     }
     $sql3 = "INSERT INTO user_info(uname,pasw,admin)
     VALUES
-    ('root', '$rootpasw',$alevel)";
+    ('$uname', '$rootpasw',$alevel)";
     if($conn->query($sql3) == TRUE){
         echo "User added successfully";
 
     }
     else{
         echo"Error adding user";
+
     }
 }
 else{
