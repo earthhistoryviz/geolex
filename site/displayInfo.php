@@ -65,11 +65,19 @@ if($name == "") {
 // display information below
 ?>
 <style>
+    [contenteditable="true"] {
+        font-family: "Rajdhani";
+        color: #C00;
+    }
     #Save{
         height: 40px;
         border: 3px solid #000000;
     }
     #AddNewFile{
+        height: 40px;
+        border: 3px solid #000000;
+    }
+    #Edit{
         height: 40px;
         border: 3px solid #000000;
     }
@@ -88,10 +96,15 @@ if($name == "") {
         xr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xr.send(vars);
     }
+    function editValues(){
+        alert("Form submitted!");
+        return false;
+    }
 </script>
 <?php
 if (!($_SESSION["loggedIn"])) {
     ?>
+    <form onsubmit ="return editValues();" class="my-form">
     <div id="title" style="max-width: 1024px;">
         <h1><b><?=$name?></b></h1>
         <hr>
@@ -129,7 +142,7 @@ if (!($_SESSION["loggedIn"])) {
 
     <div id="relationships_distribution" style="max-width: 1024px;">
         <h3><b>Relationships and Distribution</b></h3>
-        <div id="lower_contact" style="text-indent: 50px; max-width: 1024px;">
+        <div id="lower_contact" style="text-indent: 50px; max-width: 1024px;" >
             <h4 style="display: inline;">Lower Contact: </h4>
             <span><?=$lower_contact?></span>
         </div>
@@ -167,18 +180,21 @@ if (!($_SESSION["loggedIn"])) {
         <h3 style="display: inline;"><b>Compiler:</b></h3>
         <span><?=$compiler?></span>
     </div>
+    </form>
 
-    <?php
+
+        <?php
 }
 
 // If the user logged in
 
 else {
     ?>
-    <input id="Save" type="submit" value="Save" disabled>
-    <input id="AddNewFile" type="submit" value="Add new files" disabled>
-    <div id="title" contenteditable="true" onblur="saveText()">
-        <h1><b><?=$name?></b></h1>
+    <input id="Edit" type ="button" value = "Edit">
+    <input id="Save" type="button" value="Save" disabled onclick="save()">
+    <input id="AddNewFile" type="button" value="Add new files" disabled>
+    <div id= onblur="saveText()">
+        <b><h1 id ='title'><?=$name?></h1></b>
         <hr>
     </div>
     
@@ -187,74 +203,146 @@ else {
         <span><?=$id?></span>
     </div>
 
-    <div id="period" contenteditable="true">
+    <div id="period">
         <h3 style="display: inline;"><b>Period: </b></h3>
-        <span><?=$period?><br></span>
+        <span id="period_value"><?=$period?></span><br>
     </div>
 
-    <div id="age_interval" contenteditable="true">
+    <div id="age_interval">
         <h3 style="display: inline;"><b>Age Interval: </b></h3>
-        <span><?=$age_interval?><br></span>
+        <span id ="agein_value"><?=$age_interval?></span><br>
     </div>
 
-    <div id="province" contenteditable="true">
+    <div id="province" >
         <h3 style="display: inline;"><b>Province: </b></h3>
-        <span><?=$province?><br></span>
+        <span id = "province_value"><?=$province?></span><br>
     </div>
 
-    <div id="type_locality" contenteditable="true">
+    <div id="type_locality">
         <h3><b>Type Locality and Naming</b></h3>
-        <p><?=$type_locality?><br></p>
+        <p id="type_value"><?=$type_locality?></p><br>
     </div>
 
-    <div id="lithology" contenteditable="true">
+    <div id="lithology">
         <h3><b>Lithology and Thickness</b></h3>
-        <p><?=$lithology?><br></p>
+        <p id ="lithology_value"><?=$lithology?></p><br>
     </div>
 
     <div id="relationships_distribution">
         <h3><b>Relationships and Distribution</b></h3>
         <div id="lower_contact">
             <h4><i>Lower contact</i></h4>
-            <p contenteditable="true"><?=$lower_contact?></p>
+            <p id="lower_value"><?=$lower_contact?></p>
         </div>
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
-            <p contenteditable="true"><?=$upper_contact?></p>
+            <p id="upper_value"><?=$upper_contact?></p>
         </div>
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
-            <p contenteditable="true"><?=$regional_extent?><br></p>
+            <p id="regional_value"><?=$regional_extent?></p><br>
         </div>
     </div>
 
     <div id="fossils">
         <h3><b>Fossils</b></h3>
-        <p contenteditable="true"><?=$fossils?><br></p>
+        <p id ="fossil_value"><?=$fossils?></p><br>
     </div>
 
     <div id="age">
         <h3 style="display: inline;"><b>Age: </b></h3>
-        <span contenteditable="true"><?=$age?><br></span>
+        <span id="age_value"><?=$age?></span><br>
     </div>
 
     <div id="depositional">
         <h3><b>Depositional setting</b></h3>
-        <p contenteditable="true"><?=$depositional?><br></p>
+        <p id="depo_value"><?=$depositional?></p><br>
     </div>
 
     <div id="additional_info">
         <h3><b>Additional Information</b></h3>
-        <p contenteditable="true"><?=$additional_info?><br></p>
+        <p id="ad_value"><?=$additional_info?></p><br>
     </div>
 
     <div id="compiler">
         <h3 style="display: inline;"><b>Compiler: </b></h3>
-        <span contenteditable="true"><?=$compiler?><br></span>
+        <span id="comp_val"><?=$compiler?></span><br>
     </div>
     <?php
 }
 ?>
+<script type="text/javascript">
+        var editBtn = document.getElementById('Edit');
+        var saveBtn = document.getElementById('Save');
+        var editables = document.querySelectorAll('#title, #period_value, #agein_value , #province_value, #type_value, #lithology_value, #lower_value, #upper_value, #regional_value, #fossil_value, #age_value,' +
+            '#depo_value, #ad_value, #comp_val');
+        editBtn.addEventListener('click',function(e){
+            if(!editables[0].isContentEditable){
+                saveBtn.disabled = false;
+                for (var i = 0;i<editables.length;i++){
+                    editables[i].contentEditable = true;
+
+                }
+            }
+            else{
+                saveBtn.disabled = true;
+                for (var i = 0;i<editables.length;i++){
+                    editables[i].contentEditable = false;
+
+                }
+            }
+        });
+        saveBtn.addEventListener('click',function(e){
+            for (var i = 0;i<editables.length;i++) {
+                localStorage.setItem(editables[i].getAttribute('id'), editables[i].innerHTML);
+            }
+            var title = localStorage.getItem('title');
+            var period_value = localStorage.getItem('period_value');
+            var agein_value = localStorage.getItem('agein_value');
+            var province_value = localStorage.getItem('province_value');
+            var type_value = localStorage.getItem('type_value');
+            var lithology_value = localStorage.getItem('lithology_value');
+            var lower_value = localStorage.getItem('lower_value');
+            var upper_value = localStorage.getItem('upper_value');
+            var regional_value = localStorage.getItem('regional_value');
+            var fossil_value = localStorage.getItem('fossil_value');
+            var age_value = localStorage.getItem('age_value');
+            var depo_value = localStorage.getItem('depo_value');
+            var ad_value = localStorage.getItem('ad_value');
+            var comp_value = localStorage.getItem('comp_val');
+            var savedata = {
+                            "title":title,
+                            "period_value":period_value,
+                            "agein_value":agein_value,
+                            "province_value":province_value,
+                            "type_value":type_value,
+                            "lithology_value":lithology_value,
+                            "lower_value":lower_value,
+                            "upper_value":upper_value,
+                            "regional_value":regional_value,
+                            "fossil_value":fossil_value,
+                            "age_value":age_value,
+                            "depo_value":depo_value,
+                            "ad_value":ad_value,
+                            "comp_value":comp_value};
+
+            form = document.createElement('form');
+            document.body.appendChild(form);
+            form.method="POST";
+            form.action = "saveData.php";
+            var length = Object.keys(savedata).length;
+            for(var data in savedata) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = data;
+                input.value = savedata[data];
+                form.appendChild(input);
+            }
+            form.submit();
+            document.removeChild(form);
+
+        });
+</script>
 
 <?php
 include("footer.php");
