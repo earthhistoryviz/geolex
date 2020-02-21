@@ -200,7 +200,7 @@ else {
     
     <div id="id" style="max-width: 1024px;">
         <h3 style="display: inline;"><b>ID: </b></h3>
-        <span><?=$id?></span>
+        <span id ="id_value"><?=$id?></span>
     </div>
 
     <div id="period">
@@ -274,7 +274,7 @@ else {
 <script type="text/javascript">
         var editBtn = document.getElementById('Edit');
         var saveBtn = document.getElementById('Save');
-        var editables = document.querySelectorAll('#title, #period_value, #agein_value , #province_value, #type_value, #lithology_value, #lower_value, #upper_value, #regional_value, #fossil_value, #age_value,' +
+        var editables = document.querySelectorAll('#id_value, #title, #period_value, #agein_value , #province_value, #type_value, #lithology_value, #lower_value, #upper_value, #regional_value, #fossil_value, #age_value,' +
             '#depo_value, #ad_value, #comp_val');
         editBtn.addEventListener('click',function(e){
             if(!editables[0].isContentEditable){
@@ -296,6 +296,7 @@ else {
             for (var i = 0;i<editables.length;i++) {
                 localStorage.setItem(editables[i].getAttribute('id'), editables[i].innerHTML);
             }
+            var id_value = localStorage.getItem('id_value');
             var title = localStorage.getItem('title');
             var period_value = localStorage.getItem('period_value');
             var agein_value = localStorage.getItem('agein_value');
@@ -311,6 +312,7 @@ else {
             var ad_value = localStorage.getItem('ad_value');
             var comp_value = localStorage.getItem('comp_val');
             var savedata = {
+                            "id_value":id_value,
                             "title":title,
                             "period_value":period_value,
                             "agein_value":agein_value,
