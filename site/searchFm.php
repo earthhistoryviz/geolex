@@ -35,18 +35,8 @@ if (isset($_REQUEST['search'])) {
 <!DOCTYPE html>
 <html>
 
-<style type="text/css">
-    .formation-container {
-        margin: auto;
-	text-align: center;
-        width: 65%;
-	column-count:3;        
-        padding: 5px;
-	
-    }
-a{font-size: 20px;}
+<link rel="stylesheet" href="style.css"/>
 
-</style>
 
 <title>Search for Formation</title>
 <?php include("navBar.php"); include("SearchBar.php"); ?>
@@ -72,7 +62,9 @@ a{font-size: 20px;}
 	{
 		//$output = '<h4>'.$formation.'</h4>';
 		//print($output);
-		?><b><br><a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a></br></b><?php
+		?><div class="formationitem">
+        <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
+      </div><?php
 	}?>
 </div>
 

@@ -11,27 +11,20 @@
 
 <div class="container">
     <!-- aside left -->
-    <div class="aside-left">
-        <ul id="menus">
-            <li>
+    <div class="left-menu">
+        <div class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+          <a class="menu-link" href="displayInfo.php">Manage Database</a>
+        </div>
+        <div class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+          <a class="menu-link" href="fileBrowser.php">Parse Word Document</a>
+        </div>
+	      <div class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+          <a class="menu-link" href="manageUser.php">Manage User information</a>
+        </div>
+  	    <div>
+  	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
+  	    </div>
 
-                <a href="javascript:;" class="m-title active">Dashboard</a>
-            </li>
-	    <li class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
-                <a href="manageUser.php">Manage User information</a>
-            </li>
-            <li class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
-                <a href="displayInfo.php">Manage Database</a>
-            </li>
-            <li class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
-                <a href="fileBrowser.php">Parse Word Document</a>
-            </li>
-
-	    <li>
-	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
-	    </li>
-
-        </ul>
     </div>
     <!-- aside right -->
     <div class="mainBody aside-right" id="conts">

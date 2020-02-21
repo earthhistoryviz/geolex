@@ -72,14 +72,29 @@ if($name == "") {
     #Save{
         height: 40px;
         border: 3px solid #000000;
+        min-width: 60px;
+        font-weight: bold;
+        border-radius: 5px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
     #AddNewFile{
         height: 40px;
         border: 3px solid #000000;
+        font-weight: bold;
+        border-radius: 5px;
+        min-width: 60px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
     #Edit{
         height: 40px;
         border: 3px solid #000000;
+        min-width: 60px;
+        font-weight: bold;
+        border-radius: 5px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 </style>
 
