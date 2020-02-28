@@ -24,28 +24,30 @@ while($row = mysqli_fetch_array($result)) {
     $province = $row['province'];
     $type_locality = $row['type_locality'];
     
-    $lithology = $row['lithology'];
-    $lithology = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $lithology);
+    $fmgr_regexp = "~([^\s]+\sFm|[^\s]+\sGr)[ .,;:]~";
+
+    $lithology_orig = $row['lithology'];
+    $lithology = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>", $lithology_orig);
     
     $lower_contact = $row['lower_contact'];
-    $lower_contact = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $lower_contact);
+    $lower_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>", $lower_contact);
     
     $upper_contact = $row['upper_contact'];
-    $upper_contact = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $upper_contact);
+    $upper_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>", $upper_contact);
     
     $regional_extent = $row['regional_extent'];
-    $regional_extent = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $regional_extent);
+    $regional_extent = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>", $regional_extent);
     
     $fossils = $row['fossils'];
-    $fossils = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $fossils);
+    $fossils = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>", $fossils);
     
     $age = $row['age'];
     
     $depositional = $row['depositional'];
-    $depositional = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $depositional);
+    $depositional = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>", $depositional);
     
     $additional_info = $row['additional_info'];
-    $additional_info = preg_replace("~([^\s]+\sFm|[^\s]+\sGr)~", "<a href=\"displayInfo.php?formation=$1\">$1</a>", $additional_info);
+    $additional_info = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>", $additional_info);
     
     $compiler = $row['compiler'];
 
@@ -210,7 +212,8 @@ else {
     <input id="AddNewFile" type="button" value="Add new files" disabled>
     <div id= onblur="saveText()">
         <b><h1 id ='title'><?=$name?></h1></b>
-         <input id="Addtitle" type ="button" value = "Add Image" onclick = addimage("title")>
+        <input type="file" name="title_image"/>
+        <input id="Addtitle" type="button" name="add_title_image" value="Add Title Image" />
         <hr>
     </div>
     
@@ -240,7 +243,7 @@ else {
     </div>
 
     <div id="lithology">
-        <input id="Addlithology" type ="button" value = "Add Image" onclick = addimage("lithology")>
+        <input id="Addlithology" type="button" name="add_lithology_image" value="Add Lithology Image" onclick="addImageClicked('lithology')" />
         <h3><b>Lithology and Thickness</b></h3>
         <p id ="lithology_value"><?=$lithology?></p><br>
     </div>
@@ -262,7 +265,7 @@ else {
     </div>
 
     <div id="fossils">
-        <input id="Addfossil" type ="button" value = "Add Image">
+        <input id="Addfossil" type="button" name="add_fossil_image" value="Add Fossil Image" onclick="addImageClicked('fossil')" />
         <h3><b>Fossils</b></h3>
         <p id ="fossil_value"><?=$fossils?></p><br>
     </div>
@@ -294,12 +297,12 @@ else {
         var saveBtn = document.getElementById('Save');
         var editables = document.querySelectorAll('#id_value, #title, #period_value, #agein_value , #province_value, #type_value, #lithology_value, #lower_value, #upper_value, #regional_value, #fossil_value, #age_value,' +
             '#depo_value, #ad_value, #comp_val');
+
         editBtn.addEventListener('click',function(e){
             if(!editables[0].isContentEditable){
                 saveBtn.disabled = false;
                 for (var i = 0;i<editables.length;i++){
                     editables[i].contentEditable = true;
-
                 }
             }
             else{
@@ -362,11 +365,8 @@ else {
             document.removeChild(form);
 
         });
-        function addimage (var type){
-        var addfossilbtn = document.getelementbyID("Addfossil");
-        addfossilbtn.addEventListener('click',function(e){
-
-        });
+        function addImageClicked(type){
+          console.log('addImageClicked: type = ', type);
         }
 </script>
 
