@@ -1,5 +1,6 @@
-<?php
-$servername = "localhost";
+<
+php
+$s                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ervername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "myDB";
@@ -32,6 +33,12 @@ if ($conn->query($sql6) === TRUE) {
 $sql7 = "DROP TABLE IF EXISTS timeperiod";
 if ($conn->query($sql7) === TRUE) {
     echo "Table timeperiod dropped successfully<br>";
+} else {
+    echo "\n Error dropping table formation: " . $conn->error;
+}
+$sql8 = "DROP TABLE IF EXISTS images";
+if ($conn->query($sql7) === TRUE) {
+    echo "Table images dropped successfully<br>";
 } else {
     echo "\n Error dropping table formation: " . $conn->error;
 }
@@ -122,6 +129,15 @@ if ($conn->query($sql2)===TRUE) {
 } else {
     echo "\n Error creating formation table: " . $conn->error;
 }
-
+$sql = "CREATE TABLE images(
+        SR_NO int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        ID int,
+        type Varchar(255),
+        image_name Varchar(255))";
+if ($conn->query($sql2)===TRUE) {
+    echo "table images created successfully<br>";
+} else {
+    echo "\n Error creating formation table: " . $conn->error;
+}
 ?>
 

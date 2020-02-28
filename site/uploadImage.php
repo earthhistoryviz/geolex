@@ -1,5 +1,4 @@
 <?php
-include ("docx_read.php");
 try {
     $uploads_dir ='  /imguploads'.$_FILES['upfile']['tmp_name'];
 // Undefined | Multiple Files | $_FILES Corruption Attack

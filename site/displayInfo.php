@@ -210,6 +210,7 @@ else {
     <input id="AddNewFile" type="button" value="Add new files" disabled>
     <div id= onblur="saveText()">
         <b><h1 id ='title'><?=$name?></h1></b>
+         <input id="Addtitle" type ="button" value = "Add Image" onclick = addimage("title")>
         <hr>
     </div>
     
@@ -239,6 +240,7 @@ else {
     </div>
 
     <div id="lithology">
+        <input id="Addlithology" type ="button" value = "Add Image" onclick = addimage("lithology")>
         <h3><b>Lithology and Thickness</b></h3>
         <p id ="lithology_value"><?=$lithology?></p><br>
     </div>
@@ -260,6 +262,7 @@ else {
     </div>
 
     <div id="fossils">
+        <input id="Addfossil" type ="button" value = "Add Image">
         <h3><b>Fossils</b></h3>
         <p id ="fossil_value"><?=$fossils?></p><br>
     </div>
@@ -359,6 +362,12 @@ else {
             document.removeChild(form);
 
         });
+        function addimage (var type){
+        var addfossilbtn = document.getelementbyID("Addfossil");
+        addfossilbtn.addEventListener('click',function(e){
+
+        });
+        }
 </script>
 
 <?php
