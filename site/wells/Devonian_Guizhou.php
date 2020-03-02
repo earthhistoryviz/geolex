@@ -5,34 +5,38 @@ $page = "allformations_new";
 include("../formationheader.php");
 ?>
 
-<img src="wells_pic/Guizhou_Devonian.jpg" width="700" height="1000" border="0" usemap="#Map" />
+<img src="wells_pic/Devonian_Guizhou.jpg" width="605"  border="0" usemap="#Map" />
 <map name="Map" id="Map">
-<area shape="rect" coords="250,65,355,77" href="../displayInfo.php?formation=Tangbagou%20Fm" />
-<area shape="rect" coords="592,443,697,526" href="../displayInfo.php?formation=Huohong%20Fm" />
-<area shape="rect" coords="137,442,242,525" href="../displayInfo.php?formation=Huohong%20Fm" />
-<area shape="rect" coords="366,142,470,225" href="../displayInfo.php?formation=Zhewang%20Fm" />
-<area shape="rect" coords="366,79,471,141" href="../displayInfo.php?formation=Gelaohe%20Fm" />
-<area shape="rect" coords="593,241,698,441" href="../displayInfo.php?formation=Liujiang%20Fm" />
-<area shape="rect" coords="593,81,699,242" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
-<area shape="rect" coords="479,80,584,284" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
-<area shape="rect" coords="138,242,243,442" href="../displayInfo.php?formation=Liujiang%20Fm" />
-<area shape="rect" coords="480,443,584,517" href="../displayInfo.php?formation=Huohong%20Fm" />
-<area shape="rect" coords="252,223,357,466" href="../displayInfo.php?formation=Gaopochang%20Fm" />
-<area shape="rect" coords="366,224,471,283" href="../displayInfo.php?formation=Yaosuo%20Fm" />
-<area shape="rect" coords="365,284,470,440" href="../displayInfo.php?formation=Wangchengpo%20Fm" />
-<area shape="rect" coords="366,442,470,493" href="../displayInfo.php?formation=Dushan%20Fm" />
-<area shape="rect" coords="137,528,242,657" href="../displayInfo.php?formation=Guanziyao%20Fm" />
-<area shape="rect" coords="366,494,472,544" href="../displayInfo.php?formation=Bangzhai%20Fm" />
-<area shape="rect" coords="595,527,698,682" href="../displayInfo.php?formation=Chehe%20Fm" />
-<area shape="rect" coords="366,544,472,604" href="../displayInfo.php?formation=Longdongshui%20Fm" />
-<area shape="rect" coords="366,646,471,745" href="../displayInfo.php?formation=Danlin%20Fm" />
-<area shape="rect" coords="365,604,471,647" href="../displayInfo.php?formation=Shujiaping%20Fm" />
-<area shape="rect" coords="480,284,584,441" href="../displayInfo.php?formation=Xiangshuidong%20Fm" />
-<area shape="rect" coords="253,468,339,518" href="../displayInfo.php?formation=Mazongling%20Fm" />
-<area shape="rect" coords="253,520,340,574" href="../displayInfo.php?formation=Wudang%20Fm" />
-<area shape="rect" coords="340,467,356,571" href="../displayInfo.php?formation=Mangshan%20Gr" />
-<area shape="rect" coords="253,141,356,223" href="../displayInfo.php?formation=Zhewang%20Fm" />
-<area shape="rect" coords="251,78,356,140" href="../displayInfo.php?formation=Gelaohe%20Fm" />
-<area shape="rect" coords="138,80,244,241" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
-<area shape="rect" coords="365,65,470,77" href="../displayInfo.php?formation=Tangbagou%20Fm" />
+<area shape="rect" coords="505,80,595,229" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
+<area shape="rect" coords="504,232,596,415" href="../displayInfo.php?formation=Xiangshuidong%20Fm" />
+<area shape="rect" coords="506,418,595,496" href="../displayInfo.php?formation=Huohong%20Fm" />
+<area shape="rect" coords="219,81,306,139" href="../displayInfo.php?formation=Gelaohe%20Fm" />
+<area shape="rect" coords="621,464,731,551" href="../displayInfo.php?formation=Huohong%20Fm" />
+<area shape="rect" coords="121,232,210,418" href="../displayInfo.php?formation=Liujiang%20Fm" />
+<area shape="rect" coords="315,608,402,697" href="../displayInfo.php?formation=Danlin%20Fm" />
+<area shape="rect" coords="314,566,402,608" href="../displayInfo.php?formation=Shujiaping%20Fm" />
+<area shape="rect" coords="622,252,732,462" href="../displayInfo.php?formation=Liujiang%20Fm" />
+<area shape="rect" coords="622,84,733,253" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
+<area shape="rect" coords="409,417,497,490" href="../displayInfo.php?formation=Huohong%20Fm" />
+<area shape="rect" coords="122,498,209,618" href="../displayInfo.php?formation=Guanziyao%20Fm" />
+<area shape="rect" coords="408,271,498,418" href="../displayInfo.php?formation=Xiangshuidong%20Fm" />
+<area shape="rect" coords="220,440,292,490" href="../displayInfo.php?formation=Mazongling%20Fm" />
+<area shape="rect" coords="315,514,402,567" href="../displayInfo.php?formation=Longdongshui%20Fm" />
+<area shape="rect" coords="314,465,404,515" href="../displayInfo.php?formation=Bangzhai%20Fm" />
+<area shape="rect" coords="315,417,403,464" href="../displayInfo.php?formation=Dushan%20Fm" />
+<area shape="rect" coords="121,419,209,495" href="../displayInfo.php?formation=Huohong%20Fm" />
+<area shape="rect" coords="316,273,401,418" href="../displayInfo.php?formation=Wangchengpo%20Fm" />
+<area shape="rect" coords="624,552,732,716" href="../displayInfo.php?formation=Chehe%20Fm" />
+<area shape="rect" coords="315,212,404,273" href="../displayInfo.php?formation=Yaosuo%20Fm" />
+<area shape="rect" coords="314,137,405,213" href="../displayInfo.php?formation=Zhewang%20Fm" />
+<area shape="rect" coords="315,80,403,137" href="../displayInfo.php?formation=Gelaohe%20Fm" />
+<area shape="rect" coords="408,81,500,270" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
+<area shape="rect" coords="220,214,308,440" href="../displayInfo.php?formation=Gaopochang%20Fm" />
+<area shape="rect" coords="218,67,307,79" href="../displayInfo.php?formation=Tangbagou%20Fm" />
+<area shape="rect" coords="292,440,306,540" href="../displayInfo.php?formation=Mangshan%20Gr" />
+<area shape="rect" coords="221,492,291,541" href="../displayInfo.php?formation=Wudang%20Fm" />
+<area shape="rect" coords="221,138,305,212" href="../displayInfo.php?formation=Zhewang%20Fm" />
+<area shape="rect" coords="122,81,211,231" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
+<area shape="rect" coords="314,65,403,78" href="../displayInfo.php?formation=Tangbagou%20Fm" />
+<area shape="rect" coords="505,497,596,639" href="../displayInfo.php?formation=Chehe%20Fm" />
 </map>
