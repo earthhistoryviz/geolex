@@ -42,7 +42,8 @@
 
     <?php
        if($period) {
-         ?><p>Select Region: </p><?php
+         ?><p>Map is clickable </p>
+           <p>Click on any provinces to view detailed information</p><?php
          include 'Mapinfo/' . $period.'_China_Map.php';
        }
     ?>
