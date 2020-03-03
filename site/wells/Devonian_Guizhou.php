@@ -8,7 +8,7 @@ include("../formationheader.php");
 <img src="wells_pic/Devonian_Guizhou.jpg" width="605"  border="0" usemap="#Map" />
 <map name="Map" id="Map">
 <area shape="rect" coords="505,80,595,229" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
-<area shape="rect" coords="504,232,596,415" href="../displayInfo.php?formation=Xiangshuidong%20Fm" />
+<area shape="rect" coords="504,232,596,415" href="../displayInfo.php?formation=Liujiang%20Fm" />
 <area shape="rect" coords="506,418,595,496" href="../displayInfo.php?formation=Huohong%20Fm" />
 <area shape="rect" coords="219,81,306,139" href="../displayInfo.php?formation=Gelaohe%20Fm" />
 <area shape="rect" coords="621,464,731,551" href="../displayInfo.php?formation=Huohong%20Fm" />
@@ -19,7 +19,7 @@ include("../formationheader.php");
 <area shape="rect" coords="622,84,733,253" href="../displayInfo.php?formation=Wuzhishan%20Fm" />
 <area shape="rect" coords="409,417,497,490" href="../displayInfo.php?formation=Huohong%20Fm" />
 <area shape="rect" coords="122,498,209,618" href="../displayInfo.php?formation=Guanziyao%20Fm" />
-<area shape="rect" coords="408,271,498,418" href="../displayInfo.php?formation=Xiangshuidong%20Fm" />
+<area shape="rect" coords="408,271,498,418" href="../displayInfo.php?formation=Liujiang%20Fm" />
 <area shape="rect" coords="220,440,292,490" href="../displayInfo.php?formation=Mazongling%20Fm" />
 <area shape="rect" coords="315,514,402,567" href="../displayInfo.php?formation=Longdongshui%20Fm" />
 <area shape="rect" coords="314,465,404,515" href="../displayInfo.php?formation=Bangzhai%20Fm" />
