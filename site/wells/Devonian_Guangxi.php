@@ -1,8 +1,8 @@
-<html>
-<head>
-<title>Guangxi Devonian</title>
-<body>
-	<h2><img src="wells_pic/Devonian_Guangxi.jpg" width="700" height="1000" border="0" usemap="#Map" />
+<?php 
+include("./wells-header.php");
+?>
+
+<h2><img src="wells_pic/Devonian_Guangxi.jpg" width="700" height="1000" border="0" usemap="#Map" />
 	<map name="Map" id="Map">
 	<area href="../displayInfo.php?formation=Donggangling%20Fm" shape="rect" coords="447,407,524,481" alt="Donggangling Fm" title="Donggangling Fm">
 	<area href="../displayInfo.php?formation=Liujiang%20Fm" shape="rect" coords="446,249,524,406" alt="Liujiang Fm" title="Liujiang Fm">
