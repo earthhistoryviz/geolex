@@ -2,7 +2,8 @@
 $page = "allformations_new";
 // include("../full/config/config.php");
 // include("lib/formationtop_lib.php");
-include("../formationheader.php");
+// include("../formationheader.php");
+include("./wells-header.php");
 ?>
 
 <img src="wells_pic/Devonian_Hunan.jpg" width="605"  border="0" usemap="#Map" />
