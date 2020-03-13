@@ -56,7 +56,7 @@ if ($_SESSION["loggedIn"]) {
 
 
   <div style="display: flex; flex-direction: row">
-    <div style="width: 120px; display: flex; flex-direction: column; ">
+    <div style="width: 120px; padding: 5px; display: flex; flex-direction: column; ">
       <?php
        if (isset($_GET["period"])) {
          $period=$_GET["period"];
@@ -80,7 +80,7 @@ if ($_SESSION["loggedIn"]) {
           array( "name" => "Ediacaran", "color" => "#FED96A"),
        );
       foreach($periods as $p) {?>
-        <div style="background-color: <?php echo $p["color"]?>;">
+        <div style="background-color: <?php echo $p["color"]?>; padding: 5px; ">
           <a href="/index.php?period=<?php echo $p["name"]?>"><?php echo $p["name"]?></a>
         </div>
       <?php } ?>
