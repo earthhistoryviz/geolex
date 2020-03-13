@@ -212,8 +212,8 @@ else {
     <input id="AddNewFile" type="button" value="Add new files" disabled>
     <div id= onblur="saveText()">
         <b><h1 id ='title'><?=$name?></h1></b>
-        <input type="file" name="title_image"/>
-        <input id="Addtitle" type="button" name="add_title_image" value="Add Title Image" />
+        <input type="file" name="title_image" id ="title_image"/>
+        <input id="Addtitle" type="button" name="add_title_image" value="Add Title Image" onclick = addImageClicked('title') />
         <hr>
     </div>
     
@@ -243,6 +243,7 @@ else {
     </div>
 
     <div id="lithology">
+    <input type="file" name="lithology_image" id = "lithology_image"/>
         <input id="Addlithology" type="button" name="add_lithology_image" value="Add Lithology Image" onclick="addImageClicked('lithology')" />
         <h3><b>Lithology and Thickness</b></h3>
         <p id ="lithology_value"><?=$lithology?></p><br>
@@ -265,6 +266,7 @@ else {
     </div>
 
     <div id="fossils">
+    <input type="file" name="fossil_image" id = "fossil_image"/>
         <input id="Addfossil" type="button" name="add_fossil_image" value="Add Fossil Image" onclick="addImageClicked('fossil')" />
         <h3><b>Fossils</b></h3>
         <p id ="fossil_value"><?=$fossils?></p><br>
@@ -292,6 +294,35 @@ else {
     <?php
 }
 ?>
+<script type ="text/javascript">
+function addImageClicked(type) {
+    let img;
+    if (type === "lithology") {
+        console.log("lithology");
+        img = document.getElementById('lithology_image').files[0]
+    } else if (type === "title") {
+        console.log("title");
+        img = document.getElementById('title_image').files[0]
+    } else if (type === "fossil") {
+        console.log("fossil");
+        img = document.getElementById('fossil_image').files[0]
+    } else {
+        img = 0;
+    }
+    let form = new FormData();
+
+    form.append("image", img);
+    try {
+
+
+    let x = fetch('/uploadImage.php', {method: "POST", body: form});
+    console.log('HTTP response code:', x.status);
+    }catch(e){
+        console.log("Error uploading image");
+    }
+
+}
+</script>
 <script type="text/javascript">
         var editBtn = document.getElementById('Edit');
         var saveBtn = document.getElementById('Save');
@@ -361,13 +392,12 @@ else {
                 input.value = savedata[data];
                 form.appendChild(input);
             }
+            //console.log(savedata["id_value"])
             form.submit();
             document.removeChild(form);
 
         });
-        function addImageClicked(type){
-          console.log('addImageClicked: type = ', type);
-        }
+
 </script>
 
 <?php
