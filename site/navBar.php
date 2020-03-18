@@ -24,7 +24,7 @@ if ($_SESSION["loggedIn"]) {
         padding: 14px 16px;
         font-size: 17px;
       }
-    
+
       .topnav a:hover {
         background-color: #ddd;
         color: blue;
@@ -49,8 +49,15 @@ if ($_SESSION["loggedIn"]) {
   <body>
 
   <div class="topnav">
-    <a href="index.php">Home</a>
-    <a href="searchFm.php">Search Formation</a>
+    <?php /* if currently in /site folder, use index.php directly;
+             if currently in a lower level folder, use ../index.php */
+    if (strcmp(getcwd(), "/app") == 0) { ?>
+      <a href="index.php">Home</a>
+      <a href="searchFm.php">Search Formation</a> <?php
+    } else { ?>
+      <a href="../index.php">Home</a>
+      <a href="../searchFm.php">Search Formation</a> <?php
+    } ?>
     <a style="float: right;" href="login.php">Admin Login</a>
   </div>
 
@@ -88,6 +95,6 @@ if ($_SESSION["loggedIn"]) {
 
     <div class="mainBody">
 
-<?php 
+<?php
 }
 ?>
