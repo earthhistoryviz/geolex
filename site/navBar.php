@@ -8,7 +8,6 @@
 if ($_SESSION["loggedIn"]) {
   include("./adminDash.php");
 } else {
-
 ?>
     <style>
       .topnav {

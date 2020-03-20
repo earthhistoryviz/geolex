@@ -9,23 +9,22 @@ if (isset($_REQUEST['search'])) {
     $searchquery = $_REQUEST['search'];
 
     $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%'";
-    
+
     $result = mysqli_query($conn, $sql);
     //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
     //echo '<pre>'.$sql.'</pre>';
     $count = mysqli_num_rows($result);
 
-    
+
     //if($count == 0){
       //  $output = '<h4>'.'Formation not found'.'</h4>';
     //}
     //else{
-        while ($row = mysqli_fetch_array($result)){
-            $name = $row['name'];
-            array_push($arr, $name);
-            $output = '<h4>'.$name.'</h4>';
-
-        }
+    while ($row = mysqli_fetch_array($result)){
+        $name = $row['name'];
+        array_push($arr, $name);
+        $output = '<h4>'.$name.'</h4>';
+    }
     //}
 }
 
@@ -42,33 +41,26 @@ if (isset($_REQUEST['search'])) {
 <?php include("navBar.php"); include("SearchBar.php"); ?>
 
 <div class="formation-container">
-<?php 
+<?php
 	//print_r(array_values($arr));
 	//print_r($count);
-	if($count == -1){
-		
-	}
-	else if($count == 0){
+	if($count == -1) {
+    } else if($count == 0) {
 		$output = '<h4>'.'Formation not found'.'</h4>';
 		print($output);
-	}
-        else if ($count == 1) {
-          header("Location: displayInfo.php?formation=".$arr[0]); 
-          exit(0);
-        }
-	else{
-	}
-	foreach ($arr as $formation)
-	{
-		//$output = '<h4>'.$formation.'</h4>';
-		//print($output);
-		?><div class="formationitem">
-        <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
-      </div><?php
-	}?>
+	} else if ($count == 1) {
+        header("Location: displayInfo.php?formation=".$arr[0]);
+        exit(0);
+    } else {
+    	foreach ($arr as $formation) {
+    		//$output = '<h4>'.$formation.'</h4>';
+    		//print($output);
+    		?><div class="formationitem">
+            <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
+          </div><?php
+    	}
+    } ?>
 </div>
 
 </body>
 </html>
-
-
