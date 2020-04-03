@@ -315,7 +315,7 @@ function addImageClicked(type) {
 
     let x = fetch('/uploadImage.php', {method: "POST", body: form})
     .then(function(res) {
-      console.log('HTTP response code:', res);
+      console.log('HTTP response code:', res.text().then(function(a){console.log(a)}));
     }).catch(function(e) {
       console.log("Error uploading image: ", e);
     });
