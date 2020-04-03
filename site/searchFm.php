@@ -26,8 +26,11 @@ if (isset($_REQUEST['search'])) {
         $output = '<h4>'.$name.'</h4>';
     }
     //}
-}
 
+    if ($count == 1) {
+      header("Location: displayInfo.php?formation=".$arr[0]);
+    }
+}
 ?>
 
 
@@ -42,13 +45,9 @@ if (isset($_REQUEST['search'])) {
 
 <div class="formation-container">
 <?php
-    if($count == -1) {
-    } else if($count == 0) {
+    if($count < 1) {
       $output = '<h4>'.'Formation not found'.'</h4>';
       print($output);
-    } else if ($count == 1) {
-      header("Location: displayInfo.php?formation=".$arr[0]);
-      exit(0);
     } else {
       foreach ($arr as $formation) { ?>
         <div class="formationitem">
