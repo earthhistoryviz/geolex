@@ -213,7 +213,7 @@ else {
     <div id= onblur="saveText()">
         <b><h1 id ='title'><?=$name?></h1></b>
         <input type="file" name="title_image" id ="title_image"/>
-        <input id="Addtitle" type="button" name="add_title_image" value="Add Title Image" onclick = addImageClicked('title') />
+        <input id="Addtitle" type="button" name="add_title_image" value="Add Chosen Title Image" onclick = addImageClicked('title') />
         <hr>
     </div>
     
@@ -240,13 +240,15 @@ else {
     <div id="type_locality">
         <h3><b>Type Locality and Naming</b></h3>
         <p id="type_value"><?=$type_locality?></p><br>
+        <input type="file" name="locality_image" id ="locality_image"/>
+        <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = addImageClicked('locality') />
     </div>
 
     <div id="lithology">
-    <input type="file" name="lithology_image" id = "lithology_image"/>
-        <input id="Addlithology" type="button" name="add_lithology_image" value="Add Lithology Image" onclick="addImageClicked('lithology')" />
         <h3><b>Lithology and Thickness</b></h3>
         <p id ="lithology_value"><?=$lithology?></p><br>
+        <input type="file" name="lithology_image" id = "lithology_image"/>
+        <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
     </div>
 
     <div id="relationships_distribution">
@@ -254,22 +256,28 @@ else {
         <div id="lower_contact">
             <h4><i>Lower contact</i></h4>
             <p id="lower_value"><?=$lower_contact?></p>
+            <input type="file" name="lowercontact_image" id = "lowercontact_image"/>
+            <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
         </div>
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
             <p id="upper_value"><?=$upper_contact?></p>
+            <input type="file" name="uppercontact_image" id = "uppercontact_image"/>
+            <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
         </div>
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
             <p id="regional_value"><?=$regional_extent?></p><br>
+            <input type="file" name="regionalcontact_image" id = "regionalcontact_image"/>
+            <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick = addImageClicked('regionalextent') />
         </div>
     </div>
 
     <div id="fossils">
-    <input type="file" name="fossil_image" id = "fossil_image"/>
-        <input id="Addfossil" type="button" name="add_fossil_image" value="Add Fossil Image" onclick="addImageClicked('fossil')" />
         <h3><b>Fossils</b></h3>
         <p id ="fossil_value"><?=$fossils?></p><br>
+        <input type="file" name="fossil_image" id = "fossil_image"/>
+        <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')" />
     </div>
 
     <div id="age">
