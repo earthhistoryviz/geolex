@@ -321,7 +321,7 @@ function addImageClicked(type) {
 
     form.append("image", img);
 
-    let x = fetch('/uploadImage.php', {method: "POST", body: form})
+    let x = fetch('/uploadImage.php', {method: "POST", body:JSON.stringify({form:form, type:type})})
     .then(function(res) {
       console.log('HTTP response code:', res.text().then(function(a){console.log(a)}));
     }).catch(function(e) {
