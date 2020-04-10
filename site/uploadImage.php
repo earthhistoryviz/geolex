@@ -15,14 +15,16 @@ if(isset($_POST["submit"])) {
         $uploadOk = 0;
     }
 }
-echo $_POST['type'];
+// image_type, formation_name
+echo "POST = "; print_r($_POST);
+
 // Check if file already exists
 if (file_exists($target_file)) {
     echo "Sorry, file $target_file already exists.";
     $uploadOk = 0;
 }
 // Check file size
-if ($_FILES["image"]["size"] > 500000) {
+if ($_FILES["image"]["size"] > 5000000) {
     echo "Sorry, your file is too large.";
     $uploadOk = 0;
 }

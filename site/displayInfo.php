@@ -319,9 +319,11 @@ function addImageClicked(type) {
     }
     let form = new FormData();
 
+    form.append("formation_name", "<?php echo $name?>");
+    form.append("image_type", type);
     form.append("image", img);
 
-    let x = fetch('/uploadImage.php', {method: "POST", body:JSON.stringify({form:form, type:type})})
+    let x = fetch('/uploadImage.php', {method: "POST", body: form })
     .then(function(res) {
       console.log('HTTP response code:', res.text().then(function(a){console.log(a)}));
     }).catch(function(e) {
