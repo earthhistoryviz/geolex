@@ -38,57 +38,71 @@ include("../formationheader.php");
   </map>
 </h2>
 
-<?php /*
 <script>
-  if(document.readyState === 'complete') {
+  function setupAllMouseovers() {
+    console.log('Setting up the mouseovers...');
     // alert('debugging!!!');
     let allAreas = document.getElementById('Map').children;
     let areaCount = allAreas.length;
     for(let i = 0; i < areaCount; i++) {
-      console.log(allAreas[i]);
       let area_div = document.createElement('div');
       area_div.setAttribute('id', 'area_' + i);
-      let text_div = document.createElement('span');
+      let text_span = document.createElement('span');
       text_span.setAttribute('id', 'text_' + i);
+
+      if (allAreas[i].href && allAreas[i].href.match(/#/)) {
+        text_span.innerHTML = "No data yet for this time interval";
+      } else {
+        text_span.innerHTML = "CLICK to view geologic data";
+      }
       area_div.appendChild(text_span);
-      setTooltip(area_div.id, text_span.id);
+      setTooltip(area_div, text_span, allAreas[i]);
+
+      allAreas[i].appendChild(area_div);
+
       // area_div.setAttribute('onmouseover', 'mouseOver(area_div.id)');
       // area_div.setAttribute('onmouseout', 'mouseOut(area_div.id)');
     }
+  
+    // function mouseOver(area_id) {
+    //   document.getElementById(area_id).style.display = 'block';
+    // }
+    //
+    // function mouseOut(area_id) {
+    //   document.getElementById(area_id).style.display = 'none';
+    // }
+  
+    function setTooltip(area, text, maparea) {
+      console.log('Setting tooltip, the area element is: ', area, ', and the text element is: ', text);
+      area.style.position = 'absolute';
+//      area.style.display = 'inline-block';
+      area.style.visibility = 'hidden';
+      area.style.border = '1px solid grey';
+      area.style.backgroundColor = 'rgba(255,255,255,0.7)';
+  
+      area.style.width = '250px';
+      // document.getElementById(text_id).style.background-color = 'black';
+      // document.getElementById(text_id).style.color = 'red';
+      text.style['text-align'] = 'center';
+      text.style.padding = '5px 0';
+      // document.getElementById(text_id).style.border-radius = '6px';
+      text.style.position = 'absolute';
+      text.style['z-index'] = '1';
+  
+      // when hovered over
+      maparea.onmouseover = function(evt) {
+        area.style.top = evt.pageY + 'px';
+        area.style.left = evt.pageX + 'px';
+        area.style.visibility = 'visible';
+        console.log('AREA MOUSED OVER!!!');
+      }
+      // when hovered out
+      maparea.onmouseout = function() {
+        area.style.visibility = 'hidden';
+        console.log('AREA MOUSED OUT!!!');
+      }
+    }
   }
 
-  // function mouseOver(area_id) {
-  //   document.getElementById(area_id).style.display = 'block';
-  // }
-  //
-  // function mouseOut(area_id) {
-  //   document.getElementById(area_id).style.display = 'none';
-  // }
-
-  function setTooltip(area_id, text_id) {
-    document.getElementById(area_id).style.position = 'relative';
-    document.getElementById(area_id).style.display = 'inline-block';
-
-    document.getElementById(text_id).style.visibility = 'hidden';
-    document.getElementById(text_id).style.width = '120 px';
-    document.getElementById(text_id).style.height = '120 px';
-    // document.getElementById(text_id).style.background-color = 'black';
-    // document.getElementById(text_id).style.color = 'red';
-    document.getElementById(text_id).style.text-align = 'center';
-    document.getElementById(text_id).style.padding = '5px 0';
-    // document.getElementById(text_id).style.border-radius = '6px';
-    document.getElementById(text_id).style.position = 'absolute';
-    document.getElementById(text_id).style.z-index = '1';
-
-    // when hovered over
-    document.getElementById(area_id).onmouseover = function() {
-      document.getElementById(text_id).style.visibility = 'visible';
-    }
-    // when hovered out
-    document.getElementById(area_id).onmouseout = function() {
-      document.getElementById(text_id).style.visibility = 'hidden';
-    }
-  }
-
+  window.onload = setupAllMouseovers
 </script>
-*/ ?>
