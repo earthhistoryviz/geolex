@@ -39,25 +39,55 @@ include("../formationheader.php");
 </h2>
 
 <?php /*
-<script type="text/javascript">
-  if(document.readystate === 'complete') {
-    var allAreas = document.getElementByClassName('Map').children;
-    var areaCount = allAreas.length;
-    for(var i = 0; i < areaCount; i++) {
+<script>
+  if(document.readyState === 'complete') {
+    // alert('debugging!!!');
+    let allAreas = document.getElementById('Map').children;
+    let areaCount = allAreas.length;
+    for(let i = 0; i < areaCount; i++) {
       console.log(allAreas[i]);
-      var div = document.createElement('div');
-      // TODO: link to each child
-      div.setAttribute('onmouseover', 'mouseOver()');
-      div.setAttribute('onmouseout', 'mouseOut()');
+      let area_div = document.createElement('div');
+      area_div.setAttribute('id', 'area_' + i);
+      let text_div = document.createElement('span');
+      text_span.setAttribute('id', 'text_' + i);
+      area_div.appendChild(text_span);
+      setTooltip(area_div.id, text_span.id);
+      // area_div.setAttribute('onmouseover', 'mouseOver(area_div.id)');
+      // area_div.setAttribute('onmouseout', 'mouseOut(area_div.id)');
     }
   }
 
-  function mouseOver() {
-    document.getElementById('').style.display = 'block';
-  }
+  // function mouseOver(area_id) {
+  //   document.getElementById(area_id).style.display = 'block';
+  // }
+  //
+  // function mouseOut(area_id) {
+  //   document.getElementById(area_id).style.display = 'none';
+  // }
 
-  function mouseOut() {
-    document.getElementById('').style.display = 'none';
+  function setTooltip(area_id, text_id) {
+    document.getElementById(area_id).style.position = 'relative';
+    document.getElementById(area_id).style.display = 'inline-block';
+
+    document.getElementById(text_id).style.visibility = 'hidden';
+    document.getElementById(text_id).style.width = '120 px';
+    document.getElementById(text_id).style.height = '120 px';
+    // document.getElementById(text_id).style.background-color = 'black';
+    // document.getElementById(text_id).style.color = 'red';
+    document.getElementById(text_id).style.text-align = 'center';
+    document.getElementById(text_id).style.padding = '5px 0';
+    // document.getElementById(text_id).style.border-radius = '6px';
+    document.getElementById(text_id).style.position = 'absolute';
+    document.getElementById(text_id).style.z-index = '1';
+
+    // when hovered over
+    document.getElementById(area_id).onmouseover = function() {
+      document.getElementById(text_id).style.visibility = 'visible';
+    }
+    // when hovered out
+    document.getElementById(area_id).onmouseout = function() {
+      document.getElementById(text_id).style.visibility = 'hidden';
+    }
   }
 
 </script>
