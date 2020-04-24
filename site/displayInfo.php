@@ -64,6 +64,29 @@ if($name == "") {
     exit(0);
 }
 
+
+// Fetch any image filenames for this formation from the disk
+$dirs = scandir("./uploads/$name");
+$images = array();
+if ($dirs) {
+  foreach($dirs as $type) {
+    if (preg_match('/^\./', $type)) continue;
+    $files = scandir("./uploads/$name/$type");
+    if ($files) {
+      foreach($files as $f) {
+        if (preg_match('/^\./', $f)) continue;
+        if (preg_match('/^thumb_/', $f)) continue;
+        if (!$images[$type]) $images[$type] = array();
+        array_push($images[$type], array(
+          "full" => "/uploads/$name/$type/$f",
+          "thumbnail" => "uploads/$name/$type/$f",
+        ));
+      }
+    }
+  }
+}
+
+
 // display information below
 ?>
 <style>
@@ -210,10 +233,22 @@ else {
     <input id="Edit" type ="button" value = "Edit">
     <input id="Save" type="button" value="Save" disabled onclick="save()">
     <input id="AddNewFile" type="button" value="Add new files" disabled>
+
     <div id= onblur="saveText()">
         <b><h1 id ='title'><?=$name?></h1></b>
         <input type="file" name="title_image" id ="title_image"/>
         <input id="Addtitle" type="button" name="add_title_image" value="Add Chosen Title Image" onclick = addImageClicked('title') />
+        <div style="display: flex; flex-direction: row;">
+        <?php
+          foreach($images['title'] as $i) {
+            ?><div>
+              <a href="<?php echo $i["full"];?>">
+                <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+              </a>
+            </div><?php
+          }
+        ?>
+        </div>
         <hr>
     </div>
     
