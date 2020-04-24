@@ -41,7 +41,6 @@ include("../formationheader.php");
 <script>
   function setupAllMouseovers() {
     console.log('Setting up the mouseovers...');
-    // alert('debugging!!!');
     let allAreas = document.getElementById('Map').children;
     let areaCount = allAreas.length;
     for(let i = 0; i < areaCount; i++) {
@@ -59,43 +58,34 @@ include("../formationheader.php");
       setTooltip(area_div, text_span, allAreas[i]);
 
       allAreas[i].appendChild(area_div);
-
-      // area_div.setAttribute('onmouseover', 'mouseOver(area_div.id)');
-      // area_div.setAttribute('onmouseout', 'mouseOut(area_div.id)');
     }
-  
-    // function mouseOver(area_id) {
-    //   document.getElementById(area_id).style.display = 'block';
-    // }
-    //
-    // function mouseOut(area_id) {
-    //   document.getElementById(area_id).style.display = 'none';
-    // }
-  
+
     function setTooltip(area, text, maparea) {
       console.log('Setting tooltip, the area element is: ', area, ', and the text element is: ', text);
       area.style.position = 'absolute';
-//      area.style.display = 'inline-block';
       area.style.visibility = 'hidden';
-      area.style.border = '1px solid grey';
       area.style.backgroundColor = 'rgba(255,255,255,0.7)';
-  
       area.style.width = '250px';
-      // document.getElementById(text_id).style.background-color = 'black';
-      // document.getElementById(text_id).style.color = 'red';
+
       text.style['text-align'] = 'center';
-      text.style.padding = '5px 0';
-      // document.getElementById(text_id).style.border-radius = '6px';
+      text.style.padding = '1px 0';
+      text.style['border-top'] = '1px solid gray';
+      text.style['border-bottom'] = '1px solid gray';
+      text.style['border-left'] = '1px solid gray';
+      text.style['border-right'] = '1px solid gray';
       text.style.position = 'absolute';
       text.style['z-index'] = '1';
-  
+      text.style.color = '#ff2100'
+
       // when hovered over
       maparea.onmouseover = function(evt) {
         area.style.top = evt.pageY + 'px';
         area.style.left = evt.pageX + 'px';
         area.style.visibility = 'visible';
         console.log('AREA MOUSED OVER!!!');
+        console.log('X: ', evt.pageX, 'Y: ', evt.pageY);
       }
+
       // when hovered out
       maparea.onmouseout = function() {
         area.style.visibility = 'hidden';
@@ -104,5 +94,5 @@ include("../formationheader.php");
     }
   }
 
-  window.onload = setupAllMouseovers
+  window.onload = setupAllMouseovers;
 </script>
