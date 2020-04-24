@@ -1,7 +1,14 @@
 <?php
 error_reporting(E_ALL);
 $target_dir = "uploads/";
-$target_file = $target_dir . basename($_FILES["image"]["name"]);
+$type = $_POST['image_type'];
+$formname = $_POST['formation_name'];
+echo $type;
+echo $formname;
+$folder_path = $target_dir.$formname.'/'.$type.'/';
+echo $folder_path;
+mkdir($folder_path,0777,true);
+$target_file = $target_dir.$formname.'/'.$type.'/'. basename($_FILES["image"]["name"]);
 $uploadOk = 1;
 $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 // Check if image file is a actual image or fake image
