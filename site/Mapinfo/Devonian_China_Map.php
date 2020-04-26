@@ -5,7 +5,7 @@ include("../formationheader.php");
 
 <h2><img src="Mapinfo/Devonian_China_provinces.jpg" width="800" height="625" border="0" usemap="#Map" />
   <map name="Map" id="Map">
-    <area shape="poly" coords="247,65,328,187,276,219,273,243,235,253,246,276,226,285,194,275,149,281,111,267,87,277,63,275,38,175,181,88" href="#Devonian_Xinjiang"/>
+    <area shape="poly" id="Xinjiang" coords="247,65,328,187,276,219,273,243,235,253,246,276,226,285,194,275,149,281,111,267,87,277,63,275,38,175,181,88" href="#Devonian_Xinjiang"/>
     <area shape="poly" coords="219,287,192,280,151,287,109,272,44,289,104,375,179,428,231,454,310,442,331,418,327,385,316,363,298,378,263,360,217,332,220,295" href="#Devonian_Xizang" />
     <area shape="poly" coords="328,191,305,210,280,224,279,242,321,264,330,252,392,290,398,309,392,316,385,324,379,332,381,344,394,341,412,359,420,368,430,365,435,350,448,344,441,330,468,327,468,307,446,296,442,308,446,317,439,326,424,317,426,301,421,287,411,289,399,282,415,263,411,256,386,267,358,244,367,231,360,227,347,229,334,217,340,210,336,191" href="#Devonian_Gansu" />
     <area shape="poly" coords="315,360,319,339,335,343,349,364,362,369,381,348,376,337,395,309,388,292,330,255,320,267,274,244,238,253,246,276,223,286,221,330,297,375" href="#Devonian_Qinghai" />
@@ -49,10 +49,13 @@ include("../formationheader.php");
       let text_span = document.createElement('span');
       text_span.setAttribute('id', 'text_' + i);
 
-      if (allAreas[i].href && allAreas[i].href.match(/#/)) {
-        text_span.innerHTML = "No data yet for this time interval";
+      if(allAreas[i].id) {
+          text_span.innerHTML = allAreas[i].id + "<br />";
+      }
+      if(allAreas[i].href && allAreas[i].href.match(/#/)) {
+        text_span.innerHTML += "No data yet for this time interval";
       } else {
-        text_span.innerHTML = "CLICK to view geologic data";
+        text_span.innerHTML += "CLICK to view geologic data";
       }
       area_div.appendChild(text_span);
       setTooltip(area_div, text_span, allAreas[i]);
@@ -75,7 +78,9 @@ include("../formationheader.php");
       text.style['border-right'] = '1px solid gray';
       text.style.position = 'absolute';
       text.style['z-index'] = '1';
-      text.style.color = '#ff2100'
+      text.style.color = '#ff2100';
+      text.style['font-family'] = 'Arial, Helvetica, sans-serif';
+      text.style['text-shadow'] = '1px 1px #ff2100';
 
       // when hovered over
       maparea.onmouseover = function(evt) {
