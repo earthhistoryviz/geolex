@@ -142,12 +142,23 @@ if ($dirs) {
     }
 </script>
 <?php
+//var_dump($images);
 if (!($_SESSION["loggedIn"])) {
     ?>
     <form onsubmit ="return editValues();" class="my-form">
     <div id="title" style="max-width: 1024px;">
         <h1><b><?=$name?></b></h1>
         <hr>
+        <div style="display: flex; flex-direction: row;">
+            <?php
+            foreach($images['title'] as $i) {
+                ?><div>
+                <a href="<?php echo $i["full"];?>">
+                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                </div><?php
+            }
+            ?>
     </div>
 
     <div id="id" style="max-width: 1024px;">
@@ -173,11 +184,32 @@ if (!($_SESSION["loggedIn"])) {
     <div id="type_locality" style="max-width: 1024px;">
         <h3><b>Type Locality and Naming</b></h3>
         <p><?=$type_locality?></p>
-    </div>
+        <div style="display: flex; flex-direction: row;">
+            <?php
+            print_r($images);
+            foreach($images['locality'] as $i) {
+                ?><div>
+                <a href="<?php echo $i["full"];?>">
+                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                </div><?php
+            }
+            ?>
+        </div>
 
     <div id="lithology" style="max-width: 1024px;">
         <h3><b>Lithology and Thickness</b></h3>
         <p><?=$lithology?></p>
+        <div style="display: flex; flex-direction: row;">
+            <?php
+            foreach($images['lithology'] as $i) {
+                ?><div>
+                <a href="<?php echo $i["full"];?>">
+                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                </div><?php
+            }
+            ?>
     </div>
 
     <div id="relationships_distribution" style="max-width: 1024px;">
@@ -185,20 +217,60 @@ if (!($_SESSION["loggedIn"])) {
         <div id="lower_contact" style="text-indent: 50px; max-width: 1024px;" >
             <h4 style="display: inline;">Lower Contact: </h4>
             <span><?=$lower_contact?></span>
+            <div style="display: flex; flex-direction: row;">
+                <?php
+                foreach($images['lowercontact'] as $i) {
+                    ?><div>
+                    <a href="<?php echo $i["full"];?>">
+                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                    </a>
+                    </div><?php
+                }
+                ?>
         </div>
         <div id="upper_contact" style="text-indent: 50px; max-width: 1024px;">
             <h4 style="display: inline;">Upper Contact: </h4>
             <span><?=$upper_contact?></span>
+            <div style="display: flex; flex-direction: row;">
+                <?php
+                foreach($images['uppercontact'] as $i) {
+                    ?><div>
+                    <a href="<?php echo $i["full"];?>">
+                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                    </a>
+                    </div><?php
+                }
+                ?>
         </div>
         <div id="regional_extent" style="text-indent: 50px; max-width: 1024px;">
             <h4 style="display: inline;">Regional Extent: </h4>
             <span><?=$regional_extent?></span>
+            <div style="display: flex; flex-direction: row;">
+                <?php
+                foreach($images['regionalextent'] as $i) {
+                    ?><div>
+                    <a href="<?php echo $i["full"];?>">
+                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                    </a>
+                    </div><?php
+                }
+                ?>
         </div>
     </div>
 
     <div id="fossils" style="max-width: 1024px;">
         <h3><b>Fossils</b></h3>
         <p><?=$fossils?></p>
+        <div style="display: flex; flex-direction: row;">
+            <?php
+            foreach($images['fossil'] as $i) {
+                ?><div>
+                <a href="<?php echo $i["full"];?>">
+                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                </div><?php
+            }
+            ?>
     </div>
 
     <div id="age" style="max-width: 1024px;">
@@ -276,7 +348,17 @@ else {
         <h3><b>Type Locality and Naming</b></h3>
         <p id="type_value"><?=$type_locality?></p><br>
         <input type="file" name="locality_image" id ="locality_image"/>
-        <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = addImageClicked('locality') />
+        <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = "addImageClicked('locality')" />
+        <div style="display: flex; flex-direction: row;">
+            <?php
+            foreach($images['type_locality'] as $i) {
+                ?><div>
+                <a href="<?php echo $i["full"];?>">
+                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                </div><?php
+            }
+            ?>
     </div>
 
     <div id="lithology">
@@ -284,6 +366,16 @@ else {
         <p id ="lithology_value"><?=$lithology?></p><br>
         <input type="file" name="lithology_image" id = "lithology_image"/>
         <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
+        <div style="display: flex; flex-direction: row;">
+            <?php
+            foreach($images['lithology'] as $i) {
+                ?><div>
+                <a href="<?php echo $i["full"];?>">
+                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                </div><?php
+            }
+            ?>
     </div>
 
     <div id="relationships_distribution">
@@ -293,18 +385,48 @@ else {
             <p id="lower_value"><?=$lower_contact?></p>
             <input type="file" name="lowercontact_image" id = "lowercontact_image"/>
             <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
+            <div style="display: flex; flex-direction: row;">
+                <?php
+                foreach($images['lower_contact'] as $i) {
+                    ?><div>
+                    <a href="<?php echo $i["full"];?>">
+                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                    </a>
+                    </div><?php
+                }
+                ?>
         </div>
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
             <p id="upper_value"><?=$upper_contact?></p>
             <input type="file" name="uppercontact_image" id = "uppercontact_image"/>
             <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
+            <div style="display: flex; flex-direction: row;">
+                <?php
+                foreach($images['upper_contact'] as $i) {
+                    ?><div>
+                    <a href="<?php echo $i["full"];?>">
+                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                    </a>
+                    </div><?php
+                }
+                ?>
         </div>
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
             <p id="regional_value"><?=$regional_extent?></p><br>
-            <input type="file" name="regionalcontact_image" id = "regionalcontact_image"/>
+            <input type="file" name="regionalcontact_image" id = "regionalextent_image"/>
             <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick = addImageClicked('regionalextent') />
+            <div style="display: flex; flex-direction: row;">
+                <?php
+                foreach($images['regionalextent'] as $i) {
+                    ?><div>
+                    <a href="<?php echo $i["full"];?>">
+                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                    </a>
+                    </div><?php
+                }
+                ?>
         </div>
     </div>
 
@@ -313,6 +435,16 @@ else {
         <p id ="fossil_value"><?=$fossils?></p><br>
         <input type="file" name="fossil_image" id = "fossil_image"/>
         <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')" />
+        <div style="display: flex; flex-direction: row;">
+            <?php
+            foreach($images['fossil'] as $i) {
+                ?><div>
+                <a href="<?php echo $i["full"];?>">
+                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+                </a>
+                </div><?php
+            }
+            ?>
     </div>
 
     <div id="age">
@@ -349,7 +481,24 @@ function addImageClicked(type) {
     } else if (type === "fossil") {
         console.log("fossil");
         img = document.getElementById('fossil_image').files[0]
-    } else {
+    }
+        else if(type ==="locality") {
+            img = document.getElementById('locality_image').files[0]
+        console.log("locality")
+        }
+    else if (type === "lowercontact") {
+        console.log("lowercontact");
+        img = document.getElementById('lowercontact_image').files[0]
+    }
+    else if (type === "uppercontact") {
+        console.log("uppercontact");
+        img = document.getElementById('uppercontact_image').files[0]
+    }
+    else if (type === "regionalextent") {
+        console.log("regionalextent");
+        img = document.getElementById('regionalextent_image').files[0]
+    }
+    else {
         img = 0;
     }
     let form = new FormData();
@@ -364,7 +513,9 @@ function addImageClicked(type) {
     }).catch(function(e) {
       console.log("Error uploading image: ", e);
     });
+   location.reload()
 }
+
 </script>
 <script type="text/javascript">
         var editBtn = document.getElementById('Edit');
