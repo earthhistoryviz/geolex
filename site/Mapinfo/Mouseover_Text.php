@@ -15,7 +15,7 @@
       if(allAreas[i].href && allAreas[i].href.match(/#/)) {
         text_span.innerHTML += "No data yet for this time interval.";
       } else {
-        text_span.innerHTML += "CLICK to view geologic data.";
+        text_span.innerHTML += "CLICK to view data.";
       }
       area_div.appendChild(text_span);
       setTooltip(area_div, text_span, allAreas[i]);
@@ -27,7 +27,7 @@
       console.log('Setting tooltip, the area element is: ', area, ', and the text element is: ', text);
       area.style.position = 'absolute';
       area.style.visibility = 'hidden';
-      area.style.width = '200px';
+      area.style.width = '115px';
 
       text.style['text-align'] = 'center';
       text.style.padding = '1px 0';
@@ -39,8 +39,8 @@
       text.style['z-index'] = '1';
       text.style.color = '#ff2100';
       text.style['font-family'] = 'Arial, Helvetica, sans-serif';
-      text.style['font-size'] = '16px';
-      text.style['background-color'] = 'rgba(255,255,255,1.0)';
+      text.style['font-size'] = '12px';
+      text.style['background-color'] = 'rgba(255,255,255,0.7)';
 
       // when hovered over
       maparea.onmouseover = function(evt) {
