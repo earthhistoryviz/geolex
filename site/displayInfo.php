@@ -513,7 +513,7 @@ function addImageClicked(type) {
     }).catch(function(e) {
       console.log("Error uploading image: ", e);
     });
-   location.reload()
+   //location.reload()
 }
 
 </script>
