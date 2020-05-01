@@ -20,7 +20,8 @@
       area_div.appendChild(text_span);
       setTooltip(area_div, text_span, allAreas[i]);
 
-      allAreas[i].appendChild(area_div);
+      //allAreas[i].appendChild(area_div);
+      document.body.appendChild(area_div);
     }
 
     function setTooltip(area, text, maparea) {
@@ -43,11 +44,11 @@
       text.style['background-color'] = 'rgba(255,255,255,0.7)';
 
       // when hovered over
-      maparea.onmouseover = function(evt) {
-        area.style.top = evt.pageY + 'px';
-        area.style.left = evt.pageX + 'px';
+      maparea.onmousemove = function(evt) {
+        area.style.top = (evt.pageY+5) + 'px';
+        area.style.left = (evt.pageX+5) + 'px';
         area.style.visibility = 'visible';
-        console.log('AREA MOUSED OVER!!!');
+        console.log('AREA MOUSED OVER!!! area = ', area);
         console.log('X: ', evt.pageX, 'Y: ', evt.pageY);
       }
 
