@@ -186,7 +186,6 @@ if (!($_SESSION["loggedIn"])) {
         <p><?=$type_locality?></p>
         <div style="display: flex; flex-direction: row;">
             <?php
-            print_r($images);
             foreach($images['locality'] as $i) {
                 ?><div>
                 <a href="<?php echo $i["full"];?>">
@@ -351,7 +350,7 @@ else {
         <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = "addImageClicked('locality')" />
         <div style="display: flex; flex-direction: row;">
             <?php
-            foreach($images['type_locality'] as $i) {
+            foreach($images['locality'] as $i) {
                 ?><div>
                 <a href="<?php echo $i["full"];?>">
                     <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
@@ -387,7 +386,7 @@ else {
             <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
             <div style="display: flex; flex-direction: row;">
                 <?php
-                foreach($images['lower_contact'] as $i) {
+                foreach($images['lowercontact'] as $i) {
                     ?><div>
                     <a href="<?php echo $i["full"];?>">
                         <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
@@ -403,7 +402,7 @@ else {
             <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
             <div style="display: flex; flex-direction: row;">
                 <?php
-                foreach($images['upper_contact'] as $i) {
+                foreach($images['uppercontact'] as $i) {
                     ?><div>
                     <a href="<?php echo $i["full"];?>">
                         <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />

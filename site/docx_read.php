@@ -84,7 +84,7 @@ function docx_read($filename)
     $splitcontent = explode($splitpattern, $content);
     $x = 0;
     $y = 0;
-    $formpattern = "/[\w’]+\s(Gr|Fm)/";
+    $formpattern = "/[\s\w’]+\s(Gr|Fm)/";
     $periodpattern = "/Period:\s*(\w+)/";
     $age_inpattern = "/Age Interval\s*\(Map column\): (\w+)/";
     $provincepattern = "/Province:\s*(\w+)/";
@@ -196,6 +196,7 @@ function docx_read($filename)
             $sadd,
             $scompiler)";
     */
+    var_dump($splitcontent);
     foreach ($splitcontent as $ministr) {
 //  echo $ministr;
         preg_match($formpattern, $ministr, $formname);
@@ -229,7 +230,7 @@ function docx_read($filename)
         $sdepositional = $depositional[1];
         $sadd = $addinfo[1];
         $scompiler = $compiler[1];
-        if ($x > $y) {
+        if ($x >=$y) {
          //   echo $sage_in;
             //var_dump($type);
 //    var_dump($compiler);
@@ -263,17 +264,18 @@ function docx_read($filename)
         '$slith',
         '$slower',
         '$supper',
-        '$sregional',x
+        '$sregional',
         '$sfossil',
         '$sage',
         '$sdepositional',
         '$sadd',
         '$scompiler')";
 
+        echo $sformname;
             if ($conn->query($sql) === TRUE) {
-             //   echo "data inserted ";
+                echo "data inserted ";
             } else {
-               // echo "Error inserted " . $conn->error;
+                echo "Error inserted " . $conn->error;
             }
 
         }
