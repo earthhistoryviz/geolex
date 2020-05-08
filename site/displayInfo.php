@@ -24,30 +24,30 @@ while($row = mysqli_fetch_array($result)) {
     $province = $row['province'];
     $type_locality = $row['type_locality'];
     
-    $fmgr_regexp = "~([^\s]+\sFm|[^\s]+\sGr)[ .,;:]~";
+    $fmgr_regexp = "~([^\s]+\sFm|[^\s]+\sGr)([ .,;:])~";
 
     $lithology_orig = $row['lithology'];
-    $lithology = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$0\">$0</a>", $lithology_orig);
+    $lithology = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $lithology_orig);
     
     $lower_contact = $row['lower_contact'];
-    $lower_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$0\">$0</a>", $lower_contact);
+    $lower_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $lower_contact);
     
     $upper_contact = $row['upper_contact'];
-    $upper_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$0\">$0</a>", $upper_contact);
+    $upper_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $upper_contact);
     
     $regional_extent = $row['regional_extent'];
-    $regional_extent = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$0\">$0</a>", $regional_extent);
+    $regional_extent = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $regional_extent);
     
     $fossils = $row['fossils'];
-    $fossils = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$0\">$0</a>", $fossils);
+    $fossils = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $fossils);
     
     $age = $row['age'];
     
     $depositional = $row['depositional'];
-    $depositional = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$0\">$0</a>", $depositional);
+    $depositional = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $depositional);
     
     $additional_info = $row['additional_info'];
-    $additional_info = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$0\">$0</a>", $additional_info);
+    $additional_info = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $additional_info);
     
     $compiler = $row['compiler'];
 
