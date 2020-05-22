@@ -30,6 +30,8 @@ if (isset($_REQUEST['search'])) {
     if ($count == 1) {
       header("Location: displayInfo.php?formation=".$arr[0]);
     }
+
+    sort($arr);    
 }
 ?>
 
