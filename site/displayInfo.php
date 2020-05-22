@@ -121,6 +121,11 @@ if ($dirs) {
         padding-left: 20px;
         padding-right: 20px;
     }
+    p {
+      text-indent: 2em;
+      margin-bottom: 0px;
+      margin-top: 0px;
+    }
 </style>
 
 <script>
@@ -226,6 +231,7 @@ if (!($_SESSION["loggedIn"])) {
                     </div><?php
                 }
                 ?>
+            </div>
         </div>
         <div id="upper_contact" style="text-indent: 50px; max-width: 1024px;">
             <h4 style="display: inline;">Upper Contact: </h4>
@@ -240,6 +246,7 @@ if (!($_SESSION["loggedIn"])) {
                     </div><?php
                 }
                 ?>
+            </div>
         </div>
         <div id="regional_extent" style="text-indent: 50px; max-width: 1024px;">
             <h4 style="display: inline;">Regional Extent: </h4>
@@ -254,6 +261,7 @@ if (!($_SESSION["loggedIn"])) {
                     </div><?php
                 }
                 ?>
+            </div>
         </div>
     </div>
 
@@ -270,11 +278,12 @@ if (!($_SESSION["loggedIn"])) {
                 </div><?php
             }
             ?>
+        </div>
     </div>
 
     <div id="age" style="max-width: 1024px;">
-        <h3 style="display: inline;"><b>Age:</b></h3>
-        <span><?=$age?></span>
+        <h3><b>Age</b></h3>
+        <p><?=$age?></p>
     </div>
 
     <div id="depositional" style="max-width: 1024px;">

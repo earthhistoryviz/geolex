@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL);
 include ("docx_read.php");
 try {
     $uploads_dir ='  /uploads'.$_FILES['upfile']['tmp_name'];

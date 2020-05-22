@@ -16,19 +16,13 @@ function docx_read($filename)
     $output = '';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-    else{
-        //echo '<pre>'.'successfully linked to Database'.'</pre>';
-    }
 
     $splitpattern = "*****************"; //Split pattern set by the document to differentiate between each of the formations
-//read_file_docx("test.docx");
     function read_file_docx($filename)
-    {  //FUNCTION to read information out of a docx and return it as a String
-      //  $filename = 'test.docx';
+    {   //FUNCTION to read information out of a docx and return it as a String
         $striped_content = '';
         $content = '';
 
@@ -51,248 +45,88 @@ function docx_read($filename)
 
         zip_close($zip);
 
-        //echo $content;
-        //echo "<hr>";
-        //file_put_contents('1.xml', $content);
-
         $content = str_replace('</w:r></w:p></w:tc><w:tc>', " ", $content);
         $content = str_replace('</w:r></w:p>', "\r\n", $content);
         $striped_content = strip_tags($content);
         $text = trim($striped_content);
-        // $contents = strip_tags($content, '<w:p><w:u><w:i><w:b>');
-        // $contents = preg_replace("/(<(\/?)w:(.)[^>]*>)\1*/", "<$2$3>", $contents);
-        //echo $content;
         return '<p>' . preg_replace('/[\r\n]+/', '</p><p>', $text) . '</p>';
-        // require_once 'bootstrap.php';
-        //   $objReader = new \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
-        //$phpWord = $objReader->load($filename);
-        //$section = $phpWord->getSection(0);
-        //var_dump($section);
-        //return $section;
     }
 
-    //require_once 'bootstrap.php';
-    //$objReader = new \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
-    // $phpWord = $objReader->load($filename);
-    // $section = $phpWord->getSection(0);
-    // var_dump($section);
-//function convert($text) { //FUNCTION to supplement the conversion of 
-    // $text = trim($text);
-    //  return '<p>' . preg_replace('/[\r\n]+/', '</p><p>', $text) . '</p>';
-//}
+
     $content = read_file_docx($filename);
     $splitcontent = explode($splitpattern, $content);
-    $x = 0;
-    $y = 0;
-    $formpattern = "/[\s\w’]+\s(Gr|Fm)/";
-    $periodpattern = "/Period:\s*(\w+)/";
-    $age_inpattern = "/Age Interval\s*\(Map column\): (\w+)/";
-    $provincepattern = "/Province:\s*(\w+)/";
-    $typepattern = "/Type Locality and Naming:(\s*(.+))Lithology and Thickness:/";
-    $lithpattern = "/Lithology and Thickness:(\s*(.+))Relationships and Distribution:/";
-    $lowerpattern = "/Lower contact:(\s*(.+))Upper contact:/";
-    $upperpattern = "/Upper contact:\s*(.+)Regional extent:/";
-    $regionalpattern = "/Regional extent:\s*(.+)Fossils:/";
-    $fossilpattern = "/Fossils:\s*(.+)Age:/";
-    $agepattern = "/Age:\s*(.+)Depositional setting:/";
-    $depositionpattern = "/Depositional setting:\s*(.+)Additional Information/";
-    $addpattern = "/Additional Information\s*(.+)Compiler/";
-    $compilerpattern = "/Compiler\s*(.+)/";
+    $skipFirstNFormations = 0;
 
-
-
-/*
-// create connection
-    $conn = new mysqli($servername, $username, $password);
-// Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-// drop database
-    $sql = "DROP DATABASE IF EXISTS myDB";
-    if ($conn->query($sql) === TRUE) {
-        echo "Database dropped successfully<br>";
-    } else {
-        echo "Error droping database: " . $conn->error;
-    }
-
-    $conn->close();
-
-// Create connection
-    $conn = new mysqli($servername, $username, $password);
-// Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-// Create database
-    $sql = "CREATE DATABASE myDB";
-    if ($conn->query($sql) === TRUE) {
-        echo "Database created successfully<br>";
-    } else {
-        echo "Error creating database: " . $conn->error;
-    }
-
-    $conn->close();
-
-// Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-
-    }*/
-//$sql = "DROP DATABASE IF EXISTS myDB";
-//$sql = "CREATE DATABASE myDB";
-//$sql = "USE  myDB";
-
-/*    $sql = "CREATE TABLE timeperiod(
-  ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name Varchar(255),
-  color Varchar(255)
-
-)";
-    $sql2 = "CREATE TABLE formation(
-  ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name Varchar(255),
-  period Varchar(255),
-  age_interval Varchar(255),
-  province Varchar(255),
-  type_locality Text,
-  lithology Text,
-  lower_contact Text,
-  upper_contact Text,
-  regional_extent Text,
-  fossils Text,
-  age Text,
-  depositional Text,
-  additional_info Text,
-  compiler Varchar(255)
-)";*/
-
- /*   if ($conn->query($sql) && $conn->query($sql2) === TRUE) {
-        echo "table create successfully<br>";
-    } else {
-        echo "Error creating table: " . $conn->error;
-    }
-*/
-//$sql = "USE myDB IF EXISTS";
-    /*$sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact
-            regional_extent,fossils,age,depositional,additional_info,compiler)
-            VALUES(
-            $formname,
-            $period,
-            $age_in,
-            $province,
-            $stype,
-            $slith,
-            $slower,
-            $supper,
-            $sregional,
-            $sfossil,
-            $sage,
-            $sdepositional,
-            $sadd,
-            $scompiler)";
-    */
     var_dump($splitcontent);
+    $count = 0;
+
+    $vars = array(
+      array("name" => "name",            "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/"),
+      array("name" => "period",          "matchoffset" => 1, "pattern" => "/Period:\s*(\w+)/"),
+      array("name" => "age_interval",    "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\): (\w+)/"),
+      array("name" => "province",        "matchoffset" => 1, "pattern" => "/Province:\s*(\w+)/"),
+      array("name" => "type_locality",   "matchoffset" => 2, "pattern" => "/Type Locality and Naming:(\s*(.+))Lithology:/"),
+      array("name" => "lithology",       "matchoffset" => 1, "pattern" => "/Lithology:(\s*(.+))Relationships and Distribution:/"),
+      array("name" => "lower_contact",   "matchoffset" => 1, "pattern" => "/Lower contact:(\s*(.+))Upper contact:/"),
+      array("name" => "upper_contact",   "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional extent:/"),
+      array("name" => "regional_extent", "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)Fossils:/"),
+      array("name" => "fossils",         "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/"),
+      array("name" => "age",             "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Depositional setting:/"),
+      array("name" => "depositional",    "matchoffset" => 1, "pattern" => "/Depositional setting:\s*(.+)Additional Information/"),
+      array("name" => "additional_info", "matchoffset" => 1, "pattern" => "/Additional Information\s*(.+)Compiler/"),
+      array("name" => "compiler",        "matchoffset" => 1, "pattern" => "/Compiler\s*(.+)/"),
+    );
+
     foreach ($splitcontent as $ministr) {
-//  echo $ministr;
-        preg_match($formpattern, $ministr, $formname);
-        preg_match($periodpattern, $ministr, $period);
-        preg_match($age_inpattern, $ministr, $age_in);
-        preg_match($provincepattern, $ministr, $province);
-        preg_match($typepattern, $ministr, $type);
-        preg_match($lithpattern, $ministr, $lith);
-        preg_match($lowerpattern, $ministr, $lower);
-        preg_match($upperpattern, $ministr, $upper);
-        preg_match($regionalpattern, $ministr, $regional);
-        preg_match($fossilpattern, $ministr, $fossil);
-        preg_match($agepattern, $ministr, $age);
-        preg_match($depositionpattern, $ministr, $depositional);
-        preg_match($addpattern, $ministr, $addinfo);
-        preg_match($compilerpattern, $ministr, $compiler);
-        //echo $ministr;
-        $sformname = $formname[0];
-        $speriod = $period[1];
-        $sage_in = $age_in[1];
-        $sprovince = $province[1];
-        $stype = $type[2];
-        $slith = $lith[1];
-        $slower = $lower[1];
-        $supper = $upper[1];
-        //echo "upper = ";
-        //print_r($upper);
-        $sregional = $regional[1];
-        $sfossil = $fossil[1];
-        $sage = $age[1];
-        $sdepositional = $depositional[1];
-        $sadd = $addinfo[1];
-        $scompiler = $compiler[1];
-        if ($x >=$y) {
-         //   echo $sage_in;
-            //var_dump($type);
-//    var_dump($compiler);
+echo "ministr = $ministr";
+        if ($count++ < $skipFirstNFormations) continue;
 
-            $sformname = str_replace("</p><p>", "", $sformname);
-            $speriod = str_replace("</p><p>", "", $speriod);
-            $sage_in = str_replace("</p><p>", "", $sage_in);
-            $sprovince = str_replace("</p><p>", "", $sprovince);
-            $stype = str_replace("</p><p>", "", $stype);
-            $slith = str_replace("</p><p>", "", $slith);
-            $slower = str_replace("</p><p>", "", $slower);
-            $supper = str_replace("</p><p>", "", $supper);
-            $sregional = str_replace("</p><p>", "", $sregional);
-            $sfossil = str_replace("</p><p>", "", $sfossil);
-            $sage = str_replace("</p><p>", "", $sage);
-            $sdepositional = str_replace("</p><p>", "", $sdepositional);
-            $sadd = str_replace("</p><p>", "", $sadd);
+        // match all the patterns
+        for($i=0; $i<count($vars); $i++) {
+          $v = $vars[$i];
+          //preg_match($formpattern, $ministr, $form)
+          //echo "Pattern = " . $v["pattern"] . ", ministr = $ministr";
+          preg_match($v["pattern"], $ministr, $matches);
+          $vars[$i]["matches"] = $matches;
+          $vars[$i]["value"] = trim($matches[$v["matchoffset"]]); // get rid of newlines on the end
+          if (preg_match("/\r\n/", $vars[$i]["value"])) { // only add paragraph tags if there are newlines in it (single-line doesn't have them)
+            $vars[$i]["value"] = "<p>" . str_replace("\r\n", "</p>\r\n<p>", $vars[$i]["value"]) . "</p>";
+          }
 
-            $scompiler = str_replace("</p><p>", "", $scompiler);
-            $scompiler = str_replace("(", "", $scompiler);
-            $scompiler = str_replace(")", "", $scompiler);
-            //echo $scompiler;
-           // echo $sformname."\n";
-            $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
-       VALUES(
-        '$sformname',
-        '$speriod',
-        '$sage_in',
-        '$sprovince',
-        '$stype',
-        '$slith',
-        '$slower',
-        '$supper',
-        '$sregional',
-        '$sfossil',
-        '$sage',
-        '$sdepositional',
-        '$sadd',
-        '$scompiler')";
-
-        echo $sformname;
-            if ($conn->query($sql) === TRUE) {
-                echo "data inserted ";
-            } else {
-                echo "Error inserted " . $conn->error;
-            }
+          if ($v["name"] == "compiler") {
+            $vars[$i]["value"] = str_replace("(", "", $v["value"]);
+            $vars[$i]["value"] = str_replace(")", "", $v["value"]);
+          }
 
         }
-        $x = $x + 1;
+
+        $sql = "INSERT INTO formation(";
+        for($i=0; $i<count($vars); $i++) {
+          $v = $vars[$i];
+          $sql .= $v["name"];
+          if ($i < count($vars)-1) {
+            $sql .= ",";
+          }
+        }
+        $sql .= ") VALUES (";
+        for($i=0; $i<count($vars); $i++) {
+          $v = $vars[$i];
+          $sql .= "'".$v["value"]."'";
+          if ($i < count($vars)-1) {
+            $sql .= ",";
+          }
+        }
+        $sql .= ")";
+        echo "Sending query: <pre>$sql</pre>";
+        echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
+          
+        if ($conn->query($sql) === TRUE) {
+            echo "data inserted ";
+        } else {
+            echo "Error inserted " . $conn->error;
+        }
+
     }
-//$filename = "filepath";// or /var/www/html/file.docx
-
-//$content = read_file_docx($filename);
-//if($content !== false) {
-
-    //   echo nl2br($content);
-//    return '<p>' . preg_replace('/[\r\n]+/', '</p><p>', $text) . '</p>';
-//}
-//else {
-    //  echo 'Couldn\'t the file. Please check that file.';
-//}
-
     echo "Parsing is Complete!";
 }
 
