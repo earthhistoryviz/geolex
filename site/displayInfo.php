@@ -86,7 +86,6 @@ if ($dirs) {
   }
 }
 
-
 // display information below
 ?>
 <style>
@@ -103,6 +102,10 @@ if ($dirs) {
         padding-left: 20px;
         padding-right: 20px;
     }
+    #Delete{ 
+    	height:40px;
+      	border:3px solid #000000;
+	}
     #AddNewFile{
         height: 40px;
         border: 3px solid #000000;
@@ -147,7 +150,7 @@ if ($dirs) {
     }
 </script>
 <?php
-//var_dump($images);
+var_dump($images);
 if (!($_SESSION["loggedIn"])) {
     ?>
     <form onsubmit ="return editValues();" class="my-form">
@@ -313,7 +316,7 @@ else {
     <input id="Edit" type ="button" value = "Edit">
     <input id="Save" type="button" value="Save" disabled onclick="save()">
     <input id="AddNewFile" type="button" value="Add new files" disabled>
-
+    <input id="Delete" type="button" value="Delete" name="Delete Formation" onclick = deleteform() />
     <div id= onblur="saveText()">
         <b><h1 id ='title'><?=$name?></h1></b>
         <input type="file" name="title_image" id ="title_image"/>
@@ -324,7 +327,9 @@ else {
             ?><div>
               <a href="<?php echo $i["full"];?>">
                 <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-              </a>
+	      </a>
+	      <input id = "<?php echo $i["full"];?>" type = "button" value = "Delete" onclick = 'delImageClicked("<?php echo $i['full'];?>")' />
+
             </div><?php
           }
         ?>
@@ -476,8 +481,43 @@ else {
     </div>
     <?php
 }
-?>
+?> 
 <script type ="text/javascript">
+function deleteform(){
+	console.log("delete pressed");
+	var title1 = document.getElementById('title');
+	newform = document.createElement('form');
+	document.body.appendChild(newform);
+	newform.method = "POST";
+	newform.action = "deleteForm.php";
+	input = document.createElement('input');
+	input.type = "hidden";
+	input.name = "title";
+	input.value = title1.innerHTML;
+	newform.appendChild(input);
+	newform.submit();
+	document.removeChild(newform);
+
+}
+function delImageClicked(type){
+	//img = document.getElementById(type)
+	//	img.parentNode.removeChild(img);
+	console.log(type);
+	str1 = "/app/";
+	type2 = str1.concat(type);
+	console.log(type2);
+	let form = new FormData();
+	form.append("Img_select",type2);
+
+	let x = fetch('/delete_image.php',{method:"POST",body:form}).then(function(res){
+		console.log("HTTP response code:",res.text().then(function(a){console.log(a)}));
+	}).catch(function(e){
+ 		console.log("Error deleting image:",e);
+	});
+
+}
+
+
 function addImageClicked(type) {
     let img;
     if (type === "lithology") {
@@ -488,6 +528,7 @@ function addImageClicked(type) {
         img = document.getElementById('title_image').files[0]
     } else if (type === "fossil") {
         console.log("fossil");
+
         img = document.getElementById('fossil_image').files[0]
     }
         else if(type ==="locality") {

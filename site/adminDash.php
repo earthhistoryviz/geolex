@@ -20,7 +20,10 @@
         </div>
 	      <div class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="manageUser.php">Manage User information</a>
-        </div>
+	</div>
+		<div class ="itme <?php if (preg_match("/create_db.php/",$_SERVER["PHP_SELF"])){echo "active";}?>">
+		<a class ="menu-link" href = "create_db.php">Clear Database </a>
+	</div>	
   	    <div>
   	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
   	    </div>

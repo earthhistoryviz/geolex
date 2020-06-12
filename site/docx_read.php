@@ -63,10 +63,10 @@ function docx_read($filename)
     $vars = array(
       array("name" => "name",            "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/"),
       array("name" => "period",          "matchoffset" => 1, "pattern" => "/Period:\s*(\w+)/"),
-      array("name" => "age_interval",    "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\): (\w+)/"),
+      array("name" => "age_interval",    "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/"),
       array("name" => "province",        "matchoffset" => 1, "pattern" => "/Province:\s*(\w+)/"),
-      array("name" => "type_locality",   "matchoffset" => 2, "pattern" => "/Type Locality and Naming:(\s*(.+))Lithology:/"),
-      array("name" => "lithology",       "matchoffset" => 1, "pattern" => "/Lithology:(\s*(.+))Relationships and Distribution:/"),
+      array("name" => "type_locality",   "matchoffset" => 2, "pattern" => "/Type Locality and Naming:(\s*(.+))Lithology and Thickness:/"),
+      array("name" => "lithology",       "matchoffset" => 1, "pattern" => "/Lithology and Thickness:(\s*(.+))Relationships and Distribution:/"),
       array("name" => "lower_contact",   "matchoffset" => 1, "pattern" => "/Lower contact:(\s*(.+))Upper contact:/"),
       array("name" => "upper_contact",   "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional extent:/"),
       array("name" => "regional_extent", "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)Fossils:/"),
@@ -92,10 +92,9 @@ echo "ministr = $ministr";
           if (preg_match("/\r\n/", $vars[$i]["value"])) { // only add paragraph tags if there are newlines in it (single-line doesn't have them)
             $vars[$i]["value"] = "<p>" . str_replace("\r\n", "</p>\r\n<p>", $vars[$i]["value"]) . "</p>";
           }
-
-          if ($v["name"] == "compiler") {
-            $vars[$i]["value"] = str_replace("(", "", $v["value"]);
-            $vars[$i]["value"] = str_replace(")", "", $v["value"]);
+          if ($vars[$i]["name"] == "compiler") {
+            $vars[$i]["value"] = str_replace("(", "", $vars[$i]["value"]);
+            $vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
           }
 
         }
@@ -119,7 +118,7 @@ echo "ministr = $ministr";
         $sql .= ")";
         echo "Sending query: <pre>$sql</pre>";
         echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
-          
+        $conn->real_escape_string($sql);	
         if ($conn->query($sql) === TRUE) {
             echo "data inserted ";
         } else {

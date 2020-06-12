@@ -1,6 +1,5 @@
-<
-php
-$s                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ervername = "localhost";
+<?php
+$servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "myDB";
