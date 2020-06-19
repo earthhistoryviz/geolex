@@ -10,6 +10,20 @@ if($formationName[formation] == "") {?>
     include("footer.php");
     exit(0);
 }
+
+$imagedisplaycount = 0;
+function displayImages($images, $imtype) {
+  foreach($images[$imtype] as $i) {
+    $id = "image_".$imtype."_".$imagedisplaycount;
+    ?><div id="<?php echo $id?>">
+      <a href="<?php echo $i["full"];?>">
+        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
+	    </a>
+	    <input id="<?php echo $i["full"];?>" type="button" value="Delete" onclick='delImageClicked("<?php echo $i['full'];?>", "<?php echo $imtype?>", "<?php echo $id?>");' />
+    </div><?php
+  }
+}
+
 ?>
 <title><?=$formationName[formation]?></title>
 
@@ -150,7 +164,7 @@ if ($dirs) {
     }
 </script>
 <?php
-var_dump($images);
+//var_dump($images);
 if (!($_SESSION["loggedIn"])) {
     ?>
     <form onsubmit ="return editValues();" class="my-form">
@@ -221,7 +235,7 @@ if (!($_SESSION["loggedIn"])) {
 
     <div id="relationships_distribution" style="max-width: 1024px;">
         <h3><b>Relationships and Distribution</b></h3>
-        <div id="lower_contact" style="text-indent: 50px; max-width: 1024px;" >
+        <div id="lower_contact" style="max-width: 1024px;" >
             <h4 style="display: inline;">Lower Contact: </h4>
             <span><?=$lower_contact?></span>
             <div style="display: flex; flex-direction: row;">
@@ -236,7 +250,7 @@ if (!($_SESSION["loggedIn"])) {
                 ?>
             </div>
         </div>
-        <div id="upper_contact" style="text-indent: 50px; max-width: 1024px;">
+        <div id="upper_contact" style="max-width: 1024px;">
             <h4 style="display: inline;">Upper Contact: </h4>
             <span><?=$upper_contact?></span>
             <div style="display: flex; flex-direction: row;">
@@ -251,7 +265,7 @@ if (!($_SESSION["loggedIn"])) {
                 ?>
             </div>
         </div>
-        <div id="regional_extent" style="text-indent: 50px; max-width: 1024px;">
+        <div id="regional_extent" style="max-width: 1024px;">
             <h4 style="display: inline;">Regional Extent: </h4>
             <span><?=$regional_extent?></span>
             <div style="display: flex; flex-direction: row;">
@@ -322,17 +336,7 @@ else {
         <input type="file" name="title_image" id ="title_image"/>
         <input id="Addtitle" type="button" name="add_title_image" value="Add Chosen Title Image" onclick = addImageClicked('title') />
         <div style="display: flex; flex-direction: row;">
-        <?php
-          foreach($images['title'] as $i) {
-            ?><div>
-              <a href="<?php echo $i["full"];?>">
-                <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-	      </a>
-	      <input id = "<?php echo $i["full"];?>" type = "button" value = "Delete" onclick = 'delImageClicked("<?php echo $i['full'];?>")' />
-
-            </div><?php
-          }
-        ?>
+          <?php displayImages($images, 'title') ?>
         </div>
         <hr>
     </div>
@@ -362,16 +366,7 @@ else {
         <p id="type_value"><?=$type_locality?></p><br>
         <input type="file" name="locality_image" id ="locality_image"/>
         <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = "addImageClicked('locality')" />
-        <div style="display: flex; flex-direction: row;">
-            <?php
-            foreach($images['locality'] as $i) {
-                ?><div>
-                <a href="<?php echo $i["full"];?>">
-                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                </a>
-                </div><?php
-            }
-            ?>
+        <?php displayImages($images, 'locality') ?>
     </div>
 
     <div id="lithology">
@@ -379,16 +374,7 @@ else {
         <p id ="lithology_value"><?=$lithology?></p><br>
         <input type="file" name="lithology_image" id = "lithology_image"/>
         <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
-        <div style="display: flex; flex-direction: row;">
-            <?php
-            foreach($images['lithology'] as $i) {
-                ?><div>
-                <a href="<?php echo $i["full"];?>">
-                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                </a>
-                </div><?php
-            }
-            ?>
+        <?php displayImages($images, 'lithology') ?>
     </div>
 
     <div id="relationships_distribution">
@@ -398,48 +384,21 @@ else {
             <p id="lower_value"><?=$lower_contact?></p>
             <input type="file" name="lowercontact_image" id = "lowercontact_image"/>
             <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
-            <div style="display: flex; flex-direction: row;">
-                <?php
-                foreach($images['lowercontact'] as $i) {
-                    ?><div>
-                    <a href="<?php echo $i["full"];?>">
-                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                    </a>
-                    </div><?php
-                }
-                ?>
+            <?php displayImages($images, 'lowercontact') ?>
         </div>
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
             <p id="upper_value"><?=$upper_contact?></p>
             <input type="file" name="uppercontact_image" id = "uppercontact_image"/>
             <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
-            <div style="display: flex; flex-direction: row;">
-                <?php
-                foreach($images['uppercontact'] as $i) {
-                    ?><div>
-                    <a href="<?php echo $i["full"];?>">
-                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                    </a>
-                    </div><?php
-                }
-                ?>
+            <?php displayImages($images, 'uppercontact') ?>
         </div>
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
             <p id="regional_value"><?=$regional_extent?></p><br>
             <input type="file" name="regionalcontact_image" id = "regionalextent_image"/>
             <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick = addImageClicked('regionalextent') />
-            <div style="display: flex; flex-direction: row;">
-                <?php
-                foreach($images['regionalextent'] as $i) {
-                    ?><div>
-                    <a href="<?php echo $i["full"];?>">
-                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                    </a>
-                    </div><?php
-                }
-                ?>
+            <?php displayImages($images, 'regionalextent') ?>
         </div>
     </div>
 
@@ -448,16 +407,7 @@ else {
         <p id ="fossil_value"><?=$fossils?></p><br>
         <input type="file" name="fossil_image" id = "fossil_image"/>
         <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')" />
-        <div style="display: flex; flex-direction: row;">
-            <?php
-            foreach($images['fossil'] as $i) {
-                ?><div>
-                <a href="<?php echo $i["full"];?>">
-                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                </a>
-                </div><?php
-            }
-            ?>
+        <?php displayImages($images, 'fossil') ?>
     </div>
 
     <div id="age">
@@ -499,18 +449,18 @@ function deleteform(){
 	document.removeChild(newform);
 
 }
-function delImageClicked(type){
-	//img = document.getElementById(type)
-	//	img.parentNode.removeChild(img);
-	console.log(type);
-	str1 = "/app/";
-	type2 = str1.concat(type);
-	console.log(type2);
+function delImageClicked(path, type, id){
+	console.log("delImageClicked: asked to delete image at path ", path);
+	const fullpath = "/app" + path;
 	let form = new FormData();
-	form.append("Img_select",type2);
+	form.append("Img_select",fullpath);
 
 	let x = fetch('/delete_image.php',{method:"POST",body:form}).then(function(res){
-		console.log("HTTP response code:",res.text().then(function(a){console.log(a)}));
+    res.text().then(function(val) {
+      console.log('Response text = ', val);
+	    img = document.getElementById(id);
+    	img.parentNode.removeChild(img);
+    });
 	}).catch(function(e){
  		console.log("Error deleting image:",e);
 	});

@@ -6,7 +6,8 @@
 <body>
 
 <?php
-
+include("navBar.php");
+include("SearchBar.php");
 function docx_read($filename)
 {
     $servername = "localhost";
@@ -60,6 +61,7 @@ function docx_read($filename)
     var_dump($splitcontent);
     $count = 0;
 
+    $nameindex = 0; // The index of the "name" field in the array below:
     $vars = array(
       array("name" => "name",            "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/"),
       array("name" => "period",          "matchoffset" => 1, "pattern" => "/Period:\s*(\w+)/"),
@@ -78,7 +80,6 @@ function docx_read($filename)
     );
 
     foreach ($splitcontent as $ministr) {
-echo "ministr = $ministr";
         if ($count++ < $skipFirstNFormations) continue;
 
         // match all the patterns
@@ -99,6 +100,12 @@ echo "ministr = $ministr";
 
         }
 
+        // Check if the name is blank, if so, do not insert anything to the database
+        if (strlen(trim($vars[$nameindex]["value"])) < 1) {
+          echo "Found an empty name, ignoring...";
+          continue;
+        }
+
         $sql = "INSERT INTO formation(";
         for($i=0; $i<count($vars); $i++) {
           $v = $vars[$i];
@@ -110,19 +117,21 @@ echo "ministr = $ministr";
         $sql .= ") VALUES (";
         for($i=0; $i<count($vars); $i++) {
           $v = $vars[$i];
-          $sql .= "'".$v["value"]."'";
+          $sql .= "'".trim($conn->real_escape_string($v["value"]))."'";
           if ($i < count($vars)-1) {
             $sql .= ",";
           }
         }
         $sql .= ")";
-        echo "Sending query: <pre>$sql</pre>";
         echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
-        $conn->real_escape_string($sql);	
         if ($conn->query($sql) === TRUE) {
             echo "data inserted ";
         } else {
+            echo "-------------------------------------------------\n\n<br><br>";
             echo "Error inserted " . $conn->error;
+            echo "The sent query was: : <pre>$sql</pre>";
+            echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
+            echo "-------------------------------------------------\n\n<br><br>";
         }
 
     }

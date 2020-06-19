@@ -22,6 +22,7 @@ if (isset($_REQUEST['search'])) {
     //else{
     while ($row = mysqli_fetch_array($result)){
         $name = $row['name'];
+        if (strlen($name) < 1) continue;
         array_push($arr, $name);
         $output = '<h4>'.$name.'</h4>';
     }
