@@ -28,6 +28,31 @@ function displayImages($images, $imtype) {
 <title><?=$formationName[formation]?></title>
 
 <?php
+// Get all the formation names to build the regexp searches in the text for automatic link creation
+$sql = "SELECT ID,name FROM formation";
+$result = mysqli_query($conn, $sql);
+$nameregexes = array();
+while($row = mysqli_fetch_array($result)) {
+  $id = $row['ID'];
+  $name = $row['name'];
+  // turn name into regular expression allowing arbitrary number of spaces between words
+  preg_replace("/ /g", " \*", $name);
+  array_push($nameregexes, array(
+    "ID" => $id,
+    "name" => $name,
+    "regex" => "/($name)/i"
+  ));
+}
+//echo "nameregexes = <pre>"; print_r($nameregexes); echo "</pre>";
+
+function findAndMakeFormationLinks($str, $nameregexes) {
+  for($i=0; $i<count($nameregexes); $i++) {
+    $n = $nameregexes[$i];
+    $str = preg_replace($n["regex"], "<a href=\"displayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>", $str);
+  }
+  return $str;
+}
+
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
 $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_array($result)) {
@@ -37,32 +62,17 @@ while($row = mysqli_fetch_array($result)) {
     $age_interval = trim($row['age_interval']);
     $province = $row['province'];
     $type_locality = $row['type_locality'];
-    
-    $fmgr_regexp = "~([^\s]+\sFm|[^\s]+\sGr)([ .,;:])~";
-
-    $lithology_orig = $row['lithology'];
-    $lithology = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $lithology_orig);
-    
-    $lower_contact = $row['lower_contact'];
-    $lower_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $lower_contact);
-    
-    $upper_contact = $row['upper_contact'];
-    $upper_contact = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $upper_contact);
-    
-    $regional_extent = $row['regional_extent'];
-    $regional_extent = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $regional_extent);
-    
-    $fossils = $row['fossils'];
-    $fossils = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $fossils);
-    
     $age = $row['age'];
     
-    $depositional = $row['depositional'];
-    $depositional = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $depositional);
-    
-    $additional_info = $row['additional_info'];
-    $additional_info = preg_replace($fmgr_regexp, "<a href=\"displayInfo.php?formation=$1\">$1</a>$2", $additional_info);
-    
+    //$fmgr_regexp = "~([^\s]+\sFm|[^\s]+\sGr)([ .,;:])~"; // this is the old regexp
+    $lithology = findAndMakeFormationLinks($row['lithology'], $nameregexes);
+    $lower_contact = findAndMakeFormationLinks($row['lower_contact'], $nameregexes);
+    $upper_contact = findAndMakeFormationLinks($row['upper_contact'], $nameregexes);
+    $regional_extent = findAndMakeFormationLinks($row['regional_extent'], $nameregexes);
+    $fossils = findAndMakeFormationLinks($row['fossils'], $nameregexes);
+    $depositional = findAndMakeFormationLinks($row['depositional'], $nameregexes);
+    $additional_info = findAndMakeFormationLinks($row['additional_info'], $nameregexes);
+
     $compiler = $row['compiler'];
 
     //$my_array = [$lithology, $lower_contact, $upper_contact, $regional_extent, $fossils, $depositional];

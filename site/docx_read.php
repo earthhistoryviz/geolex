@@ -53,20 +53,24 @@ function docx_read($filename)
         return '<p>' . preg_replace('/[\r\n]+/', '</p><p>', $text) . '</p>';
     }
 
+    $command = "mammoth ".$filename;
 
-    $content = read_file_docx($filename);
-    $splitcontent = explode($splitpattern, $content);
+    //echo "command = $command<br/>";
+    //$content = read_file_docx($filename);
+    exec($command,$content);
+    //echo "Content = <pre>";print_r($content);echo"</pre><br/>, result = $result<br/>";
+    $splitcontent = explode($splitpattern, $content[0]);
     $skipFirstNFormations = 0;
 
-    var_dump($splitcontent);
+    //echo "splitcontent = <pre>"; var_dump($splitcontent); echo "</pre>";
     $count = 0;
 
     $nameindex = 0; // The index of the "name" field in the array below:
     $vars = array(
       array("name" => "name",            "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/"),
-      array("name" => "period",          "matchoffset" => 1, "pattern" => "/Period:\s*(\w+)/"),
+      array("name" => "period",          "matchoffset" => 1, "pattern" => "/Period:\s*(.*)Age Interval/"),
       array("name" => "age_interval",    "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/"),
-      array("name" => "province",        "matchoffset" => 1, "pattern" => "/Province:\s*(\w+)/"),
+      array("name" => "province",        "matchoffset" => 1, "pattern" => "/Province:\s*(.*)Type Locality and Naming:/"),
       array("name" => "type_locality",   "matchoffset" => 2, "pattern" => "/Type Locality and Naming:(\s*(.+))Lithology and Thickness:/"),
       array("name" => "lithology",       "matchoffset" => 1, "pattern" => "/Lithology and Thickness:(\s*(.+))Relationships and Distribution:/"),
       array("name" => "lower_contact",   "matchoffset" => 1, "pattern" => "/Lower contact:(\s*(.+))Upper contact:/"),
