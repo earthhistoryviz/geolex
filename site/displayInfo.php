@@ -2,14 +2,17 @@
 include("navBar.php");
 include("SearchBar.php");
 include("SqlConnection.php");
-$formationName = $_REQUEST;
-if($formationName[formation] == "") {?>
+$formation = $_REQUEST;
+$auth = $_SESSION["loggedIn"];
+
+if($formation[formation] == "") {?>
     <title>Empty Search</title>
     <h3><center>Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</center></h3>
     <?php
     include("footer.php");
     exit(0);
 }
+
 
 $imagedisplaycount = 0;
 function displayImages($images, $imtype) {
@@ -24,8 +27,15 @@ function displayImages($images, $imtype) {
   }
 }
 
+function eliminateParagraphs($str) {
+  while (preg_match("/<p>.*</p>/g", $str)) {
+    $str = preg_replace("/<p>.*</p>/g", "", $str);
+  }
+  return $str;
+}
+
 ?>
-<title><?=$formationName[formation]?></title>
+<title><?=$formation[formation]?></title>
 
 <?php
 // Get all the formation names to build the regexp searches in the text for automatic link creation
@@ -53,7 +63,7 @@ function findAndMakeFormationLinks($str, $nameregexes) {
   return $str;
 }
 
-$sql = "SELECT * FROM formation WHERE name LIKE '%$formationName[formation]%'";
+$sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'";
 $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_array($result)) {
     $id = $row['ID'];
@@ -82,7 +92,7 @@ while($row = mysqli_fetch_array($result)) {
 if($name == "") {
     ?>
     <title>No Match</title>
-    <h3>Nothing found for "<?=$formationName[formation]?>". Please search again.</h3>
+    <h3>Nothing found for "<?=$formation[formation]?>". Please search again.</h3>
     <?php
     include("footer.php");
     exit(0);
@@ -155,7 +165,10 @@ if ($dirs) {
     }
 </style>
 
-<script>
+<?php
+if ($auth) {
+?>
+  <script>
     function saveText(){
         var xr = new XMLHttpRequest();
         var url = "saveNewText.php";
@@ -172,218 +185,82 @@ if ($dirs) {
         alert("Form submitted!");
         return false;
     }
-</script>
+  </script>
 <?php
-//var_dump($images);
-if (!($_SESSION["loggedIn"])) {
-    ?>
-    <form onsubmit ="return editValues();" class="my-form">
-    <div id="title" style="max-width: 1024px;">
-        <h1><b><?=$name?></b></h1>
-        <hr>
-        <div style="display: flex; flex-direction: row;">
-            <?php
-            foreach($images['title'] as $i) {
-                ?><div>
-                <a href="<?php echo $i["full"];?>">
-                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                </a>
-                </div><?php
-            }
-            ?>
-    </div>
-
-    <div id="id" style="max-width: 1024px;">
-        <h3 style="display: inline;"><b>ID: </b></h3>
-        <span><?=$id?></span>
-    </div>
-
-    <div id="period" style="max-width: 1024px;">
-        <h3 style="display: inline;"><b>Period: </b></h3>
-        <span><?=$period?></span>
-    </div>
-
-    <div id="age_interval" style="max-width: 1024px;">
-        <h3 style="display: inline;"><b>Age Interval: </b></h3>
-        <span><?=$age_interval?></span>
-    </div>
-
-    <div id="province" style="max-width: 1024px;">
-        <h3 style="display: inline;"><b>Province: </b></h3>
-        <span><?=$province?></span>
-    </div>
-
-    <div id="type_locality" style="max-width: 1024px;">
-        <h3><b>Type Locality and Naming</b></h3>
-        <p><?=$type_locality?></p>
-        <div style="display: flex; flex-direction: row;">
-            <?php
-            foreach($images['locality'] as $i) {
-                ?><div>
-                <a href="<?php echo $i["full"];?>">
-                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                </a>
-                </div><?php
-            }
-            ?>
-        </div>
-
-    <div id="lithology" style="max-width: 1024px;">
-        <h3><b>Lithology and Thickness</b></h3>
-        <p><?=$lithology?></p>
-        <div style="display: flex; flex-direction: row;">
-            <?php
-            foreach($images['lithology'] as $i) {
-                ?><div>
-                <a href="<?php echo $i["full"];?>">
-                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                </a>
-                </div><?php
-            }
-            ?>
-    </div>
-
-    <div id="relationships_distribution" style="max-width: 1024px;">
-        <h3><b>Relationships and Distribution</b></h3>
-        <div id="lower_contact" style="max-width: 1024px;" >
-            <h4 style="display: inline;">Lower Contact: </h4>
-            <span><?=$lower_contact?></span>
-            <div style="display: flex; flex-direction: row;">
-                <?php
-                foreach($images['lowercontact'] as $i) {
-                    ?><div>
-                    <a href="<?php echo $i["full"];?>">
-                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                    </a>
-                    </div><?php
-                }
-                ?>
-            </div>
-        </div>
-        <div id="upper_contact" style="max-width: 1024px;">
-            <h4 style="display: inline;">Upper Contact: </h4>
-            <span><?=$upper_contact?></span>
-            <div style="display: flex; flex-direction: row;">
-                <?php
-                foreach($images['uppercontact'] as $i) {
-                    ?><div>
-                    <a href="<?php echo $i["full"];?>">
-                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                    </a>
-                    </div><?php
-                }
-                ?>
-            </div>
-        </div>
-        <div id="regional_extent" style="max-width: 1024px;">
-            <h4 style="display: inline;">Regional Extent: </h4>
-            <span><?=$regional_extent?></span>
-            <div style="display: flex; flex-direction: row;">
-                <?php
-                foreach($images['regionalextent'] as $i) {
-                    ?><div>
-                    <a href="<?php echo $i["full"];?>">
-                        <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                    </a>
-                    </div><?php
-                }
-                ?>
-            </div>
-        </div>
-    </div>
-
-    <div id="fossils" style="max-width: 1024px;">
-        <h3><b>Fossils</b></h3>
-        <p><?=$fossils?></p>
-        <div style="display: flex; flex-direction: row;">
-            <?php
-            foreach($images['fossil'] as $i) {
-                ?><div>
-                <a href="<?php echo $i["full"];?>">
-                    <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-                </a>
-                </div><?php
-            }
-            ?>
-        </div>
-    </div>
-
-    <div id="age" style="max-width: 1024px;">
-        <h3><b>Age</b></h3>
-        <p><?=$age?></p>
-    </div>
-
-    <div id="depositional" style="max-width: 1024px;">
-        <h3><b>Depositional setting</b></h3>
-        <p><?=$depositional?></p>
-    </div>
-
-    <div id="additional_info" style="max-width: 1024px;">
-        <h3><b>Additional Information</b></h3>
-        <p><?=$additional_info?></p>
-    </div>
-
-    <div id="compiler" style="max-width: 1024px;">
-        <h3 style="display: inline;"><b>Compiler:</b></h3>
-        <span><?=$compiler?></span>
-    </div>
-    </form>
-
-
-        <?php
 }
 
-// If the user logged in
-
-else {
     ?>
-    <input id="Edit" type ="button" value = "Edit">
-    <input id="Save" type="button" value="Save" disabled onclick="save()">
-    <input id="AddNewFile" type="button" value="Add new files" disabled>
-    <input id="Delete" type="button" value="Delete" name="Delete Formation" onclick = deleteform() />
-    <div id= onblur="saveText()">
+    <style>
+      .horiz {
+        display: flex;
+        flex-direction: row;
+      }
+      .big {
+        font-size: 1.2em;
+      }
+      .minwidth {
+        min-width: 50px;
+      }
+    </style>
+
+    <?php if ($auth) {?>
+      <input id="Edit" type ="button" value = "Edit">
+      <input id="Save" type="button" value="Save" disabled>
+      <input id="AddNewFile" type="button" value="Add new files" disabled>
+      <input id="Delete" type="button" value="Delete" name="Delete Formation" onclick = deleteform() />
+    <?php } ?>
+
+    <div>
         <b><h1 id ='title'><?=$name?></h1></b>
-        <input type="file" name="title_image" id ="title_image"/>
-        <input id="Addtitle" type="button" name="add_title_image" value="Add Chosen Title Image" onclick = addImageClicked('title') />
+        <?php if ($auth) {?>
+          <input type="file" name="title_image" id ="title_image"/>
+          <input id="Addtitle" type="button" name="add_title_image" value="Add Chosen Title Image" onclick = addImageClicked('title') />
+        <?php } ?>
         <div style="display: flex; flex-direction: row;">
           <?php displayImages($images, 'title') ?>
         </div>
         <hr>
     </div>
-    
-    <div id="id" style="max-width: 1024px;">
-        <h3 style="display: inline;"><b>ID: </b></h3>
-        <span id ="id_value"><?=$id?></span>
+   
+    <?php if ($auth) {?>
+    <div id="id" class="horiz" style="max-width: 1024px;">
+        <b>ID:&nbsp; </b>
+        <div id ="id_value"><?=eliminateParagraphs($id)?></div>
+    </div>
+    <?php } ?>
+
+    <div id="period" class="horiz">
+        <b>Period:&nbsp; </b>
+        <div id="period_value" class="minwidth"><?=eliminateParagraphs($period)?></div><br>
     </div>
 
-    <div id="period">
-        <h3 style="display: inline;"><b>Period: </b></h3>
-        <span id="period_value"><?=$period?></span><br>
+    <div id="age_interval" class="horiz">
+        <b>Age Interval:&nbsp; </b>
+        <div id ="agein_value" class="minwidth"><?=eliminateParagraphs($age_interval)?></div><br>
     </div>
 
-    <div id="age_interval">
-        <h3 style="display: inline;"><b>Age Interval: </b></h3>
-        <span id ="agein_value"><?=$age_interval?></span><br>
-    </div>
-
-    <div id="province" >
-        <h3 style="display: inline;"><b>Province: </b></h3>
-        <span id = "province_value"><?=$province?></span><br>
+    <div id="province" class="horiz" >
+        <b>Province:&nbsp; </b>
+        <div id = "province_value" class="minwidth"><?=eliminateParagraphs($province)?></div><br>
     </div>
 
     <div id="type_locality">
         <h3><b>Type Locality and Naming</b></h3>
-        <p id="type_value"><?=$type_locality?></p><br>
-        <input type="file" name="locality_image" id ="locality_image"/>
-        <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = "addImageClicked('locality')" />
+        <div id="type_value"><?=$type_locality?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="locality_image" id ="locality_image"/>
+          <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = "addImageClicked('locality')" />
+        <?php } ?>
         <?php displayImages($images, 'locality') ?>
     </div>
 
     <div id="lithology">
         <h3><b>Lithology and Thickness</b></h3>
-        <p id ="lithology_value"><?=$lithology?></p><br>
-        <input type="file" name="lithology_image" id = "lithology_image"/>
-        <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
+        <div id ="lithology_value"><?=$lithology?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="lithology_image" id = "lithology_image"/>
+          <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
+        <?php } ?>
         <?php displayImages($images, 'lithology') ?>
     </div>
 
@@ -391,57 +268,64 @@ else {
         <h3><b>Relationships and Distribution</b></h3>
         <div id="lower_contact">
             <h4><i>Lower contact</i></h4>
-            <p id="lower_value"><?=$lower_contact?></p>
-            <input type="file" name="lowercontact_image" id = "lowercontact_image"/>
-            <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
+            <div id="lower_value"><?=$lower_contact?></div>
+            <?php if ($auth) {?>
+              <input type="file" name="lowercontact_image" id = "lowercontact_image"/>
+              <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
+            <?php } ?>
             <?php displayImages($images, 'lowercontact') ?>
         </div>
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
-            <p id="upper_value"><?=$upper_contact?></p>
-            <input type="file" name="uppercontact_image" id = "uppercontact_image"/>
-            <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
+            <div id="upper_value"><?=$upper_contact?></div>
+            <?php if ($auth) {?>
+              <input type="file" name="uppercontact_image" id = "uppercontact_image"/>
+              <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
+            <?php } ?>
             <?php displayImages($images, 'uppercontact') ?>
         </div>
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
-            <p id="regional_value"><?=$regional_extent?></p><br>
-            <input type="file" name="regionalcontact_image" id = "regionalextent_image"/>
-            <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick = addImageClicked('regionalextent') />
+            <div id="regional_value"><?=$regional_extent?></div><br>
+            <?php if ($auth) {?>
+              <input type="file" name="regionalcontact_image" id = "regionalextent_image"/>
+              <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick = addImageClicked('regionalextent') />
+            <?php } ?>
             <?php displayImages($images, 'regionalextent') ?>
         </div>
     </div>
 
     <div id="fossils">
         <h3><b>Fossils</b></h3>
-        <p id ="fossil_value"><?=$fossils?></p><br>
-        <input type="file" name="fossil_image" id = "fossil_image"/>
-        <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')" />
+        <div id ="fossil_value"><?=$fossils?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="fossil_image" id = "fossil_image"/>
+          <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')" />
+        <?php } ?>
         <?php displayImages($images, 'fossil') ?>
     </div>
 
     <div id="age">
-        <h3 style="display: inline;"><b>Age: </b></h3>
-        <span id="age_value"><?=$age?></span><br>
+        <h3><b>Age&nbsp; </b></h3>
+        <div id="age_value"><?=eliminateParagraphs($age)?></div><br>
     </div>
 
     <div id="depositional">
         <h3><b>Depositional setting</b></h3>
-        <p id="depo_value"><?=$depositional?></p><br>
+        <div id="depo_value"><?=$depositional?></div><br>
     </div>
 
     <div id="additional_info">
         <h3><b>Additional Information</b></h3>
-        <p id="ad_value"><?=$additional_info?></p><br>
+        <div id="ad_value"><?=$additional_info?></div><br>
     </div>
 
     <div id="compiler">
-        <h3 style="display: inline;"><b>Compiler: </b></h3>
-        <span id="comp_val"><?=$compiler?></span><br>
+        <h3><b>Compiler</b></h3>
+        <div id="comp_val"><?=eliminateParagraphs($compiler)?></div><br>
     </div>
-    <?php
-}
-?> 
+
+<?php if ($auth) {?> 
 <script type ="text/javascript">
 function deleteform(){
 	console.log("delete pressed");
@@ -547,42 +431,12 @@ function addImageClicked(type) {
                 }
             }
         });
-        saveBtn.addEventListener('click',function(e){
-            for (var i = 0;i<editables.length;i++) {
-                localStorage.setItem(editables[i].getAttribute('id'), editables[i].innerHTML);
-            }
-            var id_value = localStorage.getItem('id_value');
-            var title = localStorage.getItem('title');
-            var period_value = localStorage.getItem('period_value');
-            var agein_value = localStorage.getItem('agein_value');
-            var province_value = localStorage.getItem('province_value');
-            var type_value = localStorage.getItem('type_value');
-            var lithology_value = localStorage.getItem('lithology_value');
-            var lower_value = localStorage.getItem('lower_value');
-            var upper_value = localStorage.getItem('upper_value');
-            var regional_value = localStorage.getItem('regional_value');
-            var fossil_value = localStorage.getItem('fossil_value');
-            var age_value = localStorage.getItem('age_value');
-            var depo_value = localStorage.getItem('depo_value');
-            var ad_value = localStorage.getItem('ad_value');
-            var comp_value = localStorage.getItem('comp_val');
-            var savedata = {
-                            "id_value":id_value,
-                            "title":title,
-                            "period_value":period_value,
-                            "agein_value":agein_value,
-                            "province_value":province_value,
-                            "type_value":type_value,
-                            "lithology_value":lithology_value,
-                            "lower_value":lower_value,
-                            "upper_value":upper_value,
-                            "regional_value":regional_value,
-                            "fossil_value":fossil_value,
-                            "age_value":age_value,
-                            "depo_value":depo_value,
-                            "ad_value":ad_value,
-                            "comp_value":comp_value};
 
+        saveBtn.addEventListener('click',function(e){
+            var savedata = {};
+            for (let i = 0; i<editables.length; i++) {
+              savedata[editables[i].id] = editables[i].innerHTML;
+            }
             form = document.createElement('form');
             document.body.appendChild(form);
             form.method="POST";
@@ -598,11 +452,10 @@ function addImageClicked(type) {
             //console.log(savedata["id_value"])
             form.submit();
             document.removeChild(form);
-
         });
 
 </script>
-
+<?php } ?>
 <?php
 include("footer.php");
 ?>

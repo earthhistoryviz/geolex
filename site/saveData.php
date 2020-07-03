@@ -11,10 +11,8 @@ for($i = 0;$i<sizeof($list_names); $i = $i +1){
     array_push($list_values,mysqli_real_escape_string($conn,$_POST[$list_names[$i]]));
 
 }
-/*for($i = 0; i<sizeof($list_values);$i = $i+1){
-$list_values[i] = mysqli::real_escape_string($list_values[i]);
-}*/
-echo sizeof($list_values);
+
+
 $sql = "UPDATE formation
        SET name = '$list_values[1]',
            period ='$list_values[2]',
@@ -31,12 +29,12 @@ $sql = "UPDATE formation
            additional_info = '$list_values[13]',
            compiler = '$list_values[14]'
            WHERE id = '$list_values[0]';";
-echo "<pre>$sql</pre>";
 
 if ($conn->query($sql) === TRUE) {
-       echo "data inserted ";
+  // worked
+  header("location: displayInfo.php?formation=".$list_values[1]);
 } else {
-     echo "Error inserted " . $conn->error;
+  // failed
+  echo "Error, could not update data, error was: " . $conn->error;
 }
-header("Location:displayInfo.php");
 ?>
