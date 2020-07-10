@@ -43,14 +43,14 @@ $sql = "SELECT ID,name FROM formation";
 $result = mysqli_query($conn, $sql);
 $nameregexes = array();
 while($row = mysqli_fetch_array($result)) {
-  $id = $row['ID'];
-  $name = $row['name'];
+  $rid = $row['ID'];
+  $rname = $row['name'];
   // turn name into regular expression allowing arbitrary number of spaces between words
-  preg_replace("/ /g", " \*", $name);
+  preg_replace("/ /g", " \*", $rname);
   array_push($nameregexes, array(
-    "ID" => $id,
-    "name" => $name,
-    "regex" => "/($name)/i"
+    "ID" => $rid,
+    "name" => $rname,
+    "regex" => "/($rname)/i"
   ));
 }
 //echo "nameregexes = <pre>"; print_r($nameregexes); echo "</pre>";
