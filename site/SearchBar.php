@@ -1,3 +1,4 @@
+<?php include("SqlConnection.php") ?>
 <!DOCTYPE html>
 <html>
 
@@ -19,7 +20,43 @@
     }
     
 </style>
+<?php
+  
+  // Get all the unique periods and provinces
+  $sql = "SELECT name, period, province FROM formation";
+  $result = mysqli_query($conn, $sql);
+  $filters = array();
+  // We need to clean up the html tags from the periods and provices to get a canonical name
+  while ($row = mysqli_fetch_array($result)) {
+    foreach (array("province", "period") as $v) {
+      $canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
+      $canonical = trim($canonical);
+      $canonical = strtoupper($canonical);
+      $canonical = explode(",", $canonical);
+      foreach ($canonical as $c) {
+        $c = trim($c);
+        if (strlen($c) > 0) {
+          $filters[$v][$c] = true;
+        }
+      }
+    }
+  }
+  function selectFilter($v) {
+   global $filters;
+   $list = array_keys($filters[$v]);
+   sort($list);
+   ?>
+   <select name="<?=$v?>filter" id="<?=$v?>filter">
+      <option value="">All</option>
+      <?php
+        foreach($list as $p) {
+          ?><option <?php if ($_REQUEST[$v."filter"] == $p) echo "SELECTED"; ?> value="<?=$p?>"><?=$p?></option><?php
+        }
+      ?>
+    </select><?php
+  }
 
+?>
 <body>
     <div class = "search-container">
         
@@ -36,15 +73,28 @@
         		else{
         			document.getElementById("submitbtn1").disabled = false;
 
-				}
+				    }
         	}
         	function viewAll(){
         		document.getElementById('searchbar').value = ''; 
+            document.getElementById('periodfilter').value = '';
+            document.getElementById('provincefilter').value = '';
         		document.getElementById('form').submit();
 
         	}
+          function submitFilter() {
+            document.getElementById('form').submit();
+          }
+
         	</script>
         <button id="submitbtn2" type="button" onclick="viewAll()"> View All Formations </button>
+        <br/>
+        Search by Period
+        <?php selectFilter("period") ?>
+        and Province
+        <?php selectFilter("province") ?>
+        <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
+
         </form>
     	
     </div>

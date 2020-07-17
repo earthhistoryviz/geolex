@@ -3,12 +3,20 @@ include("SqlConnection.php");
 
 $arr = array();
 $count = -1;
+
+$sql2 = "SELECT province FROM formation";
+$result = mysqli_query($conn, $sql2);
+$province_list = array_unique($result);
+
 //Collect
 //Within the single quotation marks is the name of the first field within the form
 if (isset($_REQUEST['search'])) {
-    $searchquery = $_REQUEST['search'];
+    $searchquery = ($_REQUEST['search']);
 
-    $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%'";
+    $provincefilter = ($_REQUEST['provincefilter']);
+    $periodfilter = ($_REQUEST['periodfilter']);
+
+    $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
 
     $result = mysqli_query($conn, $sql);
     //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
@@ -34,6 +42,7 @@ if (isset($_REQUEST['search'])) {
 
     sort($arr);    
 }
+
 ?>
 
 
