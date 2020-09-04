@@ -39,16 +39,14 @@ function eliminateParagraphs($str) {
 
 <?php
 // Get all the formation names to build the regexp searches in the text for automatic link creation
-$sql = "SELECT ID,name FROM formation";
+$sql = "SELECT name FROM formation";
 $result = mysqli_query($conn, $sql);
 $nameregexes = array();
 while($row = mysqli_fetch_array($result)) {
-  $rid = $row['ID'];
   $rname = $row['name'];
   // turn name into regular expression allowing arbitrary number of spaces between words
   preg_replace("/ /g", " \*", $rname);
   array_push($nameregexes, array(
-    "ID" => $rid,
     "name" => $rname,
     "regex" => "/($rname)/i"
   ));
@@ -56,40 +54,55 @@ while($row = mysqli_fetch_array($result)) {
 //echo "nameregexes = <pre>"; print_r($nameregexes); echo "</pre>";
 
 function findAndMakeFormationLinks($str, $nameregexes) {
+  $orig = $str;
   for($i=0; $i<count($nameregexes); $i++) {
     $n = $nameregexes[$i];
     $str = preg_replace($n["regex"], "<a href=\"displayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>", $str);
   }
-  return $str;
+  return trim($str);
 }
+
 
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'";
 $result = mysqli_query($conn, $sql);
+$fmdata = array(
+             'name' => array("needlinks" => false),
+           'period' => array("needlinks" => false),
+     'age_interval' => array("needlinks" => false), 
+         'province' => array("needlinks" => false),
+    'type_locality' => array("needlinks" => false),
+              'age' => array("needlinks" => false),
+        'lithology' => array("needlinks" => true),
+    'lower_contact' => array("needlinks" => true),
+    'upper_contact' => array("needlinks" => true),
+  'regional_extent' => array("needlinks" => true),
+          'fossils' => array("needlinks" => true),
+     'depositional' => array("needlinks" => true),
+  'additional_info' => array("needlinks" => true),
+         'compiler' => array("needlinks" => false),
+);
+
+$found = false;
 while($row = mysqli_fetch_array($result)) {
-    $id = $row['ID'];
-    $name = $row['name'];
-    $period = $row['period'];
-    $age_interval = trim($row['age_interval']);
-    $province = $row['province'];
-    $type_locality = $row['type_locality'];
-    $age = $row['age'];
-    
-    //$fmgr_regexp = "~([^\s]+\sFm|[^\s]+\sGr)([ .,;:])~"; // this is the old regexp
-    $lithology = findAndMakeFormationLinks($row['lithology'], $nameregexes);
-    $lower_contact = findAndMakeFormationLinks($row['lower_contact'], $nameregexes);
-    $upper_contact = findAndMakeFormationLinks($row['upper_contact'], $nameregexes);
-    $regional_extent = findAndMakeFormationLinks($row['regional_extent'], $nameregexes);
-    $fossils = findAndMakeFormationLinks($row['fossils'], $nameregexes);
-    $depositional = findAndMakeFormationLinks($row['depositional'], $nameregexes);
-    $additional_info = findAndMakeFormationLinks($row['additional_info'], $nameregexes);
-
-    $compiler = $row['compiler'];
-
-    //$my_array = [$lithology, $lower_contact, $upper_contact, $regional_extent, $fossils, $depositional];
-
+  $found = true;
+  // Fill in each of the variables that we're going to send to the browser
+  foreach($fmdata as $varname => $varvalue) {
+    $rowval = $row[$varname];
+    $fmdata[$varname]["raw"] = trim($rowval);
+    $fmdata[$varname]["display"] = trim($rowval);
+    if ($varvalue["needlinks"]) {
+      $fmdata[$varname]["display"] = findAndMakeFormationLinks($rowval, $nameregexes);
+    }
+  }
 }
 
-if($name == "") {
+
+
+//-----------------------------------------------------------
+// Start outputting the page
+//-----------------------------------------------------------
+
+if(!$found) {
     ?>
     <title>No Match</title>
     <h3>Nothing found for "<?=$formation[formation]?>". Please search again.</h3>
@@ -173,7 +186,7 @@ if ($auth) {
         var xr = new XMLHttpRequest();
         var url = "saveNewText.php";
         idname = "\""+idname+"\"";
-        var text = document.getElementById("title").innerHTML;
+        var text = document.getElementById("name").innerHTML;
         // var id = document.getElementById("").innerHTML;
         console.log(text);
         var vars = "newText="+text;
@@ -209,9 +222,10 @@ if ($auth) {
       <input id="AddNewFile" type="button" value="Add new files" disabled>
       <input id="Delete" type="button" value="Delete" name="Delete Formation" onclick = deleteform() />
     <?php } ?>
-
     <div>
-        <b><h1 id ='title'><?=$name?></h1></b>
+        <b>
+          <h1 id='name_value'><?=$fmdata["name"]["display"]?></h1>
+        </b>
         <?php if ($auth) {?>
           <input type="file" name="title_image" id ="title_image"/>
           <input id="Addtitle" type="button" name="add_title_image" value="Add Chosen Title Image" onclick = addImageClicked('title') />
@@ -222,31 +236,24 @@ if ($auth) {
         <hr>
     </div>
    
-    <?php if ($auth) {?>
-    <div id="id" class="horiz" style="max-width: 1024px;">
-        <b>ID:&nbsp; </b>
-        <div id ="id_value"><?=eliminateParagraphs($id)?></div>
-    </div>
-    <?php } ?>
-
     <div id="period" class="horiz">
         <b>Period:&nbsp; </b>
-        <div id="period_value" class="minwidth"><?=eliminateParagraphs($period)?></div><br>
+        <div id="period_value" class="minwidth"><?=eliminateParagraphs($fmdata["period"]["display"])?></div><br>
     </div>
 
     <div id="age_interval" class="horiz">
         <b>Age Interval:&nbsp; </b>
-        <div id ="agein_value" class="minwidth"><?=eliminateParagraphs($age_interval)?></div><br>
+        <div id="age_interval_value" class="minwidth"><?=eliminateParagraphs($fmdata["age_interval"]["display"])?></div><br>
     </div>
 
     <div id="province" class="horiz" >
         <b>Province:&nbsp; </b>
-        <div id = "province_value" class="minwidth"><?=eliminateParagraphs($province)?></div><br>
+        <div id="province_value" class="minwidth"><?=eliminateParagraphs($fmdata["province"]["display"])?></div><br>
     </div>
 
     <div id="type_locality">
         <h3><b>Type Locality and Naming</b></h3>
-        <div id="type_value"><?=$type_locality?></div><br>
+        <div id="type_locality_value"><?=$fmdata["type_locality"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="locality_image" id ="locality_image"/>
           <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = "addImageClicked('locality')" />
@@ -256,7 +263,7 @@ if ($auth) {
 
     <div id="lithology">
         <h3><b>Lithology and Thickness</b></h3>
-        <div id ="lithology_value"><?=$lithology?></div><br>
+        <div id="lithology_value"><?=$fmdata["lithology"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="lithology_image" id = "lithology_image"/>
           <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
@@ -268,7 +275,7 @@ if ($auth) {
         <h3><b>Relationships and Distribution</b></h3>
         <div id="lower_contact">
             <h4><i>Lower contact</i></h4>
-            <div id="lower_value"><?=$lower_contact?></div>
+            <div id="lower_contact_value"><?=$fmdata["lower_contact"]["display"]?></div>
             <?php if ($auth) {?>
               <input type="file" name="lowercontact_image" id = "lowercontact_image"/>
               <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
@@ -277,7 +284,7 @@ if ($auth) {
         </div>
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
-            <div id="upper_value"><?=$upper_contact?></div>
+            <div id="upper_contact_value"><?=$fmdata["upper_contact"]["display"]?></div>
             <?php if ($auth) {?>
               <input type="file" name="uppercontact_image" id = "uppercontact_image"/>
               <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
@@ -286,7 +293,7 @@ if ($auth) {
         </div>
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
-            <div id="regional_value"><?=$regional_extent?></div><br>
+            <div id="regional_extent_value"><?=$fmdata["regional_extent"]["display"]?></div><br>
             <?php if ($auth) {?>
               <input type="file" name="regionalcontact_image" id = "regionalextent_image"/>
               <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick = addImageClicked('regionalextent') />
@@ -297,7 +304,7 @@ if ($auth) {
 
     <div id="fossils">
         <h3><b>Fossils</b></h3>
-        <div id ="fossil_value"><?=$fossils?></div><br>
+        <div id="fossils_value"><?=$fmdata["fossils"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="fossil_image" id = "fossil_image"/>
           <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')" />
@@ -307,36 +314,36 @@ if ($auth) {
 
     <div id="age">
         <h3><b>Age&nbsp; </b></h3>
-        <div id="age_value"><?=eliminateParagraphs($age)?></div><br>
+        <div id="age_value"><?=eliminateParagraphs($fmdata["age"]["display"])?></div><br>
     </div>
 
     <div id="depositional">
         <h3><b>Depositional setting</b></h3>
-        <div id="depo_value"><?=$depositional?></div><br>
+        <div id="depositional_value"><?=$fmdata["depositional"]["display"]?></div><br>
     </div>
 
     <div id="additional_info">
         <h3><b>Additional Information</b></h3>
-        <div id="ad_value"><?=$additional_info?></div><br>
+        <div id="additional_info_value"><?=$fmdata["additional_info"]["display"]?></div><br>
     </div>
 
     <div id="compiler">
         <h3><b>Compiler</b></h3>
-        <div id="comp_val"><?=eliminateParagraphs($compiler)?></div><br>
+        <div id="compiler_val"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
     </div>
 
 <?php if ($auth) {?> 
 <script type ="text/javascript">
 function deleteform(){
 	console.log("delete pressed");
-	var title1 = document.getElementById('title');
+	var title1 = document.getElementById('name');
 	newform = document.createElement('form');
 	document.body.appendChild(newform);
 	newform.method = "POST";
 	newform.action = "deleteForm.php";
 	input = document.createElement('input');
 	input.type = "hidden";
-	input.name = "title";
+	input.name = "name";
 	input.value = title1.innerHTML;
 	newform.appendChild(input);
 	newform.submit();
@@ -409,25 +416,32 @@ function addImageClicked(type) {
    //location.reload()
 }
 
-</script>
-<script type="text/javascript">
         var editBtn = document.getElementById('Edit');
         var saveBtn = document.getElementById('Save');
-        var editables = document.querySelectorAll('#id_value, #title, #period_value, #agein_value , #province_value, #type_value, #lithology_value, #lower_value, #upper_value, #regional_value, #fossil_value, #age_value,' +
-            '#depo_value, #ad_value, #comp_val');
+        var fmdata = <?=json_encode($fmdata)?>;
+
+        var fmkeys = Object.keys(fmdata);
+        var editables = document.querySelectorAll(
+          fmkeys.map(function(k) { return '#'+k+'_value'; }).join(', ') // "#name", "type_locality", ...
+        );
 
         editBtn.addEventListener('click',function(e){
             if(!editables[0].isContentEditable){
                 saveBtn.disabled = false;
                 for (var i = 0;i<editables.length;i++){
                     editables[i].contentEditable = true;
+                    // Fill editable box with the raw text for editing
+                    editables[i].innerHTML = fmdata[fmkeys[i]].raw
                 }
             }
             else{
                 saveBtn.disabled = true;
                 for (var i = 0;i<editables.length;i++){
                     editables[i].contentEditable = false;
-
+                    if (editables[i].innerHTML === fmdata[fmkeys[i]].raw) {
+                      // they didn't change it, so set it back to the display version
+                      editables[i].innerHTML = fmdata[fmkeys[i]].display;
+                    }
                 }
             }
         });
@@ -435,7 +449,7 @@ function addImageClicked(type) {
         saveBtn.addEventListener('click',function(e){
             var savedata = {};
             for (let i = 0; i<editables.length; i++) {
-              savedata[editables[i].id] = editables[i].innerHTML;
+              savedata[fmkeys[i]] = editables[i].innerHTML;
             }
             form = document.createElement('form');
             document.body.appendChild(form);

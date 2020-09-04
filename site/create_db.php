@@ -106,8 +106,7 @@ if ($conn->query($sql4)==TRUE && $conn->query($sql3)===TRUE) {
     echo "\n Error creating user_info table: " . $conn->error;
 }
 $sql2 = "CREATE TABLE formation(
-	ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name Varchar(255),
+	name Varchar(255) PRIMARY KEY NOT NULL,
 	period Varchar(255),
 	age_interval Varchar(255),
 	province Varchar(255),
@@ -133,10 +132,10 @@ $sql = "CREATE TABLE images(
         ID int,
         type Varchar(255),
         image_name Varchar(255))";
-if ($conn->query($sql2)===TRUE) {
+if ($conn->query($sql)===TRUE) {
     echo "table images created successfully<br>";
 } else {
-    echo "\n Error creating formation table: " . $conn->error;
+    echo "\n Error creating image table: " . $conn->error;
 }
 ?>
 

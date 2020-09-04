@@ -102,43 +102,73 @@ function docx_read($filename)
             $vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
           }
 
-        }
-
+	}
+	//echo "Hii";
+	$count = 0;
         // Check if the name is blank, if so, do not insert anything to the database
         if (strlen(trim($vars[$nameindex]["value"])) < 1) {
-          echo "Found an empty name, ignoring...";
+          echo "\n Found an empty name, ignoring...";
           continue;
-        }
+	}
+	$sql20 = "ON DUPLICATE KEY UPDATE ";
+	$exists = array();
+	//$sql0 = "SHOW COLUMNS FROM formation LIKE";
+	for($i=0; $i<count($vars); $i++){
+		$v = $vars[$i];
+		$sql2 = $sql0.$v["name"];
+		if($v["name"]=='name'){
+		//	echo "hi";
 
+		$result = $conn->query($sql2);
+		$exist = (mysqli_num_rows($result))?TRUE:FALSE;
+		array_push($exists,$exist);
+		$count = $count+1;
+		}
+	}
         $sql = "INSERT INTO formation(";
-        for($i=0; $i<count($vars); $i++) {
-          $v = $vars[$i];
-          $sql .= $v["name"];
-          if ($i < count($vars)-1) {
+	$ct = 0;
+	for($i=0; $i<count($vars); $i++) {
+	
+	$v = $vars[$i];
+	if($exist[$ct]!=TRUE){
+		$sql .= $v["name"];
+	}
+	if($v["name"]=="compiler"){
+		$ct = $ct +1;
+	}
+          if (($i < count($vars)-1)&&$exists[$ct]!=TRUE) {
             $sql .= ",";
           }
-        }
-        $sql .= ") VALUES (";
+	}
+//	var_dump($exists);
+	//var_dump($vars);
+	//echo $sql;
+	$sql .= ") VALUES (";
+	$ct = 0;
         for($i=0; $i<count($vars); $i++) {
-          $v = $vars[$i];
+		$v = $vars[$i];
+          $sql20 .= $v["name"]."="."'".trim($conn->real_escape_string($v["value"]))."'"; 
           $sql .= "'".trim($conn->real_escape_string($v["value"]))."'";
           if ($i < count($vars)-1) {
-            $sql .= ",";
+		  $sql .= ",";
+		  $sql20.=",";
           }
         }
-        $sql .= ")";
-        echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
+	$sql .= ")";
+	$sql = $sql.$sql20;
+        //echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
         if ($conn->query($sql) === TRUE) {
-            echo "data inserted ";
+            echo " \n data inserted ";
         } else {
             echo "-------------------------------------------------\n\n<br><br>";
-            echo "Error inserted " . $conn->error;
-            echo "The sent query was: : <pre>$sql</pre>";
-            echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
+            echo "Error inserting data " . $conn->error;
+          //  echo "The sent query was: : <pre>$sql</pre>";
+          //  echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
             echo "-------------------------------------------------\n\n<br><br>";
         }
 
     }
+    //echo $sql;
     echo "Parsing is Complete!";
 }
 
