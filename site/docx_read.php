@@ -74,7 +74,7 @@ function docx_read($filename)
       array("name" => "type_locality",   "matchoffset" => 2, "pattern" => "/Type Locality and Naming:(\s*(.+))Lithology and Thickness:/"),
       array("name" => "lithology",       "matchoffset" => 1, "pattern" => "/Lithology and Thickness:(\s*(.+))Relationships and Distribution:/"),
       array("name" => "lower_contact",   "matchoffset" => 1, "pattern" => "/Lower contact:(\s*(.+))Upper contact:/"),
-      array("name" => "upper_contact",   "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional extent:/"),
+      array("name" => "upper_contact",   "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/"),
       array("name" => "regional_extent", "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)Fossils:/"),
       array("name" => "fossils",         "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/"),
       array("name" => "age",             "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Depositional setting:/"),

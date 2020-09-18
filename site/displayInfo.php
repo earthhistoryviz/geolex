@@ -4,7 +4,7 @@ include("SearchBar.php");
 include("SqlConnection.php");
 $formation = $_REQUEST;
 $auth = $_SESSION["loggedIn"];
-
+//echo $auth;
 if($formation[formation] == "") {?>
     <title>Empty Search</title>
     <h3><center>Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</center></h3>
@@ -16,19 +16,29 @@ if($formation[formation] == "") {?>
 
 $imagedisplaycount = 0;
 function displayImages($images, $imtype) {
-  foreach($images[$imtype] as $i) {
+	
+	foreach($images[$imtype] as $i) {
     $id = "image_".$imtype."_".$imagedisplaycount;
-    ?><div id="<?php echo $id?>">
+    ?><div id="<?php echo $fmdata["name"]["display"];?>">
       <a href="<?php echo $i["full"];?>">
         <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
 	    </a>
-	    <input id="<?php echo $i["full"];?>" type="button" value="Delete" onclick='delImageClicked("<?php echo $i['full'];?>", "<?php echo $imtype?>", "<?php echo $id?>");' />
+	<?php 
+	if($_SESSION["loggedIn"]){ ?>
+	    <input id="<?php echo $i["full"];?>" type="button" value="Delete" onclick='delImageClicked("<?php echo $i['full'];?>", "<?php echo $imtype;?>", "<?php echo $fmdata["name"]["display"];?>");' />
+	<?php } ?>
     </div><?php
   }
 }
 
+
+
+
+
+
+
 function eliminateParagraphs($str) {
-  while (preg_match("/<p>.*</p>/g", $str)) {
+while(preg_match("/<p>.*</p>/g", $str)) {
     $str = preg_replace("/<p>.*</p>/g", "", $str);
   }
   return $str;
@@ -111,7 +121,7 @@ if(!$found) {
     exit(0);
 }
 
-
+$name = $fmdata["name"]["display"];
 // Fetch any image filenames for this formation from the disk
 $dirs = scandir("./uploads/$name");
 $images = array();
@@ -403,7 +413,7 @@ function addImageClicked(type) {
     }
     let form = new FormData();
 
-    form.append("formation_name", "<?php echo $name?>");
+    form.append("formation_name", "<?php echo $fmdata["name"]["display"]?>");
     form.append("image_type", type);
     form.append("image", img);
 
@@ -411,9 +421,9 @@ function addImageClicked(type) {
     .then(function(res) {
       console.log('HTTP response code:', res.text().then(function(a){console.log(a)}));
     }).catch(function(e) {
-      console.log("Error uploading image: ", e);
+	    console.log("Error uploading image: ", e);
     });
-   //location.reload()
+  // location.reload()
 }
 
         var editBtn = document.getElementById('Edit');
