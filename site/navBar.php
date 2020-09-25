@@ -52,10 +52,12 @@ if ($_SESSION["loggedIn"]) {
              if currently in a lower level folder, use ../index.php */
     if (strcmp(getcwd(), "/app") == 0) { ?>
       <a href="index.php">Home</a>
-      <a href="displayInfo.php">Search Formation</a> <?php
+      <a href="displayInfo.php">Search Formation</a>
+      <a href="general.php">General Search</a> <?php
     } else { ?>
       <a href="../index.php">Home</a>
-      <a href="../displayInfo.php">Search Formation</a> <?php
+      <a href="../displayInfo.php">Search Formation</a>
+      <a href="../general.php">General Search</a> <?php
     } ?>
     <a style="float: right;" href="login.php">Admin Login</a>
   </div>
