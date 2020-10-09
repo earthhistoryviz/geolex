@@ -1,36 +1,41 @@
 version: '3'
 services: 
+
   china: 
     build: .
     restart: always
     container_name: china
-    ports:
-      - "5000:80"
+    expose:
+      - 80
     volumes: 
       - ./site:/app
       - .:/code
       - ./run.sh:/run.sh
-      - mysql_data:/var/lib/mysql
+      - china_mysqldata:/var/lib/mysql
+
   india:
     build: .
     restart: always
     container_name: india
-    ports:
-      - "5002:80"
+    expose:
+      - 80
     volumes:
       - ./site:/app
       - .:/code
       - ./run.sh:/run.sh
-      - mysql_data:/var/lib/mysql
- nginx:
+      - india_mysqldata:/var/lib/mysql
+
+  proxy:
     image: nginx:latest
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
+    restart: always
+    container_name: proxy
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"   
     expose:
-      - 80      
+      - 80  
+
 volumes:
-  mysql_data:
+  china_mysqldata:
+  india_mysqldata:

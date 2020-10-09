@@ -3,10 +3,10 @@ error_reporting(E_ALL);
 $target_dir = "uploads/";
 $type = $_POST['image_type'];
 $formname = $_POST['formation_name'];
-echo $type;
-echo $formname;
+//echo $type;
+//echo $formname;
 $folder_path = $target_dir.$formname.'/'.$type.'/';
-echo $folder_path;
+//echo $folder_path;
 mkdir($folder_path,0777,true);
 $target_file = $target_dir.$formname.'/'.$type.'/'. basename($_FILES["image"]["name"]);
 $uploadOk = 1;
@@ -15,15 +15,15 @@ $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 if(isset($_POST["submit"])) {
     $check = getimagesize($_FILES["image"]["tmp_name"]);
     if($check !== false) {
-        echo "File is an image - " . $check["mime"] . ".";
+   //     echo "File is an image - " . $check["mime"] . ".";
         $uploadOk = 1;
     } else {
-        echo "File is not an image.";
+     //   echo "File is not an image.";
         $uploadOk = 0;
     }
 }
 // image_type, formation_name
-echo "POST = "; print_r($_POST);
+//echo "POST = "; print_r($_POST);
 
 // Check if file already exists
 if (file_exists($target_file)) {
@@ -38,7 +38,7 @@ if ($_FILES["image"]["size"] > 5000000) {
 // Allow certain file formats
 if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
     && $imageFileType != "gif" ) {
-    echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.  This one is of type: $imageFileType, target_file = $target_file, FILES = ".print_r($_FILES,true);
+    echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.  This one is of type: $imageFileType";
     $uploadOk = 0;
 }
 // Check if $uploadOk is set to 0 by an error
@@ -46,9 +46,9 @@ if ($uploadOk == 0) {
     echo "Sorry, your file was not uploaded.";
 // if everything is ok, try to upload file
 } else {
-    echo "Moving file to ".$_FILES["image"]["tmp_name"].", target_file =  $target_file";
+   // echo "Moving file to ".$_FILES["image"]["tmp_name"].", target_file =  $target_file";
     if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-        echo "The file ". basename( $_FILES["image"]["name"]). " has been uploaded.";
+        echo "The file  has been uploaded. Please Reload the Page to See it";
     } else {
         echo "Sorry, there was an error uploading your file.";
     }

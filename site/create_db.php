@@ -118,7 +118,7 @@ $sql2 = "CREATE TABLE formation(
 	fossils Text,
 	age Text,
 	depositional Text,
-	additional_info Varchar(4000),
+	additional_info Text,
 	compiler Varchar(255)
 )";
 

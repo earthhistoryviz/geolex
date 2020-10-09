@@ -368,7 +368,9 @@ function delImageClicked(path, type, id){
 
 	let x = fetch('/delete_image.php',{method:"POST",body:form}).then(function(res){
     res.text().then(function(val) {
-      console.log('Response text = ', val);
+      alert( val);
+
+
 	    img = document.getElementById(id);
     	img.parentNode.removeChild(img);
     });
@@ -418,9 +420,11 @@ function addImageClicked(type) {
     form.append("image", img);
 
     let x = fetch('/uploadImage.php', {method: "POST", body: form })
-    .then(function(res) {
-      console.log('HTTP response code:', res.text().then(function(a){console.log(a)}));
-    }).catch(function(e) {
+	    .then(function(res) {
+      console.log('HTTP response code:', res.text().then(function(a){alert(a)}));
+	
+	//alert("Image Upload complete,to see image, reload the page");
+	    }).catch(function(e) {
 	    console.log("Error uploading image: ", e);
     });
   // location.reload()

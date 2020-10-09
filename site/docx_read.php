@@ -62,7 +62,7 @@ function docx_read($filename)
     $splitcontent = explode($splitpattern, $content[0]);
     $skipFirstNFormations = 0;
 
-    //echo "splitcontent = <pre>"; var_dump($splitcontent); echo "</pre>";
+    echo "splitcontent = <pre>"; var_dump($splitcontent); echo "</pre>";
     $count = 0;
 
     $nameindex = 0; // The index of the "name" field in the array below:
@@ -156,7 +156,7 @@ function docx_read($filename)
         }
 	$sql .= ")";
 	$sql = $sql.$sql20;
-        //echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
+        echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
         if ($conn->query($sql) === TRUE) {
             echo " \n data inserted ";
         } else {
