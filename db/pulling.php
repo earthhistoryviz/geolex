@@ -94,7 +94,7 @@ $sql2 = "CREATE TABLE formation(
 	age Text,
 	depositional Text,
 	additional_info Text,
-	compiler Varchar(255)
+	compiler Varchar(255),
 )";
 
 if ($conn->query($sql)&&$conn->query($sql2) === TRUE) {

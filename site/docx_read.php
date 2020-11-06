@@ -1,7 +1,8 @@
+
 <html>
 
 <head>
-<title>Test page</title>
+<title>Document Reader</title>
 </head>
 <body>
 
@@ -62,7 +63,7 @@ function docx_read($filename)
     $splitcontent = explode($splitpattern, $content[0]);
     $skipFirstNFormations = 0;
 
-    echo "splitcontent = <pre>"; var_dump($splitcontent); echo "</pre>";
+    //echo "splitcontent = <pre>"; var_dump($splitcontent); echo "</pre>";
     $count = 0;
 
     $nameindex = 0; // The index of the "name" field in the array below:
@@ -158,7 +159,7 @@ function docx_read($filename)
 	$sql = $sql.$sql20;
         echo "The final array of extractions is <pre>"; print_r($vars); echo "</pre>";
         if ($conn->query($sql) === TRUE) {
-            echo " \n data inserted ";
+            echo " <bre> data inserted ";
         } else {
             echo "-------------------------------------------------\n\n<br><br>";
             echo "Error inserting data " . $conn->error;
@@ -168,6 +169,15 @@ function docx_read($filename)
         }
 
     }
+    $sql5 = "ALTER TABLE formation(
+    ADD perecentup int(11),
+    ADD milstart Varchar(255),
+    ADD milend Varchar(255),
+    ADD milend Varchar(255),
+    ADD geoloc Varchar(255),
+    ADD enviroPat Varchar(255),
+    ADD lithioPat Varchar(255),
+    )"
     //echo $sql;
     echo "Parsing is Complete!";
 }

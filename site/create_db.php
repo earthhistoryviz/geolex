@@ -110,7 +110,7 @@ $sql2 = "CREATE TABLE formation(
 	period Varchar(255),
 	age_interval Varchar(255),
 	province Varchar(255),
- 	type_locality Varchar(40000),
+ 	type_locality Text,
 	lithology Text,
 	lower_contact Text,
 	upper_contact Text,
@@ -119,23 +119,14 @@ $sql2 = "CREATE TABLE formation(
 	age Text,
 	depositional Text,
 	additional_info Text,
-	compiler Varchar(255)
+	compiler Varchar(255),
+	
 )";
 
 if ($conn->query($sql2)===TRUE) {
     echo "table formation created successfully<br>";
 } else {
     echo "\n Error creating formation table: " . $conn->error;
-}
-$sql = "CREATE TABLE images(
-        SR_NO int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        ID int,
-        type Varchar(255),
-        image_name Varchar(255))";
-if ($conn->query($sql)===TRUE) {
-    echo "table images created successfully<br>";
-} else {
-    echo "\n Error creating image table: " . $conn->error;
 }
 ?>
 

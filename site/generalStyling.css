@@ -1,36 +1,79 @@
-.dropbtn{
-	background-color: #3498DB;
-	color: white;
-	border: none;
-	cursor: pointer;
-}
-
-.dropbtn:hover, .dropbtn:focus {
-	background-color: #2980B9;
-}
-
-.dropdown{
-	position:relative;
-	display: inline-block;
-}
-
-.dropdown-content{
-	display:none;
-	position: absolute;
-	background-color: #f1f1f1;
-	min-width: 160px;
-	box-shadow: 0px 8px 16 px 0px rgba(0,0,0,0.2);
-	z-index: 1;
-}
-
-.dropdown-content a{
-	color: black;
-	padding: 12px 16px;
+.button{
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+	border-top-color: grey;
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-right-color: grey;
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-bottom-color: grey;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-left-color: grey;
+	border-left-style: solid;
+	border-left-width: 1px;
+	border-image-source: initial;
+	border-image-slice: initial;
+	border-image-width: initial;
+	border-image-outset: initial;
+	border-image-repeat: initial;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	width: 170px;
+	display: flex;
+	align-items: center;
 	text-decoration: none;
-	display: block;
+}
+.button a{
+	text-decoration: none;
+	color: #000;
 }
 
-.dropdown-content a: hover {background-color: #ddd}
-.show {display:block;}
+#china{
+	border: 3px solid #fff;
+	padding: 20px;
+	float: left;
+}
+#india{
+	border: 3px solid #fff;
+	padding: 20px;
+	padding-left: 40px;
+	float: right;
+}
 
+.formation-container {
+  display: flex;
+  flex-direction: column;
+}
 
+.province-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.period-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.region-container {
+  background-color: #99CCFF;
+  color: #FFFFFF;
+  width: 100%;
+  padding-left: 10px;
+  font-size: 3em;
+  font-family: Arial;
+}

@@ -1,24 +1,54 @@
 <?php
+include("constants.php");
 
-  echo "REQUEST = <pre>"; print_r($_REQUEST); echo "</pre>";
-echo "server <pre>"; print_r($_SERVER); echo "</pre>";
+// If we have a filterperiod and filterregion, send off the API requests
+if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
+  $didsearch = true;
 
-  // If we have a filterperiod and filterregion, send off the API requests
-  if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
-    $didsearch = true;
-    $results = array();
-
-
-    $url = "http://" . $_SERVER["HTTP_HOST"] . "/searchAPI.php";
-    echo "URL = $url";
-    $response = json_decode(file_get_contents($url));
-    array_push($results, $response);
+  $regionstosearch = array();
+  foreach($regions as $r) {
+    if ($r["name"] == $_REQUEST["filterregion"] || $_REQUEST["filterregion"] == "All") {
+      array_push($regionstosearch,$r);
+    }
   }
 
+  $results = array();
 
-  // This is necessary to get generalSearchBar to send things back to us
-  $formaction = "general.php";
+  foreach($regionstosearch as $r) {
+    $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"];
+    $response = json_decode(file_get_contents($url));
+    $results[$r["name"]] = array(
+      "linkurl" => $r["linkurl"],
+      "formations" => $response,
+      "groupbyprovince" => array(),
+    );
+    foreach($response as $fname => $finfo) {
+      $p = $finfo->province;
+      if (!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
+      $results[$r["name"]]["groupbyprovince"][$p]["formations"][$fname] = $finfo;
+      /*
+      $results["china"][groupbyprovince][fujian][formations][taoziken Fm]
+                                                            [Baratang Fm]
+                                                [groupbyperiod][cretaceous][taoziken fm]
+                                                               [jurassic  ][baratan fm]
+      */
+      // Figure out which periods overlap this formation
+      foreach($periods as $searchperiod) {
+        if (stripos($finfo->period, $searchperiod) === false) continue;
+        $results[$r["name"]]["groupbyprovince"][$p]["groupbyperiod"][$searchperiod][$fname] = $finfo;
+      }
+
+    }
+      
+  }
+
+}
+
+
+// This is necessary to get generalSearchBar to send things back to us
+$formaction = "general.php";
 ?>
+<link rel="stylesheet" href="generalStyling.css">
 
 <?php include("navBar.php");?>
 <?php /* navBar will set $period for us */?>
@@ -26,61 +56,44 @@ echo "server <pre>"; print_r($_SERVER); echo "</pre>";
   <h2 align="center" style="color:blue;">Welcome to the International Geology Website and Database! <br>Please enter a formation name or group to retrieve more information.</h2>
   <?php include("generalSearchBar.php");?>
 
-  <?php
-    if ($didsearch) {
-      if (count($results) < 0) {
-        echo "No results found.";
-      } else {
-	      echo "We have results!  it is: <pre>"; print_r($results); echo "</pre>";
-	      if($_REQUEST["filterregion"] == "China"){
-	      if($_REQUEST["filterperiod"] == "All"){
-		      $data = file_get_contents("http://china.oada-dev.com/searchFm.php?search=&periodfilter=&provincefilter=");
-	      }
-	      else{
-		      $data = file_get_contents("http://china.oada-dev.com/searchFm.php?search=&periodfilter=" .$_REQUEST["filterperiod"] . "&provincefilter=");
-	      }
-	      $first_s = explode( '<div class="formation-container">' , $data );
-	      $second_s = explode("</div>" , $first_s[1] );
-	      echo $first_s[1];
-	      }
+<div style="display: flex; flex-direction: column;">
+<?php
+if ($didsearch) {
+  if (count($results) < 0) {
+    echo "No results found.";
 
-	      if($_REQUEST["filterregion"] == "India"){
-              if($_REQUEST["filterperiod"] == "All"){
-                      $data = file_get_contents("http://inplex.oada-dev.com/searchFm.php?search=&periodfilter=&provincefilter=");
-              }
-              else{
-                      $data = file_get_contents("http://inplex.oada-dev.com/searchFm.php?search=&periodfilter=" .$_REQUEST["filterperiod"] . "&provincefilter=");
-              }
-              $first_s = explode( '<div class="formation-container">' , $data );
-              $second_s = explode("</div>" , $first_s[1] );
-              echo $first_s[1];
+  } else {  
+    foreach($results as $regionname => $regioninfo) {?>
+      <div class="formation-container" id="<?=$regionname?>">
+        <h3 class="region-container"><?=$regionname?></h3><hr/>
+        <div><?php
 
-	      }
-	       if($_REQUEST["filterregion"] == "All"){
-              if($_REQUEST["filterperiod"] == "All"){
-		      $china = file_get_contents("http://china.oada-dev.com/searchFm.php?search=&periodfilter=&provincefilter=");
-		      $india= file_get_contents("http://inplex.oada-dev.com/searchFm.php?search=&periodfilter=&provincefilter=");
-              }
-              else{
-		      $china= file_get_contents("http://china.oada-dev.com/searchFm.php?search=&periodfilter=" .$_REQUEST["filterperiod"] . "&provincefilter=");
-		      $india= file_get_contents("http://inplex.oada-dev.com/searchFm.php?search=&periodfilter=" .$_REQUEST["filterperiod"] . "&provincefilter=");
-              }
-              $first_sC = explode( '<div class="formation-container">' , $china );
-	      $second_sC = explode("</div>" , $first_sC[1] );
-	      echo "China Formations";
-	      echo  $first_sC[1];
-	      $first_sI = explode( '<div class="formation-container">' , $india);
-	      $second_sI = explode("</div>" , $first_sI[1] );
-	      echo "India Formations";
-              echo $first_sI[1];
+          foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) {?>
+            <h3><?=$province?></h3>
+            <div class="province-container"><?php
+           
+              foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {?>
+                <h5><?=$pname?></h5>
+                <div class="period-container"><?php
 
-		      
-	      
+                  foreach($formations as $fname => $finfo) {?>
+                    <div class = "button">    
+                      <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
+                    </div><?php
+                  }?>
 
-	      }
-      }
+                </div><?php 
+              }?>
+
+            </div>
+            <hr/><?php
+          }?>
+        </div>
+      </div><?php
+                
     }
-     
-    
-?>
+  } 
+}?>
+</div>
+
 

@@ -153,7 +153,13 @@ $sql2 = "CREATE TABLE formation(
   age Text,
   depositional Text,
   additional_info Text,
-  compiler Varchar(255)
+  compiler Varchar(255),
+  percentup int(11),
+  milstart Varchar(255),
+  milend Varchar(255),
+  geoloc Varchar(255),
+  enviroPat Varchar(255),
+  lithioPat Varchar(255)
 )";
 
 if ($conn->query($sql)&&$conn->query($sql2) === TRUE) {
@@ -244,7 +250,7 @@ echo "upper = "; print_r($upper);
 =======
     //echo $scompiler;
 >>>>>>> 3e529e81c5518541e57dc431f5bff310eaa9b3a5:db/docx_read.php
-    $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler)
+    $sql = "INSERT INTO formation(name,period,age_interval,province,type_locality,lithology,lower_contact,upper_contact,regional_extent,fossils,age,depositional,additional_info,compiler, percentup, milstart, milend, geoloc, enviroPat, lithioPat)
        VALUES(
         '$sformname',
         '$speriod',

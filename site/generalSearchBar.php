@@ -29,7 +29,7 @@
   // We need to clean up the html tags from the periods and provices to get a canonical name
   while ($row = mysqli_fetch_array($result)) {
     foreach (array("province", "period") as $v) {
-      $canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
+      //$canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
       $canonical = trim($canonical);
       $canonical = strtoupper($canonical);
       $canonical = explode(",", $canonical);
@@ -37,7 +37,8 @@
         $c = trim($c);
         if (strlen($c) > 0) {
           $filters[$v][$c] = true;
-        }
+	}
+       
       }
     }
   }
@@ -60,26 +61,7 @@
     $formaction = "searchFm.php";
   }
 
-  $periods = array(
-    "All", 
-    "QUATERNARY",
-    "NEOGENE",
-    "PALEOGENE",
-    "CRETACEOUS",
-    "JURASSIC",
-    "TRIASSIC",
-    "PERMIAN",
-    "CARBONIFEROUS",
-    "DEVONIAN",
-    "SILURIAN",
-    "ORDOVICIAN",
-    "CAMBRIAN",
-    "EDIACARAN"
-  );
-
-  $regions = array (
-    "All", "China", "India", "England"
-  );
+  include("constants.php"); // gets us $periods and $regions
 ?>
 <body>
     <div class = "search-container">
@@ -116,6 +98,7 @@
 
         Search by Period
       <select name="filterperiod">
+        <option value="All">All</option>
         <?php foreach($periods as $p) {?>
           <option value="<?=$p?>"><?=$p?></option>
         <?php }?>
@@ -123,8 +106,9 @@
 
       and Region 
       <select name="filterregion">
+        <option value="All">All</option>
         <?php foreach($regions as $r) {?>
-          <option value="<?=$r?>"><?=$r?></option>
+          <option value="<?=$r["name"]?>"><?=$r["name"]?></option>
         <?php }?>
       </select>
 
