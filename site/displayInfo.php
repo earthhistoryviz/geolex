@@ -81,13 +81,13 @@ $fmdata = array(
      'age_interval' => array("needlinks" => false), 
          'province' => array("needlinks" => false),
     'type_locality' => array("needlinks" => false),
-              'age' => array("needlinks" => false),
-        'lithology' => array("needlinks" => true),
+         'lithology' => array("needlinks" => true),
     'lower_contact' => array("needlinks" => true),
     'upper_contact' => array("needlinks" => true),
   'regional_extent' => array("needlinks" => true),
           'fossils' => array("needlinks" => true),
-     'depositional' => array("needlinks" => true),
+	    'age'   => array("needlinks" => false),      
+	'depositional' => array("needlinks" => true),
   'additional_info' => array("needlinks" => true),
          'compiler' => array("needlinks" => false),
 );
@@ -105,7 +105,7 @@ while($row = mysqli_fetch_array($result)) {
     }
   }
 }
-
+//var_dump($fmdata);
 
 
 //-----------------------------------------------------------
@@ -181,7 +181,7 @@ if ($dirs) {
         padding-left: 20px;
         padding-right: 20px;
     }
-    p {
+     {
       text-indent: 2em;
       margin-bottom: 0px;
       margin-top: 0px;
@@ -189,6 +189,7 @@ if ($dirs) {
 </style>
 
 <?php
+//var_dump(fmkeys);
 if ($auth) {
 ?>
   <script>
@@ -325,16 +326,34 @@ if ($auth) {
     <div id="age">
         <h3><b>Age&nbsp; </b></h3>
         <div id="age_value"><?=eliminateParagraphs($fmdata["age"]["display"])?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="age_image" id = "age_image"/>
+          <input id="Addage" type="button" name="add_age_image" value="Add Chosen Age Image" onclick="addImageClicked('age')" />
+        <?php } ?>
+        <?php displayImages($images, 'age') ?>
+
     </div>
 
     <div id="depositional">
         <h3><b>Depositional setting</b></h3>
         <div id="depositional_value"><?=$fmdata["depositional"]["display"]?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="depositional_image" id = "depositional_image"/>
+          <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('depositional')" />
+        <?php } ?>
+        <?php displayImages($images, 'depositional') ?>
+
+
     </div>
 
     <div id="additional_info">
         <h3><b>Additional Information</b></h3>
         <div id="additional_info_value"><?=$fmdata["additional_info"]["display"]?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="additional_image" id = "additional_image"/>
+          <input id="Addaddl" type="button" name="add_additional_image" value="Add Chosen Additional Image" onclick="addImageClicked('additional')" />
+        <?php } ?>
+        <?php displayImages($images, 'additional') ?>
     </div>
 
     <div id="compiler">
@@ -346,7 +365,8 @@ if ($auth) {
 <script type ="text/javascript">
 function deleteform(){
 	console.log("delete pressed");
-	var title1 = document.getElementById('name');
+	var title1 = document.getElementById("name_value").innerHTML;
+	console.log(title1);
 	newform = document.createElement('form');
 	document.body.appendChild(newform);
 	newform.method = "POST";
@@ -354,7 +374,7 @@ function deleteform(){
 	input = document.createElement('input');
 	input.type = "hidden";
 	input.name = "name";
-	input.value = title1.innerHTML;
+	input.value = title1;
 	newform.appendChild(input);
 	newform.submit();
 	document.removeChild(newform);
@@ -435,16 +455,17 @@ function addImageClicked(type) {
         var fmdata = <?=json_encode($fmdata)?>;
 
         var fmkeys = Object.keys(fmdata);
-        var editables = document.querySelectorAll(
+	console.log(fmkeys);       
+	var editables = document.querySelectorAll(
           fmkeys.map(function(k) { return '#'+k+'_value'; }).join(', ') // "#name", "type_locality", ...
-        );
-
-        editBtn.addEventListener('click',function(e){
-            if(!editables[0].isContentEditable){
+  );
+	editBtn.addEventListener('click',function(e){
+		if(!editables[0].isContentEditable){
                 saveBtn.disabled = false;
                 for (var i = 0;i<editables.length;i++){
                     editables[i].contentEditable = true;
-                    // Fill editable box with the raw text for editing
+		    console.log(editables[i]);
+		    // Fill editable box with the raw text for editing
                     editables[i].innerHTML = fmdata[fmkeys[i]].raw
                 }
             }

@@ -3,6 +3,8 @@ error_reporting(E_ALL);
 $target_dir = "uploads/";
 $type = $_POST['image_type'];
 $formname = $_POST['formation_name'];
+ini_set('upload_max_filesize','10M');
+ini_set('post_max_size','10M');
 //echo $type;
 //echo $formname;
 $folder_path = $target_dir.$formname.'/'.$type.'/';
@@ -18,7 +20,7 @@ if(isset($_POST["submit"])) {
    //     echo "File is an image - " . $check["mime"] . ".";
         $uploadOk = 1;
     } else {
-     //   echo "File is not an image.";
+   echo "File is not an image.";
         $uploadOk = 0;
     }
 }
@@ -31,8 +33,8 @@ if (file_exists($target_file)) {
     $uploadOk = 0;
 }
 // Check file size
-if ($_FILES["image"]["size"] > 5000000) {
-    echo "Sorry, your file is too large.";
+if ($_FILES["image"]["size"] > 50000000)
+{    echo "Sorry, your file is too large.";
     $uploadOk = 0;
 }
 // Allow certain file formats
@@ -50,7 +52,7 @@ if ($uploadOk == 0) {
     if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
         echo "The file  has been uploaded. Please Reload the Page to See it";
     } else {
-        echo "Sorry, there was an error uploading your file.";
+        echo "Sorry, there was an error uploading your file. upload_max_filesize = ".ini_get("upload_max_filesize").", post_max_size = ".ini_get("post_max_size").", memory_limit = ".ini_get("memory_limit").", failed when moving ".$_FILES["image"]["tmp_name"]." to $target_file.  FILES = "; print_r($_FILES);
     }
 }
 ?>
