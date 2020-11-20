@@ -105,7 +105,7 @@ if ($conn->query($sql4)==TRUE && $conn->query($sql3)===TRUE) {
 } else {
     echo "\n Error creating user_info table: " . $conn->error;
 }
-$sql2 = "CREATE TABLE formation(
+$sql2 = "CREATE TABLE formation (
 	name Varchar(255) PRIMARY KEY NOT NULL,
 	period Varchar(255),
 	age_interval Varchar(255),
@@ -120,7 +120,13 @@ $sql2 = "CREATE TABLE formation(
 	depositional Text,
 	additional_info Text,
 	compiler Varchar(255),
-	
+  geojson varchar(500),
+  beginning_stage varchar(255),
+  frac_upB smallint(255),
+  beg_date smallint(255),
+  end_stage varchar(255),
+  frac_upE smallint(255),
+  end_date smallint(255)
 )";
 
 if ($conn->query($sql2)===TRUE) {

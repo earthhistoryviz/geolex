@@ -430,7 +430,15 @@ function addImageClicked(type) {
         console.log("regionalextent");
         img = document.getElementById('regionalextent_image').files[0]
     }
-    else {
+    else if (type === "depositional") {
+        console.log("depositional");
+        img = document.getElementById('depositional_image').files[0]
+    }
+    else if (type === "additional") {
+        console.log("additional");
+        img = document.getElementById('additional_image').files[0]
+    } else {
+      console.log('WARNING: the image type '+type+' is not recognized!');
         img = 0;
     }
     let form = new FormData();
