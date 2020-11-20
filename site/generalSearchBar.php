@@ -93,7 +93,7 @@
           }
 
           </script>
-        <button id="submitbtn2" type="button" onclick="viewAll()"> View All Formations </button>
+       <!-- <button id="submitbtn2" type="button" onclick="viewAll()"> View All Formations </button> -->
         <br/>
 
         Search by Period

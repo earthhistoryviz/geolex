@@ -58,6 +58,7 @@ $formaction = "general.php";
 
 <div style="display: flex; flex-direction: column;">
 <?php
+$sorted = array();
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
@@ -65,32 +66,32 @@ if ($didsearch) {
   } else {  
     foreach($results as $regionname => $regioninfo) {?>
       <div class="formation-container" id="<?=$regionname?>">
-        <h3 class="region-container"><?=$regionname?></h3><hr/>
+        <h3 class="region-title"><?=$regionname?></h3>
+        <hr/>
         <div><?php
-
+          $count = 0;
+          $sortByPeriod = array();
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) {?>
             <h3><?=$province?></h3>
-            <div class="province-container"><?php
-           
-              foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {?>
-                <h5><?=$pname?></h5>
-                <div class="period-container"><?php
-
-                  foreach($formations as $fname => $finfo) {?>
-                    <div class = "button">    
-                      <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
-                    </div><?php
-                  }?>
-
-                </div><?php 
+            <div class="province-container"> <?php
+              foreach($periods as $p) {
+                foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
+                  if($pname !== $p) continue;?>
+                  <h5><?=$pname?></h5>
+                  <div class="period-container"><?php
+                    foreach($formations as $fname => $finfo){?>
+                      <div class = "button">    
+                        <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
+                      </div><?php 
+                    }?>
+                  </div><?php 
+                }
               }?>
-
-            </div>
-            <hr/><?php
+            </div><?php
           }?>
+          <hr/>
         </div>
       </div><?php
-                
     }
   } 
 }?>

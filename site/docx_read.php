@@ -1,11 +1,10 @@
-
+<?php 
+?>
 <html>
-
 <head>
 <title>Document Reader</title>
 </head>
 <body>
-
 <?php
 include("navBar.php");
 include("SearchBar.php");
@@ -167,22 +166,14 @@ function docx_read($filename)
     //  echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
     echo "-------------------------------------------------\n\n<br><br>";
   }
-
-}
-    $sql5 = "ALTER TABLE formation(
-    ADD perecentup int(11),
-    ADD milstart Varchar(255),
-    ADD milend Varchar(255),
-    ADD milend Varchar(255),
-    ADD geoloc Varchar(255),
-    ADD enviroPat Varchar(255),
-    ADD lithioPat Varchar(255),
-)";
+ 
     //echo $sql;
     echo "Parsing is Complete!";
 }
 
+
 ?>
+
 </body>
 
 </html>
