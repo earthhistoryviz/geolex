@@ -25,6 +25,31 @@ services:
       - ./run.sh:/run.sh
       - india_mysqldata:/var/lib/mysql
 
+  thailex:
+    build: .
+    restart: always
+    container_name: thailex
+    expose:
+      - 80
+    volumes:
+      - ./site:/app
+      - .:/code
+      - ./run.sh:/run.sh
+      - thailex_mysqldata:/var/lib/mysql
+
+  vietlex:
+    build: .
+    restart: always
+    container_name: vietlex
+    expose:
+      - 80
+    volumes:
+      - ./site:/app
+      - .:/code
+      - ./run.sh:/run.sh
+      - vietlex_mysqldata:/var/lib/mysql
+
+
   proxy:
     image: nginx:latest
     restart: always
@@ -39,3 +64,5 @@ services:
 volumes:
   china_mysqldata:
   india_mysqldata:
+  thailex_mysqldata:
+  vietlex_mysqldata:

@@ -13,7 +13,9 @@ $province_list = array_unique($result);
 if (isset($_REQUEST['search'])) {
     $searchquery = ($_REQUEST['search']);
 
-    $provincefilter = ($_REQUEST['provincefilter']);
+    $provincefilter = $_REQUEST['provincefilter'];
+    // This is a quick fix to help where whitespace gets surrounded by parsed HTML tags.
+    $provincefilter = preg_replace('/ /', '%', $provincefilter);
     $periodfilter = ($_REQUEST['periodfilter']);
 
     $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";

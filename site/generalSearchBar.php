@@ -67,8 +67,14 @@
     <div class = "search-container">
         
         <form id='form' action="<?=$formaction?>" method="request">
-        <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
-         <input id="submitbtn1" type="submit" value="Submit" disabled> 
+         <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
+	 <input id="submitbtn1" type="submit" value="Submit" disabled> 
+	 <br>
+        <!--NEW ADDITIONS 12/3/2020
+	<input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Enter beginning date (Ma)..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
+	<input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Enter Ending date (Ma)..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
+        -->
+        <!-- END OF NEW ADDITIONS-->
         <!--<button id="submitbtn1" type="button">Submit</button>-->
 
         <script type="text/javascript">

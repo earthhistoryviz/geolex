@@ -76,20 +76,30 @@ function findAndMakeFormationLinks($str, $nameregexes) {
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'";
 $result = mysqli_query($conn, $sql);
 $fmdata = array(
-             'name' => array("needlinks" => false),
-           'period' => array("needlinks" => false),
-     'age_interval' => array("needlinks" => false), 
-         'province' => array("needlinks" => false),
-    'type_locality' => array("needlinks" => false),
-         'lithology' => array("needlinks" => true),
-    'lower_contact' => array("needlinks" => true),
-    'upper_contact' => array("needlinks" => true),
-  'regional_extent' => array("needlinks" => true),
-          'fossils' => array("needlinks" => true),
-	    'age'   => array("needlinks" => false),      
-	'depositional' => array("needlinks" => true),
-  'additional_info' => array("needlinks" => true),
-         'compiler' => array("needlinks" => false),
+          'name'                                  => array("needlinks" => false),
+          'period'                                => array("needlinks" => false),
+          'age_interval'                          => array("needlinks" => false), 
+          'province'                              => array("needlinks" => false),
+          'type_locality'                         => array("needlinks" => false),
+          'lithology'                             => array("needlinks" => true),
+          'lithology_pattern'                     => array("needlinks" => true),
+          'lower_contact'                         => array("needlinks" => true),
+          'upper_contact'                         => array("needlinks" => true),
+          'regional_extent'                       => array("needlinks" => true),
+          'geojson'                               => array("needlinks" => true),
+          'fossils'                               => array("needlinks" => true),
+	  'age'                                   => array("needlinks" => false),
+	  'age_span'                              => array("needlinks" => false),
+          'beginning_stage'                       => array("needlinks" => false),
+	  'frac_upB'	                          => array("needlinks" => false),
+	  'beg_date'                              => array("needlinks" => false),
+	  'end_stage'                             => array("needlinks" => false),
+	  'frac_upE'                              => array("needlinks" => false),
+	  'end_date'                              => array("needlinks" => false),
+	  'depositional'                          => array("needlinks" => true),
+	  'depositional_pattern'                  => array("needlinks" => true),
+          'additional_info'                       => array("needlinks" => true),
+          'compiler'                              => array("needlinks" => false),
 );
 
 $found = false;
@@ -274,12 +284,22 @@ if ($auth) {
 
     <div id="lithology">
         <h3><b>Lithology and Thickness</b></h3>
-        <div id="lithology_value"><?=$fmdata["lithology"]["display"]?></div><br>
+        <div id="lithology_value" class = "minwidth"><?=$fmdata["lithology"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="lithology_image" id = "lithology_image"/>
           <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
         <?php } ?>
         <?php displayImages($images, 'lithology') ?>
+    </div>
+
+    <div id="Lithology-pattern" class = "horiz">
+        <b>Lithology Pattern:&nbsp;</b>
+        <div id="lithology_pattern_value" class = "minwidth"><?=eliminateParagraphs($fmdata["lithology_pattern"]["display"])?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="lithology_pattern_image" id = "lithology_pattern_image"/>
+          <input id="AddlithologyPattern" type="button" name="add_lithology_pattern_image" value="Add Chosen Lithology Pattern Image" onclick="addImageClicked('Lithology-pattern')" />
+        <?php } ?>
+        <?php displayImages($images, 'Lithology-pattern') ?>
     </div>
 
     <div id="relationships_distribution">
@@ -292,7 +312,8 @@ if ($auth) {
               <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
             <?php } ?>
             <?php displayImages($images, 'lowercontact') ?>
-        </div>
+	</div>
+
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
             <div id="upper_contact_value"><?=$fmdata["upper_contact"]["display"]?></div>
@@ -301,7 +322,8 @@ if ($auth) {
               <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
             <?php } ?>
             <?php displayImages($images, 'uppercontact') ?>
-        </div>
+	</div>
+
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
             <div id="regional_extent_value"><?=$fmdata["regional_extent"]["display"]?></div><br>
@@ -311,6 +333,16 @@ if ($auth) {
             <?php } ?>
             <?php displayImages($images, 'regionalextent') ?>
         </div>
+    </div>
+
+      <div id="GeoJSON">
+        <h3><b>GeoJSON</b></h3>
+        <div id="GeoJSON_value"><?=$fmdata["geojson"]["display"]?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="GeoJSON_image" id = "GeoJSON_image"/>
+          <input id="GeoJSON" type="button" name="add_GeoJSON_image" value="Add Chosen GeoJSON Image" onclick=addImageClicked('GeoJSON') />
+        <?php } ?>
+        <?php displayImages($images, 'GeoJSON') ?>
     </div>
 
     <div id="fossils">
@@ -334,6 +366,41 @@ if ($auth) {
 
     </div>
 
+<div id="age_span" class = "horiz">
+        <b> Age Span:&nbsp;</b>
+        <div id="age_span_value" class = "minwidth"><?=eliminateParagraphs($fmdata["age_span"]["display"])?></div><br>
+    </div> 
+
+<div id="beginning_stage" class = "horiz">
+        <i>Beginning stage:&nbsp</i>
+	<div id="beginning_stage__value" class = "horiz"><?=eliminateParagraphs($fmdata["beginning_stage"]["display"])?></div><br>
+</div>
+
+    <div id="Fraction up in beginning stage" class = "horiz">
+        <b>Fraction up in beginning stage:&nbsp</b>
+	<div id="Fraction up in beginning stage_value" class = "horiz"><?=eliminateParagraphs($fmdata["frac_upB"]["display"])?></div><br>
+    </div>
+
+    <div id="Beginning date (Ma)" class = "horiz">
+        <b>Beginning date (Ma):&nbsp</b>
+        <div id="Beginning date_value" class = "horiz"><?=eliminateParagraphs($fmdata["beg_date"]["display"])?></div><br>
+    </div> 
+
+    <div id="Ending stage" class = "horiz">
+        <b>Ending stage:&nbsp</b>
+        <div id="Ending stage_value" class = "horiz"><?=eliminateParagraphs($fmdata["end_stage"]["display"])?></div><br>
+    </div>
+
+    <div id="Fraction up in ending stage" class = "horiz">
+        <b>Fraction up in the ending stage:&nbsp</b>
+        <div id="Fraction up in ending stage_value" class = "horiz"><?=eliminateParagraphs($fmdata["frac_upE"]["display"])?></div><br>
+    </div>
+
+    <div id="Ending date (Ma)" class = "horiz">
+        <b>Ending date (Ma): &nbsp</b>
+        <div id="Ending date_value" class = "horiz"><?=eliminateParagraphs($fmdata["end_date"]["display"])?></div><br>
+    </div>
+
     <div id="depositional">
         <h3><b>Depositional setting</b></h3>
         <div id="depositional_value"><?=$fmdata["depositional"]["display"]?></div><br>
@@ -342,8 +409,16 @@ if ($auth) {
           <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('depositional')" />
         <?php } ?>
         <?php displayImages($images, 'depositional') ?>
+    </div> 
 
-
+    <div id="Depositional-pattern" class = "horiz">
+        <b>Depositional pattern: &nbsp</b>
+        <div id="Depositional-pattern_value"><?=eliminateParagraphs($fmdata["depositional_pattern"]["display"])?></div><br>
+        <?php if ($auth) {?>
+          <input type="file" name="Depositional-pattern_image" id = "Depositional-pattern_image"/>
+          <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('Depositional-pattern')" />
+        <?php } ?>
+        <?php displayImages($images, 'Depositional-pattern') ?>
     </div>
 
     <div id="additional_info">
@@ -356,9 +431,9 @@ if ($auth) {
         <?php displayImages($images, 'additional') ?>
     </div>
 
-    <div id="compiler">
-        <h3><b>Compiler</b></h3>
-        <div id="compiler_val"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
+    <div id="compiler" class = "horiz">
+        <b>Compiler: &nbsp;</b>
+        <div id="compiler_val" class = "horiz"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
     </div>
 
 <?php if ($auth) {?> 
@@ -417,6 +492,10 @@ function addImageClicked(type) {
         else if(type ==="locality") {
             img = document.getElementById('locality_image').files[0]
         console.log("locality")
+	}
+    else if(type ==="Lithology-pattern") {
+            img = document.getElementById('lithology_pattern_image').files[0]
+        console.log("lithology")
         }
     else if (type === "lowercontact") {
         console.log("lowercontact");
@@ -430,9 +509,17 @@ function addImageClicked(type) {
         console.log("regionalextent");
         img = document.getElementById('regionalextent_image').files[0]
     }
+    else if (type === "GeoJSON") {
+        console.log("GeoJSON");
+        img = document.getElementById('GeoJSON_image').files[0]
+    }
     else if (type === "depositional") {
         console.log("depositional");
         img = document.getElementById('depositional_image').files[0]
+    }
+    else if (type === "Depositional-pattern") {
+        console.log("Depositional-pattern");
+        img = document.getElementById('Depositional-pattern_image').files[0]
     }
     else if (type === "additional") {
         console.log("additional");

@@ -112,6 +112,7 @@ $sql2 = "CREATE TABLE formation (
 	province Varchar(255),
  	type_locality Text,
 	lithology Text,
+        lithology_pattern Varchar(255),
 	lower_contact Text,
 	upper_contact Text,
 	regional_extent Text,
@@ -120,13 +121,15 @@ $sql2 = "CREATE TABLE formation (
 	depositional Text,
 	additional_info Text,
 	compiler Varchar(255),
-  geojson varchar(500),
-  beginning_stage varchar(255),
-  frac_upB smallint(255),
-  beg_date smallint(255),
-  end_stage varchar(255),
-  frac_upE smallint(255),
-  end_date smallint(255)
+	Geojson varchar(500),
+        age_span varchar(255),
+        beginning_stage varchar(255),
+        frac_upB varchar(255),
+        beg_date varchar(255),
+        end_stage varchar(255),
+        frac_upE varchar(255),
+	end_date varchar(255),
+	depositional_pattern varchar(255)
 )";
 
 if ($conn->query($sql2)===TRUE) {

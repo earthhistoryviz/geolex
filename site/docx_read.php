@@ -55,20 +55,30 @@ function docx_read($filename)
   $nameindex = 0; // The index of the "name" field in the array below:
 
   $vars = array(
-    array("name" => "name",            "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/"),
-    array("name" => "period",          "matchoffset" => 1, "pattern" => "/Period:\s*(.*)Age Interval/"),
-    array("name" => "age_interval",    "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/"),
-    array("name" => "province",        "matchoffset" => 1, "pattern" => "/Province:\s*(.*)Type Locality and Naming:/"),
-    array("name" => "type_locality",   "matchoffset" => 2, "pattern" => "/Type Locality and Naming:(\s*(.+))Lithology and Thickness:/"),
-    array("name" => "lithology",       "matchoffset" => 1, "pattern" => "/Lithology and Thickness:(\s*(.+))Relationships and Distribution:/"),
-    array("name" => "lower_contact",   "matchoffset" => 1, "pattern" => "/Lower contact:(\s*(.+))Upper contact:/"),
-    array("name" => "upper_contact",   "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/"),
-    array("name" => "regional_extent", "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)Fossils:/"),
-    array("name" => "fossils",         "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/"),
-    array("name" => "age",             "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Depositional setting:/"),
-    array("name" => "depositional",    "matchoffset" => 1, "pattern" => "/Depositional setting:\s*(.+)Additional Information/"),
-    array("name" => "additional_info", "matchoffset" => 1, "pattern" => "/Additional Information\s*(.+)Compiler/"),
-    array("name" => "compiler",        "matchoffset" => 1, "pattern" => "/Compiler\s*(.+)/")
+    array("name" => "name",                          "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/"),
+    array("name" => "period",                        "matchoffset" => 1, "pattern" => "/Period:\s*(.*)Age Interval/"),
+    array("name" => "age_interval",                  "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/"),
+    array("name" => "province",                      "matchoffset" => 1, "pattern" => "/Province:\s*(.*)Type Locality and Naming:/"),
+    array("name" => "type_locality",                 "matchoffset" => 1, "pattern" => "/Type Locality and Naming:\s*(.+)Lithology and Thickness:/"),
+    array("name" => "lithology",                     "matchoffset" => 1, "pattern" => "/Lithology and Thickness:\s*(.+)Lithology-pattern:/"),
+    array("name" => "lithology_pattern",             "matchoffset" => 1, "pattern" => "/Lithology-pattern:\s*(.+)Relationships and Distribution:/"),
+    array("name" => "lower_contact",                 "matchoffset" => 1, "pattern" => "/Lower contact:\s*(.+)Upper contact:/"),
+    array("name" => "upper_contact",                 "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/"),
+    array("name" => "regional_extent",               "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)GeoJSON:/"),
+    array("name" => "geojson",                       "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/"),
+    array("name" => "fossils",                       "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/"),
+    array("name" => "age",                           "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Age span:/"),
+    array("name" => "age_span",                      "matchoffset" => 1, "pattern" => "/Age Span:\s*(.+)Beginning stage:/"),
+    array("name" => "beginning_stage",               "matchoffset" => 1, "pattern" => "/Beginning stage:\s*(.+)Fraction up in beginning stage:/"),
+    array("name" => "frac_upB",                      "matchoffset" => 1, "pattern" => "/Fraction up in beginning stage:\s*(.+)Beginning date \(Ma\):/"),
+    array("name" => "beg_date",                      "matchoffset" => 1, "pattern" => "/Beginning date \(Ma\):\s*(.+)Ending stage:/"),
+    array("name" => "end_stage",                     "matchoffset" => 1, "pattern" => "/Ending stage:\s*(.+)Fraction up in ending stage:/"),
+    array("name" => "frac_upE",                      "matchoffset" => 1, "pattern" => "/Fraction up in ending stage:\s*(.+)Ending date \(Ma\):/"),
+    array("name" => "end_date",                      "matchoffset" => 1, "pattern" => "/Ending date \(Ma\):\s*(.+)Depositional setting:/"),
+    array("name" => "depositional",                  "matchoffset" => 1, "pattern" => "/Depositional setting:\s*(.+)Depositional-pattern:/"),
+    array("name" => "depositional_pattern",          "matchoffset" => 1, "pattern" => "/Depositional-pattern:\s*(.+)Additional Information/"),
+    array("name" => "additional_info",               "matchoffset" => 1, "pattern" => "/Additional Information\s*(.+)Compiler/"),
+    array("name" => "compiler",                      "matchoffset" => 1, "pattern" => "/Compiler\s*(.+)/")
   );
 
   foreach ($splitcontent as $ministr) {
@@ -143,9 +153,10 @@ function docx_read($filename)
       echo "-------------------------------------------------\n\n<br><br>";
       echo "Error inserting data " . $conn->error;
       //  echo "The sent query was: : <pre>$sql</pre>";
-      //  echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
+      echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
       echo "-------------------------------------------------\n\n<br><br>";
     }
+    //echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
     echo "Parsing is Complete!";
   }
 }
