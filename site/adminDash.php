@@ -18,6 +18,9 @@
         <div class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="fileBrowser.php">Parse Word Document</a>
         </div>
+        <div class="item <?php if (preg_match("/uploadTimescale.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+          <a class="menu-link" href="uploadTimescale.php">Upload Timescale</a>
+        </div>
 	      <div class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="manageUser.php">Manage User information</a>
 	</div>
