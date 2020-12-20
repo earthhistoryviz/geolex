@@ -3,9 +3,9 @@
 <html>
 <body>
 <?php 
-include("navBar.php");
-include("SearchBar.php");
-include("SqlConnection.php");
+include_once("navBar.php");
+include_once("SearchBar.php");
+include_once("SqlConnection.php");
 ?>
 <form action="Upload.php" method="post" enctype="multipart/form-data">
     Select Word Document to upload:

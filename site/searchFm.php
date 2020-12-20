@@ -1,5 +1,5 @@
 <?php
-include("SqlConnection.php");
+include_once("SqlConnection.php");
 
 $arr = array();
 $count = -1;

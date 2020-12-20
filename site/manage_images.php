@@ -5,7 +5,7 @@
 
 <?php
 //include("navBar.php");
-include("SqlConnection.php");
+include_once("SqlConnection.php");
 //include("SearchBar.php");
 //$iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('/app/uploads/'));
 //$files = array();

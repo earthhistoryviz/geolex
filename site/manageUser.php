@@ -13,7 +13,7 @@
     </tr>
 <?php
 //include("navBar.php");
-include("SqlConnection.php");
+include_once("SqlConnection.php");
 $sql = "SELECT * FROM user_info ";
 $result = mysqli_query($conn, $sql);
 while($row = mysqli_fetch_array($result)) {

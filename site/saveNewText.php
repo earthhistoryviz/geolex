@@ -1,7 +1,7 @@
 <?php
-include("navBar.php");
-include("SearchBar.php");
-include("SqlConnection.php");
+include_once("navBar.php");
+include_once("SearchBar.php");
+include_once("SqlConnection.php");
 $servername = "localhost";
 $username = "root";
 $password = "";

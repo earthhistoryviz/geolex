@@ -6,8 +6,10 @@
 </head>
 <body>
 <?php
-include("navBar.php");
-include("SearchBar.php");
+include_once("navBar.php");
+include_once("SearchBar.php");
+include_once("cleanupString.php");
+include_once("TimescaleLib.php");
 
 function docx_read($filename)
 {
@@ -27,6 +29,7 @@ function docx_read($filename)
   function read_file_docx($filename) {   //FUNCTION to read information out of a docx and return it as a String
     $striped_content = '';
     $content = '';
+    $timescale = parseDefaultTimescale();
 
     if (!$filename || !file_exists($filename)) return false;
 
@@ -52,34 +55,45 @@ function docx_read($filename)
   $splitcontent = explode($splitpattern, $content[0]);
   $skipFirstNFormations = 0;
   $count = 0;
-  $nameindex = 0; // The index of the "name" field in the array below:
 
+  $numvars=0;
   $vars = array(
-    array("name" => "name",                          "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/"),
-    array("name" => "period",                        "matchoffset" => 1, "pattern" => "/Period:\s*(.*)Age Interval/"),
-    array("name" => "age_interval",                  "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/"),
-    array("name" => "province",                      "matchoffset" => 1, "pattern" => "/Province:\s*(.*)Type Locality and Naming:/"),
-    array("name" => "type_locality",                 "matchoffset" => 1, "pattern" => "/Type Locality and Naming:\s*(.+)Lithology and Thickness:/"),
-    array("name" => "lithology",                     "matchoffset" => 1, "pattern" => "/Lithology and Thickness:\s*(.+)Lithology-pattern:/"),
-    array("name" => "lithology_pattern",             "matchoffset" => 1, "pattern" => "/Lithology-pattern:\s*(.+)Relationships and Distribution:/"),
-    array("name" => "lower_contact",                 "matchoffset" => 1, "pattern" => "/Lower contact:\s*(.+)Upper contact:/"),
-    array("name" => "upper_contact",                 "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/"),
-    array("name" => "regional_extent",               "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)GeoJSON:/"),
-    array("name" => "geojson",                       "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/"),
-    array("name" => "fossils",                       "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/"),
-    array("name" => "age",                           "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Age span:/"),
-    array("name" => "age_span",                      "matchoffset" => 1, "pattern" => "/Age Span:\s*(.+)Beginning stage:/"),
-    array("name" => "beginning_stage",               "matchoffset" => 1, "pattern" => "/Beginning stage:\s*(.+)Fraction up in beginning stage:/"),
-    array("name" => "frac_upB",                      "matchoffset" => 1, "pattern" => "/Fraction up in beginning stage:\s*(.+)Beginning date \(Ma\):/"),
-    array("name" => "beg_date",                      "matchoffset" => 1, "pattern" => "/Beginning date \(Ma\):\s*(.+)Ending stage:/"),
-    array("name" => "end_stage",                     "matchoffset" => 1, "pattern" => "/Ending stage:\s*(.+)Fraction up in ending stage:/"),
-    array("name" => "frac_upE",                      "matchoffset" => 1, "pattern" => "/Fraction up in ending stage:\s*(.+)Ending date \(Ma\):/"),
-    array("name" => "end_date",                      "matchoffset" => 1, "pattern" => "/Ending date \(Ma\):\s*(.+)Depositional setting:/"),
-    array("name" => "depositional",                  "matchoffset" => 1, "pattern" => "/Depositional setting:\s*(.+)Depositional-pattern:/"),
-    array("name" => "depositional_pattern",          "matchoffset" => 1, "pattern" => "/Depositional-pattern:\s*(.+)Additional Information/"),
-    array("name" => "additional_info",               "matchoffset" => 1, "pattern" => "/Additional Information\s*(.+)Compiler/"),
-    array("name" => "compiler",                      "matchoffset" => 1, "pattern" => "/Compiler\s*(.+)/")
+    array("name" => "name",                              "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/",                          "index" => $numvars++),
+    array("name" => "period",           "clean" => true, "matchoffset" => 1, "pattern" => "/Period:\s*(.*)Age Interval/",                                   "index" => $numvars++ ),
+    array("name" => "age_interval",                      "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/",               "index" => $numvars++ ),
+    array("name" => "province",         "clean" => true, "matchoffset" => 1, "pattern" => "/Province:\s*(.*)Type Locality and Naming:/",                    "index" => $numvars++ ),
+    array("name" => "type_locality",                     "matchoffset" => 1, "pattern" => "/Type Locality and Naming:\s*(.+)Lithology and Thickness:/"      "index" => $numvars++,),
+    array("name" => "lithology",                         "matchoffset" => 1, "pattern" => "/Lithology and Thickness:\s*(.+)Lithology-pattern:/",            "index" => $numvars++ ),
+    array("name" => "lithology_pattern",                 "matchoffset" => 1, "pattern" => "/Lithology-pattern:\s*(.+)Relationships and Distribution:/"      "index" => $numvars++,),
+    array("name" => "lower_contact",                     "matchoffset" => 1, "pattern" => "/Lower contact:\s*(.+)Upper contact:/",                          "index" => $numvars++ ),
+    array("name" => "upper_contact",                     "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/",                    "index" => $numvars++ ),
+    array("name" => "regional_extent",                   "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)GeoJSON:/",                              "index" => $numvars++ ),
+    array("name" => "geojson",                           "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/",                                      "index" => $numvars++ ),
+    array("name" => "fossils",                           "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/",                                          "index" => $numvars++ ),
+    array("name" => "age",              "clean" => true, "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Age span:/",                                         "index" => $numvars++ ),
+    array("name" => "age_span",         "clean" => true, "matchoffset" => 1, "pattern" => "/Age Span:\s*(.+)Beginning stage:/",                             "index" => $numvars++ ),
+    array("name" => "beginning_stage",  "clean" => true, "matchoffset" => 1, "pattern" => "/Beginning stage:\s*(.+)Fraction up in beginning stage:/",       "index" => $numvars++ ),
+    array("name" => "frac_upB",         "clean" => true, "matchoffset" => 1, "pattern" => "/Fraction up in beginning stage:\s*(.+)Beginning date \(Ma\):/", "index" => $numvars++ ),
+    array("name" => "beg_date",         "clean" => true, "matchoffset" => 1, "pattern" => "/Beginning date \(Ma\):\s*(.+)Ending stage:/",                   "index" => $numvars++ ),
+    array("name" => "end_stage",        "clean" => true, "matchoffset" => 1, "pattern" => "/Ending stage:\s*(.+)Fraction up in ending stage:/",             "index" => $numvars++ ),
+    array("name" => "frac_upE",         "clean" => true, "matchoffset" => 1, "pattern" => "/Fraction up in ending stage:\s*(.+)Ending date \(Ma\):/",       "index" => $numvars++ ),
+    array("name" => "end_date",         "clean" => true, "matchoffset" => 1, "pattern" => "/Ending date \(Ma\):\s*(.+)Depositional setting:/",              "index" => $numvars++ ),
+    array("name" => "depositional",                      "matchoffset" => 1, "pattern" => "/Depositional setting:\s*(.+)Depositional-pattern:/",            "index" => $numvars++ ),
+    array("name" => "depositional_pattern",              "matchoffset" => 1, "pattern" => "/Depositional-pattern:\s*(.+)Additional Information/",           "index" => $numvars++ ),
+    array("name" => "additional_info",                   "matchoffset" => 1, "pattern" => "/Additional Information\s*(.+)Compiler/",                        "index" => $numvars++ ),
+    array("name" => "compiler",                          "matchoffset" => 1, "pattern" => "/Compiler\s*(.+)/",                                              "index" => $numvars++ )
   );
+  function vindex($varname) {
+    $found = current(array_filter($vars, function($v,$i) use ($varname) { return $v["name"] == $varname; }, ARRAY_FILTER_USE_BOTH);
+    return $found["index"];
+  }
+  $nameindex = vindex("name");
+  $bstageindex = vindex("beginning_stage");
+  $bfracindex = vindex("frac_upB");
+  $bdateindex = vindex("beg_date");
+  $estageindex = vindex("end_stage");
+  $efracindex = vindex("frac_upE");
+  $edateindex = vindex("end_date");
 
   foreach ($splitcontent as $ministr) {
     if ($count++ < $skipFirstNFormations) continue;
@@ -98,15 +112,31 @@ function docx_read($filename)
         $vars[$i]["value"] = str_replace("(", "", $vars[$i]["value"]);
         $vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
       }
+      if (isset($vars[$i]["clean"])) {
+        $vars[$i]["value"] = cleanupString($vars[$i]["value"]);
+      }
 
     }
-    //echo "Hii";
     $count = 0;
     // Check if the name is blank, if so, do not insert anything to the database
     if (strlen(trim($vars[$nameindex]["value"])) < 1) {
       echo "\n Found an empty name, ignoring...";
       continue;
     }
+
+    // Compute ages if possible:
+    if ($timescale) {
+      // If we have stage and percentage for base:
+      $a = computeAgeFromPercentUp($vars[$bstageindex]["value"], $vars[$bfracindex]["value"], $timescale);
+      if ($a !== false) {
+        $vars[$bdateindex]["value"] = $a
+      }
+      $a = computeAgeFromPercentUp($vars[$estageindex]["value"], $vars[$efracindex]["value"], $timescale);
+      if ($a !== false) {
+        $vars[$edateindex]["value"] = computeAgeFromPercentUp($vars[$estageindex]["value"], $vars[$efracindex]["value"], $timescale);
+      }
+    }
+
     $sql20 = "ON DUPLICATE KEY UPDATE ";
     $exists = array();
     //$sql0 = "SHOW COLUMNS FROM formation LIKE";

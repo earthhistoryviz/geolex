@@ -1,7 +1,7 @@
 <?php
-include("SqlConnection.php");
-include("navBar.php");
-include("SearchBar.php");
+include_once("SqlConnection.php");
+include_once("navBar.php");
+include_once("SearchBar.php");
 $title = $_POST["name"];echo $title;
 $sql = "DELETE FROM formation WHERE name = '$title';";
 echo "<pre> $sql <\pre>";

@@ -1,4 +1,4 @@
-<?php include("SqlConnection.php") ?>
+<?php include_once("SqlConnection.php") ?>
 <!DOCTYPE html>
 <html>
 

@@ -1,5 +1,5 @@
 <?php
-include("SqlConnection.php");
+include_once("SqlConnection.php");
 
 $searchquery = $_REQUEST['searchquery'];
 $periodfilter = $_REQUEST['periodfilter'];
