@@ -101,7 +101,7 @@ if (isset($_REQUEST["existing_timescale"])) {
       $form["frac_upB"] = cleanupString($form["frac_upB"]);
       $form["frac_upE"] = cleanupString($form["frac_upE"]);
       $newbase = computeAgeFromPercentUp($form["beginning_stage"], $form["frac_upB"], $timescale);
-      $newtop = computeAgeFromPercentUp($form["end_stage"], $form["frace_upE"], $timescale);
+      $newtop = computeAgeFromPercentUp($form["end_stage"], $form["frac_upE"], $timescale);
       if ($newbase !== false && $newtop !== false) {
         if (!updateFormationAges($form["name"], $newtop, $newbase)) {
           $failures++;
@@ -159,6 +159,11 @@ for($i=0; $i<count($files); $i++) { // remove the "timescales/" part
       <input type="file" name="upfile" id="upfile">
       <input type="submit" value="Upload Excel Timescale" name="submit_upload">
     </form>
+    <hr/>
+    You can download the existing timescales to see what they are:<br/><br/>
+    <?php foreach($files as $tf) {?>
+      <a href="timescales/<?=$tf?>"><?=$tf?></a><br/><br/>
+    <?php } ?>
   </body>
 </html>
 
