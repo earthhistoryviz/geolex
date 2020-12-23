@@ -23,13 +23,13 @@ function docx_read($filename)
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
+  $timescale = parseDefaultTimescale();
 
   $splitpattern = "*****************"; //Split pattern set by the document to differentiate between each of the formations
 
   function read_file_docx($filename) {   //FUNCTION to read information out of a docx and return it as a String
     $striped_content = '';
     $content = '';
-    $timescale = parseDefaultTimescale();
 
     if (!$filename || !file_exists($filename)) return false;
 
@@ -62,9 +62,9 @@ function docx_read($filename)
     array("name" => "period",           "clean" => true, "matchoffset" => 1, "pattern" => "/Period:\s*(.*)Age Interval/",                                   "index" => $numvars++ ),
     array("name" => "age_interval",                      "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/",               "index" => $numvars++ ),
     array("name" => "province",         "clean" => true, "matchoffset" => 1, "pattern" => "/Province:\s*(.*)Type Locality and Naming:/",                    "index" => $numvars++ ),
-    array("name" => "type_locality",                     "matchoffset" => 1, "pattern" => "/Type Locality and Naming:\s*(.+)Lithology and Thickness:/"      "index" => $numvars++,),
+    array("name" => "type_locality",                     "matchoffset" => 1, "pattern" => "/Type Locality and Naming:\s*(.+)Lithology and Thickness:/",     "index" => $numvars++,),
     array("name" => "lithology",                         "matchoffset" => 1, "pattern" => "/Lithology and Thickness:\s*(.+)Lithology-pattern:/",            "index" => $numvars++ ),
-    array("name" => "lithology_pattern",                 "matchoffset" => 1, "pattern" => "/Lithology-pattern:\s*(.+)Relationships and Distribution:/"      "index" => $numvars++,),
+    array("name" => "lithology_pattern",                 "matchoffset" => 1, "pattern" => "/Lithology-pattern:\s*(.+)Relationships and Distribution:/",     "index" => $numvars++,),
     array("name" => "lower_contact",                     "matchoffset" => 1, "pattern" => "/Lower contact:\s*(.+)Upper contact:/",                          "index" => $numvars++ ),
     array("name" => "upper_contact",                     "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/",                    "index" => $numvars++ ),
     array("name" => "regional_extent",                   "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)GeoJSON:/",                              "index" => $numvars++ ),
@@ -81,19 +81,19 @@ function docx_read($filename)
     array("name" => "depositional",                      "matchoffset" => 1, "pattern" => "/Depositional setting:\s*(.+)Depositional-pattern:/",            "index" => $numvars++ ),
     array("name" => "depositional_pattern",              "matchoffset" => 1, "pattern" => "/Depositional-pattern:\s*(.+)Additional Information/",           "index" => $numvars++ ),
     array("name" => "additional_info",                   "matchoffset" => 1, "pattern" => "/Additional Information\s*(.+)Compiler/",                        "index" => $numvars++ ),
-    array("name" => "compiler",                          "matchoffset" => 1, "pattern" => "/Compiler\s*(.+)/",                                              "index" => $numvars++ )
+    array("name" => "compiler",                          "matchoffset" => 1, "pattern" => "/Compiler\s*(.+)$/",                                              "index" => $numvars++ )
   );
-  function vindex($varname) {
-    $found = current(array_filter($vars, function($v,$i) use ($varname) { return $v["name"] == $varname; }, ARRAY_FILTER_USE_BOTH);
+  function vindex($varname, $vars) {
+    $found = current(array_filter($vars, function($v,$i) use ($varname) { return $v["name"] == $varname; }, ARRAY_FILTER_USE_BOTH));
     return $found["index"];
   }
-  $nameindex = vindex("name");
-  $bstageindex = vindex("beginning_stage");
-  $bfracindex = vindex("frac_upB");
-  $bdateindex = vindex("beg_date");
-  $estageindex = vindex("end_stage");
-  $efracindex = vindex("frac_upE");
-  $edateindex = vindex("end_date");
+  $nameindex = vindex("name", $vars);
+  $bstageindex = vindex("beginning_stage", $vars);
+  $bfracindex = vindex("frac_upB", $vars);
+  $bdateindex = vindex("beg_date", $vars);
+  $estageindex = vindex("end_stage", $vars);
+  $efracindex = vindex("frac_upE", $vars);
+  $edateindex = vindex("end_date", $vars);
 
   foreach ($splitcontent as $ministr) {
     if ($count++ < $skipFirstNFormations) continue;
@@ -109,8 +109,9 @@ function docx_read($filename)
         $vars[$i]["value"] = "<p>" . str_replace("\r\n", "</p>\r\n<p>", $vars[$i]["value"]) . "</p>";
       }
       if ($vars[$i]["name"] == "compiler") {
-        $vars[$i]["value"] = str_replace("(", "", $vars[$i]["value"]);
-        $vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
+        // Not sure why these were there, commenting for now
+        //$vars[$i]["value"] = str_replace("(", "", $vars[$i]["value"]);
+        //$vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
       }
       if (isset($vars[$i]["clean"])) {
         $vars[$i]["value"] = cleanupString($vars[$i]["value"]);
@@ -120,7 +121,7 @@ function docx_read($filename)
     $count = 0;
     // Check if the name is blank, if so, do not insert anything to the database
     if (strlen(trim($vars[$nameindex]["value"])) < 1) {
-      echo "\n Found an empty name, ignoring...";
+      echo "\n Found an empty name, ignoring...<br/>";
       continue;
     }
 
@@ -129,10 +130,12 @@ function docx_read($filename)
       // If we have stage and percentage for base:
       $a = computeAgeFromPercentUp($vars[$bstageindex]["value"], $vars[$bfracindex]["value"], $timescale);
       if ($a !== false) {
-        $vars[$bdateindex]["value"] = $a
+        echo "Computed base age of ".$vars[$nameindex]["value"]." as $a<br/>";
+        $vars[$bdateindex]["value"] = $a;
       }
       $a = computeAgeFromPercentUp($vars[$estageindex]["value"], $vars[$efracindex]["value"], $timescale);
       if ($a !== false) {
+        echo "Computed top age of ".$vars[$nameindex]["value"]." as $a<br/>";
         $vars[$edateindex]["value"] = computeAgeFromPercentUp($vars[$estageindex]["value"], $vars[$efracindex]["value"], $timescale);
       }
     }
@@ -187,7 +190,7 @@ function docx_read($filename)
       echo "-------------------------------------------------\n\n<br><br>";
     }
     //echo "The array of extractions which produced that query was: <pre>";print_r($vars);echo "</pre>";
-    echo "Parsing is Complete!";
+    echo "Parsing is Complete!<br/>";
   }
 }
 ?>

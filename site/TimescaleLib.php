@@ -15,7 +15,7 @@ function computeAgeFromPercentUp($stage, $percent, $timescale) {
   $stop = $stage_info["top"];
   $sbase = $stage_info["base"];
   $span = $sbase - $stop;
-  $comp = ($span * $percent)+$sbase;
+  $comp = ($span * $percent)-$sbase;
   return $comp;
 }
 
