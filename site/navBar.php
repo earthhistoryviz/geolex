@@ -52,8 +52,7 @@ if ($_SESSION["loggedIn"]) {
              if currently in a lower level folder, use ../index.php */
     if (strcmp(getcwd(), "/app") == 0) { ?>
       <a href="index.php">Home</a>
-      <a href="displayInfo.php">Search Formation</a>
-      <a href="general.php">General Search</a> <?php
+      <a href="general.php">Multi-Country Search</a> <?php
     } else { ?>
       <a href="../index.php">Home</a>
       <a href="../displayInfo.php">Search Formation</a>

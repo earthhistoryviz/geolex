@@ -32,12 +32,6 @@ function displayImages($images, $imtype) {
   }
 }
 
-
-
-
-
-
-
 function eliminateParagraphs($str) {
 while(preg_match("/<p>.*</p>/g", $str)) {
     $str = preg_replace("/<p>.*</p>/g", "", $str);
@@ -343,7 +337,7 @@ if ($auth) {
 
       <div id="GeoJSON">
         <h3><b>GeoJSON</b></h3>
-        <div id="GeoJSON_value" class="minwidth"><?=$fmdata["geojson"]["display"]?></div><br>
+        <div id="geojson_value" class="minwidth"><?=$fmdata["geojson"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="GeoJSON_image" id = "GeoJSON_image"/>
           <input id="GeoJSON" type="button" name="add_GeoJSON_image" value="Add Chosen GeoJSON Image" onclick=addImageClicked('GeoJSON') />
@@ -379,32 +373,32 @@ if ($auth) {
 
     <div id="beginning_stage" class="horiz">
         <i>Beginning stage:&nbsp</i>
-        <div id="beginning_stage__value" class="minwidth"><?=eliminateParagraphs($fmdata["beginning_stage"]["display"])?></div><br>
+        <div id="beginning_stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["beginning_stage"]["display"])?></div><br>
     </div>
 
-    <div id="Fraction up in beginning stage" class="horiz">
+    <div id="frac_upB" class="horiz">
         <b>Fraction up in beginning stage:&nbsp</b>
-    <div id="Fraction up in beginning stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upB"]["display"])?></div><br>
+    <div id="frac_upB_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upB"]["display"])?></div><br>
     </div>
 
-    <div id="Beginning date (Ma)" class="horiz">
+    <div id="beg_date" class="horiz">
         <b>Beginning date (Ma):&nbsp</b>
-        <div id="Beginning date_value" class="minwidth"><?=eliminateParagraphs($fmdata["beg_date"]["display"])?></div><br>
+        <div id="beg_date_value" class="minwidth"><?=eliminateParagraphs($fmdata["beg_date"]["display"])?></div><br>
     </div> 
 
-    <div id="Ending stage" class="horiz">
+    <div id="end_stage" class="horiz">
         <b>Ending stage:&nbsp</b>
-        <div id="Ending stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_stage"]["display"])?></div><br>
+        <div id="end_stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_stage"]["display"])?></div><br>
     </div>
 
-    <div id="Fraction up in ending stage" class = "horiz">
+    <div id="frac_upE" class = "horiz">
         <b>Fraction up in the ending stage:&nbsp</b>
-        <div id="Fraction up in ending stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upE"]["display"])?></div><br>
+        <div id="frac_upE_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upE"]["display"])?></div><br>
     </div>
 
-    <div id="Ending date (Ma)" class="horiz">
+    <div id="end_date" class="horiz">
         <b>Ending date (Ma): &nbsp</b>
-        <div id="Ending date_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_date"]["display"])?></div><br>
+        <div id="end_date_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_date"]["display"])?></div><br>
     </div>
 
     <div id="depositional">
@@ -417,9 +411,9 @@ if ($auth) {
         <?php displayImages($images, 'depositional') ?>
     </div> 
 
-    <div id="Depositional-pattern" class = "horiz">
+    <div id="depositional_pattern" class = "horiz">
         <b>Depositional pattern: &nbsp</b>
-        <div id="Depositional-pattern_value" class="minwidth"><?=eliminateParagraphs($fmdata["depositional_pattern"]["display"])?></div><br>
+        <div id="depositional_pattern_value" class="minwidth"><?=eliminateParagraphs($fmdata["depositional_pattern"]["display"])?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="Depositional-pattern_image" id = "Depositional-pattern_image"/>
           <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('Depositional-pattern')" />
@@ -439,7 +433,7 @@ if ($auth) {
 
     <div id="compiler" class = "horiz">
         <b>Compiler: &nbsp;</b>
-        <div id="compiler_val" class="minwidth"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
+        <div id="compiler_value" class="minwidth"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
     </div>
 
 <?php if ($auth) {?> 
