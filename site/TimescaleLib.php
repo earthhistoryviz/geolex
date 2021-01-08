@@ -16,7 +16,7 @@ function computeAgeFromPercentUp($stage, $percent, $timescale) {
   $sbase = $stage_info["base"];
   $span = $sbase - $stop;
   $comp = ($span * $percent)-$sbase;
-  return $comp;
+  return abs($comp); // need absolute value b/c millions of years ago should not actually be negative
 }
 
 $DEFAULT_TIMESCALE_PATH = dirname(__FILE__) . "/timescales/default_timescale.xlsx";

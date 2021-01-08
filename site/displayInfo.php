@@ -16,17 +16,18 @@ if($formation[formation] == "") {?>
 
 $imagedisplaycount = 0;
 function displayImages($images, $imtype) {
-	
-	foreach($images[$imtype] as $i) {
+  global $fmdata;
+  
+  foreach($images[$imtype] as $i) {
     $id = "image_".$imtype."_".$imagedisplaycount;
     ?><div id="<?php echo $fmdata["name"]["display"];?>">
       <a href="<?php echo $i["full"];?>">
         <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
-	    </a>
-	<?php 
-	if($_SESSION["loggedIn"]){ ?>
-	    <input id="<?php echo $i["full"];?>" type="button" value="Delete" onclick='delImageClicked("<?php echo $i['full'];?>", "<?php echo $imtype;?>", "<?php echo $fmdata["name"]["display"];?>");' />
-	<?php } ?>
+      </a>
+  <?php 
+  if($_SESSION["loggedIn"]){ ?>
+      <input id="<?php echo $i["full"];?>" type="button" value="Delete" onclick='delImageClicked("<?php echo $i['full'];?>", "<?php echo $imtype;?>", "<?php echo $fmdata["name"]["display"];?>");' />
+  <?php } ?>
     </div><?php
   }
 }
@@ -76,30 +77,30 @@ function findAndMakeFormationLinks($str, $nameregexes) {
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'";
 $result = mysqli_query($conn, $sql);
 $fmdata = array(
-          'name'                                  => array("needlinks" => false),
-          'period'                                => array("needlinks" => false),
-          'age_interval'                          => array("needlinks" => false), 
-          'province'                              => array("needlinks" => false),
-          'type_locality'                         => array("needlinks" => false),
-          'lithology'                             => array("needlinks" => true),
-          'lithology_pattern'                     => array("needlinks" => true),
-          'lower_contact'                         => array("needlinks" => true),
-          'upper_contact'                         => array("needlinks" => true),
-          'regional_extent'                       => array("needlinks" => true),
-          'geojson'                               => array("needlinks" => true),
-          'fossils'                               => array("needlinks" => true),
-	  'age'                                   => array("needlinks" => false),
-	  'age_span'                              => array("needlinks" => false),
-          'beginning_stage'                       => array("needlinks" => false),
-	  'frac_upB'	                          => array("needlinks" => false),
-	  'beg_date'                              => array("needlinks" => false),
-	  'end_stage'                             => array("needlinks" => false),
-	  'frac_upE'                              => array("needlinks" => false),
-	  'end_date'                              => array("needlinks" => false),
-	  'depositional'                          => array("needlinks" => true),
-	  'depositional_pattern'                  => array("needlinks" => true),
-          'additional_info'                       => array("needlinks" => true),
-          'compiler'                              => array("needlinks" => false),
+   'name'                                  => array("needlinks" => false),
+   'period'                                => array("needlinks" => false),
+   'age_interval'                          => array("needlinks" => false), 
+   'province'                              => array("needlinks" => false),
+   'type_locality'                         => array("needlinks" => false),
+   'lithology'                             => array("needlinks" => true),
+   'lithology_pattern'                     => array("needlinks" => true),
+   'lower_contact'                         => array("needlinks" => true),
+   'upper_contact'                         => array("needlinks" => true),
+   'regional_extent'                       => array("needlinks" => true),
+   'geojson'                               => array("needlinks" => true),
+   'fossils'                               => array("needlinks" => true),
+   'age'                                   => array("needlinks" => false),
+   'age_span'                              => array("needlinks" => false),
+   'beginning_stage'                       => array("needlinks" => false),
+   'frac_upB'                              => array("needlinks" => false),
+   'beg_date'                              => array("needlinks" => false),
+   'end_stage'                             => array("needlinks" => false),
+   'frac_upE'                              => array("needlinks" => false),
+   'end_date'                              => array("needlinks" => false),
+   'depositional'                          => array("needlinks" => true),
+   'depositional_pattern'                  => array("needlinks" => true),
+   'additional_info'                       => array("needlinks" => true),
+   'compiler'                              => array("needlinks" => false),
 );
 
 $found = false;
@@ -170,9 +171,9 @@ if ($dirs) {
         padding-right: 20px;
     }
     #Delete{ 
-    	height:40px;
-      	border:3px solid #000000;
-	}
+      height:40px;
+        border:3px solid #000000;
+  }
     #AddNewFile{
         height: 40px;
         border: 3px solid #000000;
@@ -235,6 +236,11 @@ if ($auth) {
       .minwidth {
         min-width: 50px;
       }
+      .hasborder {
+        border: 1px solid #AAAAAA;
+        border-radius: 3px;
+        padding: 5px;
+      }
     </style>
 
     <?php if ($auth) {?>
@@ -274,7 +280,7 @@ if ($auth) {
 
     <div id="type_locality">
         <h3><b>Type Locality and Naming</b></h3>
-        <div id="type_locality_value"><?=$fmdata["type_locality"]["display"]?></div><br>
+        <div id="type_locality_value" class="minwidth"><?=$fmdata["type_locality"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="locality_image" id ="locality_image"/>
           <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick = "addImageClicked('locality')" />
@@ -284,7 +290,7 @@ if ($auth) {
 
     <div id="lithology">
         <h3><b>Lithology and Thickness</b></h3>
-        <div id="lithology_value" class = "minwidth"><?=$fmdata["lithology"]["display"]?></div><br>
+        <div id="lithology_value" class="minwidth"><?=$fmdata["lithology"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="lithology_image" id = "lithology_image"/>
           <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')" />
@@ -294,7 +300,7 @@ if ($auth) {
 
     <div id="Lithology-pattern" class = "horiz">
         <b>Lithology Pattern:&nbsp;</b>
-        <div id="lithology_pattern_value" class = "minwidth"><?=eliminateParagraphs($fmdata["lithology_pattern"]["display"])?></div><br>
+        <div id="lithology_pattern_value" class="minwidth"><?=eliminateParagraphs($fmdata["lithology_pattern"]["display"])?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="lithology_pattern_image" id = "lithology_pattern_image"/>
           <input id="AddlithologyPattern" type="button" name="add_lithology_pattern_image" value="Add Chosen Lithology Pattern Image" onclick="addImageClicked('Lithology-pattern')" />
@@ -306,27 +312,27 @@ if ($auth) {
         <h3><b>Relationships and Distribution</b></h3>
         <div id="lower_contact">
             <h4><i>Lower contact</i></h4>
-            <div id="lower_contact_value"><?=$fmdata["lower_contact"]["display"]?></div>
+            <div id="lower_contact_value" class="minwidth"><?=$fmdata["lower_contact"]["display"]?></div>
             <?php if ($auth) {?>
               <input type="file" name="lowercontact_image" id = "lowercontact_image"/>
               <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick = addImageClicked('lowercontact') />
             <?php } ?>
             <?php displayImages($images, 'lowercontact') ?>
-	</div>
+  </div>
 
         <div id="upper_contact">
             <h4><i>Upper contact</i></h4>
-            <div id="upper_contact_value"><?=$fmdata["upper_contact"]["display"]?></div>
+            <div id="upper_contact_value" class="minwidth"><?=$fmdata["upper_contact"]["display"]?></div>
             <?php if ($auth) {?>
               <input type="file" name="uppercontact_image" id = "uppercontact_image"/>
               <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick = addImageClicked('uppercontact') />
             <?php } ?>
             <?php displayImages($images, 'uppercontact') ?>
-	</div>
+  </div>
 
         <div id="regional_extent">
             <h4><i>Regional extent</i></h4>
-            <div id="regional_extent_value"><?=$fmdata["regional_extent"]["display"]?></div><br>
+            <div id="regional_extent_value" class="minwidth"><?=$fmdata["regional_extent"]["display"]?></div><br>
             <?php if ($auth) {?>
               <input type="file" name="regionalcontact_image" id = "regionalextent_image"/>
               <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick = addImageClicked('regionalextent') />
@@ -337,7 +343,7 @@ if ($auth) {
 
       <div id="GeoJSON">
         <h3><b>GeoJSON</b></h3>
-        <div id="GeoJSON_value"><?=$fmdata["geojson"]["display"]?></div><br>
+        <div id="GeoJSON_value" class="minwidth"><?=$fmdata["geojson"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="GeoJSON_image" id = "GeoJSON_image"/>
           <input id="GeoJSON" type="button" name="add_GeoJSON_image" value="Add Chosen GeoJSON Image" onclick=addImageClicked('GeoJSON') />
@@ -347,7 +353,7 @@ if ($auth) {
 
     <div id="fossils">
         <h3><b>Fossils</b></h3>
-        <div id="fossils_value"><?=$fmdata["fossils"]["display"]?></div><br>
+        <div id="fossils_value" class="minwidth"><?=$fmdata["fossils"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="fossil_image" id = "fossil_image"/>
           <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')" />
@@ -357,7 +363,7 @@ if ($auth) {
 
     <div id="age">
         <h3><b>Age&nbsp; </b></h3>
-        <div id="age_value"><?=eliminateParagraphs($fmdata["age"]["display"])?></div><br>
+        <div id="age_value" class="minwidth"><?=eliminateParagraphs($fmdata["age"]["display"])?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="age_image" id = "age_image"/>
           <input id="Addage" type="button" name="add_age_image" value="Add Chosen Age Image" onclick="addImageClicked('age')" />
@@ -366,44 +372,44 @@ if ($auth) {
 
     </div>
 
-<div id="age_span" class = "horiz">
+    <div id="age_span" class="horiz">
         <b> Age Span:&nbsp;</b>
-        <div id="age_span_value" class = "minwidth"><?=eliminateParagraphs($fmdata["age_span"]["display"])?></div><br>
+        <div id="age_span_value" class="minwidth"><?=eliminateParagraphs($fmdata["age_span"]["display"])?></div><br>
     </div> 
 
-<div id="beginning_stage" class = "horiz">
+    <div id="beginning_stage" class="horiz">
         <i>Beginning stage:&nbsp</i>
-	<div id="beginning_stage__value" class = "horiz"><?=eliminateParagraphs($fmdata["beginning_stage"]["display"])?></div><br>
-</div>
-
-    <div id="Fraction up in beginning stage" class = "horiz">
-        <b>Fraction up in beginning stage:&nbsp</b>
-	<div id="Fraction up in beginning stage_value" class = "horiz"><?=eliminateParagraphs($fmdata["frac_upB"]["display"])?></div><br>
+        <div id="beginning_stage__value" class="minwidth"><?=eliminateParagraphs($fmdata["beginning_stage"]["display"])?></div><br>
     </div>
 
-    <div id="Beginning date (Ma)" class = "horiz">
+    <div id="Fraction up in beginning stage" class="horiz">
+        <b>Fraction up in beginning stage:&nbsp</b>
+    <div id="Fraction up in beginning stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upB"]["display"])?></div><br>
+    </div>
+
+    <div id="Beginning date (Ma)" class="horiz">
         <b>Beginning date (Ma):&nbsp</b>
-        <div id="Beginning date_value" class = "horiz"><?=eliminateParagraphs($fmdata["beg_date"]["display"])?></div><br>
+        <div id="Beginning date_value" class="minwidth"><?=eliminateParagraphs($fmdata["beg_date"]["display"])?></div><br>
     </div> 
 
-    <div id="Ending stage" class = "horiz">
+    <div id="Ending stage" class="horiz">
         <b>Ending stage:&nbsp</b>
-        <div id="Ending stage_value" class = "horiz"><?=eliminateParagraphs($fmdata["end_stage"]["display"])?></div><br>
+        <div id="Ending stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_stage"]["display"])?></div><br>
     </div>
 
     <div id="Fraction up in ending stage" class = "horiz">
         <b>Fraction up in the ending stage:&nbsp</b>
-        <div id="Fraction up in ending stage_value" class = "horiz"><?=eliminateParagraphs($fmdata["frac_upE"]["display"])?></div><br>
+        <div id="Fraction up in ending stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upE"]["display"])?></div><br>
     </div>
 
-    <div id="Ending date (Ma)" class = "horiz">
+    <div id="Ending date (Ma)" class="horiz">
         <b>Ending date (Ma): &nbsp</b>
-        <div id="Ending date_value" class = "horiz"><?=eliminateParagraphs($fmdata["end_date"]["display"])?></div><br>
+        <div id="Ending date_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_date"]["display"])?></div><br>
     </div>
 
     <div id="depositional">
         <h3><b>Depositional setting</b></h3>
-        <div id="depositional_value"><?=$fmdata["depositional"]["display"]?></div><br>
+        <div id="depositional_value" class="minwidth"><?=$fmdata["depositional"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="depositional_image" id = "depositional_image"/>
           <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('depositional')" />
@@ -413,7 +419,7 @@ if ($auth) {
 
     <div id="Depositional-pattern" class = "horiz">
         <b>Depositional pattern: &nbsp</b>
-        <div id="Depositional-pattern_value"><?=eliminateParagraphs($fmdata["depositional_pattern"]["display"])?></div><br>
+        <div id="Depositional-pattern_value" class="minwidth"><?=eliminateParagraphs($fmdata["depositional_pattern"]["display"])?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="Depositional-pattern_image" id = "Depositional-pattern_image"/>
           <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('Depositional-pattern')" />
@@ -423,7 +429,7 @@ if ($auth) {
 
     <div id="additional_info">
         <h3><b>Additional Information</b></h3>
-        <div id="additional_info_value"><?=$fmdata["additional_info"]["display"]?></div><br>
+        <div id="additional_info_value" class="minwidth"><?=$fmdata["additional_info"]["display"]?></div><br>
         <?php if ($auth) {?>
           <input type="file" name="additional_image" id = "additional_image"/>
           <input id="Addaddl" type="button" name="add_additional_image" value="Add Chosen Additional Image" onclick="addImageClicked('additional')" />
@@ -433,45 +439,45 @@ if ($auth) {
 
     <div id="compiler" class = "horiz">
         <b>Compiler: &nbsp;</b>
-        <div id="compiler_val" class = "horiz"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
+        <div id="compiler_val" class="minwidth"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
     </div>
 
 <?php if ($auth) {?> 
 <script type ="text/javascript">
 function deleteform(){
-	console.log("delete pressed");
-	var title1 = document.getElementById("name_value").innerHTML;
-	console.log(title1);
-	newform = document.createElement('form');
-	document.body.appendChild(newform);
-	newform.method = "POST";
-	newform.action = "deleteForm.php";
-	input = document.createElement('input');
-	input.type = "hidden";
-	input.name = "name";
-	input.value = title1;
-	newform.appendChild(input);
-	newform.submit();
-	document.removeChild(newform);
+  console.log("delete pressed");
+  var title1 = document.getElementById("name_value").innerHTML;
+  console.log(title1);
+  newform = document.createElement('form');
+  document.body.appendChild(newform);
+  newform.method = "POST";
+  newform.action = "deleteForm.php";
+  input = document.createElement('input');
+  input.type = "hidden";
+  input.name = "name";
+  input.value = title1;
+  newform.appendChild(input);
+  newform.submit();
+  document.removeChild(newform);
 
 }
 function delImageClicked(path, type, id){
-	console.log("delImageClicked: asked to delete image at path ", path);
-	const fullpath = "/app" + path;
-	let form = new FormData();
-	form.append("Img_select",fullpath);
+  console.log("delImageClicked: asked to delete image at path ", path);
+  const fullpath = "/app" + path;
+  let form = new FormData();
+  form.append("Img_select",fullpath);
 
-	let x = fetch('/delete_image.php',{method:"POST",body:form}).then(function(res){
+  let x = fetch('/delete_image.php',{method:"POST",body:form}).then(function(res){
     res.text().then(function(val) {
       alert( val);
 
 
-	    img = document.getElementById(id);
-    	img.parentNode.removeChild(img);
+      img = document.getElementById(id);
+      img.parentNode.removeChild(img);
     });
-	}).catch(function(e){
- 		console.log("Error deleting image:",e);
-	});
+  }).catch(function(e){
+     console.log("Error deleting image:",e);
+  });
 
 }
 
@@ -492,7 +498,7 @@ function addImageClicked(type) {
         else if(type ==="locality") {
             img = document.getElementById('locality_image').files[0]
         console.log("locality")
-	}
+  }
     else if(type ==="Lithology-pattern") {
             img = document.getElementById('lithology_pattern_image').files[0]
         console.log("lithology")
@@ -535,12 +541,12 @@ function addImageClicked(type) {
     form.append("image", img);
 
     let x = fetch('/uploadImage.php', {method: "POST", body: form })
-	    .then(function(res) {
+      .then(function(res) {
       console.log('HTTP response code:', res.text().then(function(a){alert(a)}));
-	
-	//alert("Image Upload complete,to see image, reload the page");
-	    }).catch(function(e) {
-	    console.log("Error uploading image: ", e);
+  
+  //alert("Image Upload complete,to see image, reload the page");
+      }).catch(function(e) {
+      console.log("Error uploading image: ", e);
     });
   // location.reload()
 }
@@ -550,17 +556,18 @@ function addImageClicked(type) {
         var fmdata = <?=json_encode($fmdata)?>;
 
         var fmkeys = Object.keys(fmdata);
-	console.log(fmkeys);       
-	var editables = document.querySelectorAll(
+  console.log(fmkeys);       
+  var editables = document.querySelectorAll(
           fmkeys.map(function(k) { return '#'+k+'_value'; }).join(', ') // "#name", "type_locality", ...
   );
-	editBtn.addEventListener('click',function(e){
-		if(!editables[0].isContentEditable){
+  editBtn.addEventListener('click',function(e){
+    if(!editables[0].isContentEditable){
                 saveBtn.disabled = false;
                 for (var i = 0;i<editables.length;i++){
                     editables[i].contentEditable = true;
-		    console.log(editables[i]);
-		    // Fill editable box with the raw text for editing
+                    editables[i].classList.add('hasborder');
+        console.log(editables[i]);
+        // Fill editable box with the raw text for editing
                     editables[i].innerHTML = fmdata[fmkeys[i]].raw
                 }
             }
@@ -593,7 +600,7 @@ function addImageClicked(type) {
                 input.value = savedata[data];
                 form.appendChild(input);
             }
-            //console.log(savedata["id_value"])
+            console.log('savedata = ', savedata);
             form.submit();
             document.removeChild(form);
         });
