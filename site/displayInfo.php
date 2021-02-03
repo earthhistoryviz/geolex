@@ -97,6 +97,26 @@ $fmdata = array(
    'compiler'                              => array("needlinks" => false),
 );
 
+/*
+if($fmdata['geojson']){
+	$index = 0; // used to get the name, from age and to age once geojson strings identified
+	foreach($fmdata['geojson'] as $specific){
+        $properties = '/"properties":{(.*)}/'; // gets the properties part of the long geoJSON text
+	if($properties){
+	$properties = preg_quote($properties, '/'); // adds the escape characters to those that need it
+	$oldprop = preg_match($properties, $specific); // gets the properties part of the geoJSON string
+	$newprop = substr_replace($oldprop, "", -1); // removes the closing bracket so more information can be added
+        $newprop = $newprop.'"Name":'. $fmdata['name'][$index].','.'"FROMAGE":'.$fmdata['beg_date'][$index].','.'"TOAGE":'.$fmdata['end_date'][$index]."}"; // adds new parts
+	str_replace($oldprop, $newprop, $specific); // replaces characters in properties with characters in oldproperties in string specific
+	array_replace($fmdata['geojson'][$index], $specific);
+        
+	}
+	$index = $index + 1;
+
+
+
+  }
+} */
 $found = false;
 while($row = mysqli_fetch_array($result)) {
   $found = true;
@@ -147,7 +167,20 @@ if ($dirs) {
     }
   }
 }
-
+/*
+$geojson = $fmdata["geojson"]["display"];
+$properties = '/(.)+properties/'; 
+$new = preg_replace($properties, "", $geojson);
+$extra = '/\}(.)+/';
+$addOn = preg_replace($extra, "", $new);
+$addOn = $addOn.',"Name":'.'"'.$fmdata['name']["display"].'"'.', '.'"FROMAGE":'.$fmdata['beg_date']["display"].','.'"TOAGE":'.$fmdata['end_date']["display"].'}, "geometry';
+//echo $addOn;
+$after = preg_replace('/(.)+geometry/', "", $geojson);
+$before = preg_replace('/^properties(.)*', "", $geojson);
+  if(strlen($geojson)!= 0){
+$fmdata["geojson"]["display"] = '{"type":"Feature","properties'.$addOn.$after;
+  }
+ */
 // display information below
 ?>
 <style>
@@ -215,7 +248,7 @@ if ($auth) {
         return false;
     }
   </script>
-<?php
+<?php 
 }
 
     ?>
@@ -333,8 +366,7 @@ if ($auth) {
             <?php } ?>
             <?php displayImages($images, 'regionalextent') ?>
         </div>
-    </div>
-
+    </div> 
       <div id="GeoJSON">
         <h3><b>GeoJSON</b></h3>
         <div id="geojson_value" class="minwidth"><?=$fmdata["geojson"]["display"]?></div><br>
