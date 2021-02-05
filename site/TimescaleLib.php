@@ -16,7 +16,7 @@ function computeAgeFromPercentUp($stage, $percent, $timescale) {
   $sbase = $stage_info["base"];
   $span = $sbase - $stop;
   $comp = ($span * $percent)-$sbase;
-  return abs($comp); // need absolute value b/c millions of years ago should not actually be negative
+  return number_format(abs($comp), 2); // need absolute value b/c millions of years ago should not actually be negative
 }
 
 $DEFAULT_TIMESCALE_PATH = dirname(__FILE__) . "/timescales/default_timescale.xlsx";
@@ -44,17 +44,36 @@ function parseTimescale($filepath) {
   // Headers are first row, data starts on the second row
   // Create an associative array for each row
   $stages = array();
-  // Note: $i=1 to skip header row
-  for($i=1; $i<count($rows); $i++) {
+  // Note: $i>=1 to skip header row
+  $lastperiod="";
+  $lastseries="";
+  // Have to go in reverse because the period/series names show up first at the bottom
+  for($i=(count($rows)-1); $i>=1; $i--) {
     $row = $rows[$i];
+    // If this row has a period, use it until we see another one:
+    if (strlen(trim($row[$COLPERIOD])) > 0) {
+      $lastperiod = trim($row[$COLPERIOD]);
+    }
+    // If this row has a series, use it until we see another one:
+    if (strlen(trim($row[$COLSERIES])) > 0) {
+      $lastseries = trim($row[$COLSERIES]);
+      // shorthand for "Early Cretaceous" is series = "Early"
+      $up = strtoupper($lastseries);
+      if ($up == "EARLY" || $up == "MIDDLE" || $up == "LATE") {
+        $lastseries = "$lastseries $lastperiod";
+      }
+    }
+    $series = strlen($lastseries) > 0 ? $lastseries : $row[$COLSTAGE];
+    $period = strlen($lastperiod) > 0 ? $lastperiod : $lastseries;
     array_push($stages, array(
-      "period" => $row[$COLPERIOD],
-      "series" => $row[$COLSERIES],
+      "period" => $period,
+      "series" => $series,
        "stage" => $row[$COLSTAGE],
         "base" => $row[$COLMA],
        "color" => $row[$COLCOLOR],
     ));
   }
+  $stages = array_reverse($stages); // re-order them top down
 
   // Now, fill in the top ages for each stage
   for($i=1; $i<count($stages); $i++) {
