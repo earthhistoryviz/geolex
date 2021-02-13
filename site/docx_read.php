@@ -68,7 +68,7 @@ function docx_read($filename)
     array("name" => "lower_contact",                     "matchoffset" => 1, "pattern" => "/Lower contact:\s*(.+)Upper contact:/",                          "index" => $numvars++ ),
     array("name" => "upper_contact",                     "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/",                    "index" => $numvars++ ),
     array("name" => "regional_extent",                   "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)GeoJSON:/",                              "index" => $numvars++ ),
-    array("name" => "geojson",                           "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/",                                      "index" => $numvars++ ),
+    array("name" => "geojson",          "clean" => true, "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/",                                      "index" => $numvars++ ),
     array("name" => "fossils",                           "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/",                                          "index" => $numvars++ ),
     array("name" => "age",              "clean" => true, "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Age span:/",                                         "index" => $numvars++ ),
     array("name" => "age_span",         "clean" => true, "matchoffset" => 1, "pattern" => "/Age Span:\s*(.+)Beginning stage:/",                             "index" => $numvars++ ),
@@ -94,6 +94,7 @@ function docx_read($filename)
   $estageindex = vindex("end_stage", $vars);
   $efracindex = vindex("frac_upE", $vars);
   $edateindex = vindex("end_date", $vars);
+  $geojsonindex = vindex("geojson", $vars);
 
   foreach ($splitcontent as $ministr) {
     if ($count++ < $skipFirstNFormations) continue;
@@ -180,6 +181,13 @@ function docx_read($filename)
     }
     $sql .= ")";
     $sql = $sql.$sql20;
+    
+     /* CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
+    if(!empty($vars[$geojsonindex]["value"]) && empty(json_decode($vars[$geojsonindex]["value"]))){
+      echo "Error: Invalid geoJSON data.";
+      exit("<br>Formation not parsed. Recheck word document.");
+    } */
+
     if ($conn->query($sql) === TRUE) {
       echo "Inserted Formation: ".$vars[$nameindex]["value"]."<br>";
     } else {
