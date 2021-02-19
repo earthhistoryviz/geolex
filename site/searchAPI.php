@@ -8,7 +8,7 @@ $agefilter = $_REQUEST['agefilter'];
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
 if (!$provincefilter || $provincefilter == "All") $provincefilter = "";
-if (!$agefilter || $agefilter == "All") $agefilter = ""; // What does this do?
+if (!$agefilter || $agefilter == "All") $agefilter = ""; //change this to fit age filter
 
 header("Content-Type: application/json");
 
@@ -31,8 +31,8 @@ $sql = "SELECT * "
       ." WHERE name LIKE '%$searchquery%' "
       ."       AND period LIKE '%$periodfilter%' "
       ."       AND province LIKE '%$provincefilter%'"
-      ."       AND startage <= '%agefilter%'"
-      ."       AND endage >= '%agefilter%'";
+      ."       AND beginning_date >= $agefilter"
+      ."       AND end_date <= $agefilter";
 
 $result = mysqli_query($conn, $sql);
 //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
