@@ -4,9 +4,11 @@ include_once("SqlConnection.php");
 $searchquery = $_REQUEST['searchquery'];
 $periodfilter = $_REQUEST['periodfilter'];
 $provincefilter = $_REQUEST['provincefilter'];
+$agefilter = $_REQUEST['agefilter'];
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
 if (!$provincefilter || $provincefilter == "All") $provincefilter = "";
+if (!$agefilter || $agefilter == "All") $agefilter = ""; //change this to fit age filter
 
 header("Content-Type: application/json");
 
@@ -28,7 +30,9 @@ $sql = "SELECT * "
       ."  FROM formation "
       ." WHERE name LIKE '%$searchquery%' "
       ."       AND period LIKE '%$periodfilter%' "
-      ."       AND province LIKE '%$provincefilter%'";
+      ."       AND province LIKE '%$provincefilter%'"
+      ."       AND beginning_date >= $agefilter"
+      ."       AND end_date <= $agefilter";
 
 $result = mysqli_query($conn, $sql);
 //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
