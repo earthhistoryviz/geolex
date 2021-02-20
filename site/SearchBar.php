@@ -62,7 +62,7 @@
         
         <form id='form' action="searchFm.php" method="request">
         <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
-         <input id="submitbtn1" type="submit" value="Submit" disabled> 
+        <input id="submitbtn1" type="submit" value="Submit" disabled> 
         <!--<button id="submitbtn1" type="button">Submit</button>-->
 
         <script type="text/javascript">
@@ -79,6 +79,8 @@
         		document.getElementById('searchbar').value = ''; 
             document.getElementById('periodfilter').value = '';
             document.getElementById('provincefilter').value = '';
+            document.getElementById('begDate').value = '';
+            document.getElementById('endDate').value = '';
         		document.getElementById('form').submit();
 
         	}
@@ -88,11 +90,16 @@
 
         	</script>
         <button id="submitbtn2" type="button" onclick="viewAll()"> View All Formations </button>
-        <br/>
+        <br><br>
         Search by Period
         <?php selectFilter("period") ?>
-        and Province
+         Province
         <?php selectFilter("province") ?>
+         Beginning Date
+        <input id='begDate' type='number' style="width: 75px" name="agefilterstart" value="<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>">
+         Ending Date
+        <input id='endDate' type='number' style="width: 75px" name="agefilterend" value="<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>">
+        
         <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
 
         </form>
