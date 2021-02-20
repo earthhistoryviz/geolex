@@ -68,7 +68,7 @@ function docx_read($filename)
     array("name" => "lower_contact",                     "matchoffset" => 1, "pattern" => "/Lower contact:\s*(.+)Upper contact:/",                          "index" => $numvars++ ),
     array("name" => "upper_contact",                     "matchoffset" => 1, "pattern" => "/Upper contact:\s*(.+)Regional (e|E)xtent:/",                    "index" => $numvars++ ),
     array("name" => "regional_extent",                   "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)GeoJSON:/",                              "index" => $numvars++ ),
-    array("name" => "geojson",          "clean" => true, "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/",                                      "index" => $numvars++ ),
+    array("name" => "geojson",      "cleanjson" => true, "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/",                                      "index" => $numvars++ ),
     array("name" => "fossils",                           "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/",                                          "index" => $numvars++ ),
     array("name" => "age",              "clean" => true, "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Age span:/",                                         "index" => $numvars++ ),
     array("name" => "age_span",         "clean" => true, "matchoffset" => 1, "pattern" => "/Age Span:\s*(.+)Beginning stage:/",                             "index" => $numvars++ ),
@@ -116,8 +116,11 @@ function docx_read($filename)
       }
       if (isset($vars[$i]["clean"])) {
         $vars[$i]["value"] = cleanupString($vars[$i]["value"]);
-      }
-
+      }      
+      if(isset($vars[$i]["cleanjson"])){
+        $vars[$i]["value"] = cleanupGeojson($vars[$i]["value"]);
+      } 
+       
     }
     $count = 0;
     // Check if the name is blank, if so, do not insert anything to the database
@@ -182,13 +185,14 @@ function docx_read($filename)
     $sql .= ")";
     $sql = $sql.$sql20;
     
-     /* CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
+     // CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
+    
     if(!empty($vars[$geojsonindex]["value"]) && empty(json_decode($vars[$geojsonindex]["value"]))){
       echo "Error: Invalid geoJSON data.";
       exit("<br>Formation not parsed. Recheck word document.");
-    } */
-
-    if ($conn->query($sql) === TRUE) {
+    } 
+     
+    elseif ($conn->query($sql) === TRUE) {
       echo "Inserted Formation: ".$vars[$nameindex]["value"]."<br>";
     } else {
       echo "-------------------------------------------------\n\n<br><br>";

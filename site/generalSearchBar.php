@@ -9,7 +9,7 @@
         width: 700px;
         
     }
-    #submitbtn1, #submitbtn2{
+    #submitbtn1, #submitbtn2, #submitbtn3{
         height: 40px;
         border: 3px solid #000000;
     }
@@ -18,6 +18,7 @@
   text-align: center;
         margin-top: 10px;
     }
+
     
 </style>
 <?php
@@ -68,7 +69,9 @@
         
         <form id='form' action="<?=$formaction?>" method="request">
          <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
-	 <input id="submitbtn1" type="submit" value="Submit" disabled> 
+	 <input id="submitbtn1" type="submit" value="Submit" disabled>
+      <!--	 <button id = "submitbtn2" type = "button" onclick = "changeAge()"> Advanced Search (Age) </button> !--> 
+        <!-- <button id = "submitbtn3" type = "button" onclick = "changeStage()"> Advanced Search (Stage) </button> !-->
 	 <br>
         <!--NEW ADDITIONS 12/3/2020
 	<input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Enter beginning date (Ma)..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
@@ -77,7 +80,8 @@
         <!-- END OF NEW ADDITIONS-->
         <!--<button id="submitbtn1" type="button">Submit</button>-->
 
-        <script type="text/javascript">
+  <script type="text/javascript">
+          var SearchCriteria = "Search by Period"; 
           function verify(){
             if (document.getElementById("searchbar").value === ""){
               document.getElementById("submitbtn1").disabled = true;
@@ -96,20 +100,25 @@
           }
           function submitFilter() {
             document.getElementById('form').submit();
-          }
-
+	  }
+	  function changeAge(){
+	     document.getElementById("SearchCriteria").innerHTML = "Search by Age";
+	  }
+	  function changeStage(){
+            document.getElementById("SearchCriteria").innerHTML = "Search by Stage";
+	  }
+	  SearchCriteria = document.getElementById("SearchCriteria").value;
           </script>
-       <!-- <button id="submitbtn2" type="button" onclick="viewAll()"> View All Formations </button> -->
-        <br/>
-
-        Search by Period
-      <select name="filterperiod">
-        <option value="All">All</option>
+       <!-- <button id="submitbtn2" type="button" onclick="viewAll()"> Advanced Search </button>!--> 
+	<br/>
+	<div style = "display:inline" id = "SearchCriteria"> <?php echo "<script>document.writeln(SearchCriteria)</script>"?> </div>; 
+      <select id = "PeriodDisplay" name="filterperiod">
+      <option value="All">All</option>
         <?php foreach($periods as $p) {?>
           <option value="<?=$p?>"><?=$p?></option>
         <?php }?>
       </select>
-
+      
       and Region 
       <select name="filterregion">
         <option value="All">All</option>

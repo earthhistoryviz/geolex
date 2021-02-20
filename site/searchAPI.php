@@ -1,14 +1,18 @@
 <?php
 include_once("SqlConnection.php");
 
-$searchquery = $_REQUEST['searchquery'];
-$periodfilter = $_REQUEST['periodfilter'];
-$provincefilter = $_REQUEST['provincefilter'];
-$agefilter = $_REQUEST['agefilter'];
+$searchquery = addslashes($_REQUEST['searchquery']);
+$periodfilter = addslashes($_REQUEST['periodfilter']);
+$provincefilter = addslashes($_REQUEST['provincefilter']);
+$agefilterstart = addslashes($_REQUEST['agefilterstart']);
+$agefilterend = addslashes($_REQUEST['agefilterend']);
+
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
 if (!$provincefilter || $provincefilter == "All") $provincefilter = "";
-if (!$agefilter || $agefilter == "All") $agefilter = ""; //change this to fit age filter
+if (!isset($_REQUEST['agefilterend'])) {
+  $agefilterend = $agefilterstart;
+}
 
 header("Content-Type: application/json");
 
@@ -30,9 +34,12 @@ $sql = "SELECT * "
       ."  FROM formation "
       ." WHERE name LIKE '%$searchquery%' "
       ."       AND period LIKE '%$periodfilter%' "
-      ."       AND province LIKE '%$provincefilter%'"
-      ."       AND beginning_date >= $agefilter"
-      ."       AND end_date <= $agefilter";
+      ."       AND province LIKE '%$provincefilter%'";
+
+if (isset($_REQUEST['agefilterstart'])) {
+  $sql .= "       AND NOT (beg_date < $agefilterend"
+         ."                OR end_date > $agefilterstart)";
+}
 
 $result = mysqli_query($conn, $sql);
 //echo '<pre>'."HERES THE SQL QUERY".'</pre>';

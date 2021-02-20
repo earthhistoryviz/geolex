@@ -181,6 +181,17 @@ $before = preg_replace('/^properties(.)*', "", $geojson);
 $fmdata["geojson"]["display"] = '{"type":"Feature","properties'.$addOn.$after;
   }
  */
+/*
+$output["properties"]["FROMAGE"] = $fmdata["beg_date"]["display"];
+$output["properties"]["TOAGE"] = $fmdata["end_date"]["display"];
+$output = json_encode($output, true);
+echo $output; */
+//$fmdata["geojson"]["display"] = $output;
+//echo '<pre>';
+//print_r($output);
+//echo '<pre>';
+
+
 // display information below
 ?>
 <style>

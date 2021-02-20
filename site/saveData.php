@@ -1,6 +1,6 @@
 <?php
-include_once("navBar.php");
-include_once("SearchBar.php");
+//include_once("navBar.php");
+//include_once("SearchBar.php");
 include_once("SqlConnection.php");
 
 $vars = array(
@@ -13,12 +13,24 @@ $vars = array(
   'lower_contact' => '',
   'upper_contact' => '',
   'regional_extent' => '',
+  'geojson' => '',
+  'fossils' => '',
+  'age' => '',
+  'age_span' => '',
+  'beginning_stage' => '',
+  'frac_upB' => '',
+  'beg_date' => '',
+  'end_stage' => '',
+  'frac_upE' => '',
+  'end_date' => '',
   'fossils' => '',
   'age' => '',
   'depositional' => '',
   'additional_info' => '',
   'compiler' => '',
 );
+
+
 
 
 foreach ($vars as $vname => $vval) {
