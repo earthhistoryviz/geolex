@@ -10,7 +10,7 @@ $agefilterend = addslashes($_REQUEST['agefilterend']);
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
 if (!$provincefilter || $provincefilter == "All") $provincefilter = "";
-if (!isset($_REQUEST['agefilterend'])) {
+if (!isset($_REQUEST['agefilterend'])) { // TODO: check if agefilterend is not greater than agefilterstart
   $agefilterend = $agefilterstart;
 }
 

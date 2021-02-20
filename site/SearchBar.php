@@ -41,7 +41,7 @@
       }
     }
   }
-  function selectFilter($v) {
+  function selectFilter($v) { // TODO: keep last selected option after submit
    global $filters;
    $list = array_keys($filters[$v]);
    sort($list);
@@ -60,7 +60,7 @@
 <body>
     <div class = "search-container">
         
-        <form id='form' action="searchFm.php" method="request">
+        <form id="form" action="searchFm.php" method="request">
         <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
         <input id="submitbtn1" type="submit" value="Submit" disabled> 
         <!--<button id="submitbtn1" type="button">Submit</button>-->
@@ -96,9 +96,9 @@
          Province
         <?php selectFilter("province") ?>
          Beginning Date
-        <input id='begDate' type='number' style="width: 75px" name="agefilterstart" value="<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>">
+        <input id="begDate" type="number" style="width: 75px" name="agefilterstart" min="0" value="<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>">
          Ending Date
-        <input id='endDate' type='number' style="width: 75px" name="agefilterend" value="<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>">
+        <input id="endDate" type="number" style="width: 75px" name="agefilterend" min="0" value="<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>">
         
         <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
 
