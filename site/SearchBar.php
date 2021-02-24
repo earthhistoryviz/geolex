@@ -66,21 +66,21 @@
         <!--<button id="submitbtn1" type="button">Submit</button>-->
 
         <script type="text/javascript">
-        	function verify(){
-        		if (document.getElementById("searchbar").value === ""){
+        	function verify() {
+        		if (document.getElementById("searchbar").value === "") {
         			document.getElementById("submitbtn1").disabled = true;
         		}
-        		else{
+        		else {
         			document.getElementById("submitbtn1").disabled = false;
 
 				    }
         	}
-        	function viewAll(){
+        	function viewAll() {
         		document.getElementById('searchbar').value = ''; 
             document.getElementById('periodfilter').value = '';
             document.getElementById('provincefilter').value = '';
-            document.getElementById('begDate').value = '';
-            document.getElementById('endDate').value = '';
+            // document.getElementById('begDate').value = '';
+            // document.getElementById('endDate').value = '';
         		document.getElementById('form').submit();
 
         	}
@@ -88,7 +88,7 @@
             document.getElementById('form').submit();
           }
 
-        	</script>
+        </script>
         <button id="submitbtn2" type="button" onclick="viewAll()"> View All Formations </button>
         <br><br>
         Search by Period

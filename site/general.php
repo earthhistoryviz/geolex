@@ -80,7 +80,7 @@ if ($didsearch) {
                   <h5><?=$pname?></h5>
                   <div class="period-container"><?php
                     foreach($formations as $fname => $finfo){?>
-                      <div class = "button">    
+                      <div class = "button">
                         <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
                       </div><?php 
                     }?>

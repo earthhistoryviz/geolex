@@ -7,6 +7,8 @@ $provincefilter = addslashes($_REQUEST['provincefilter']);
 $agefilterstart = addslashes($_REQUEST['agefilterstart']);
 $agefilterend = addslashes($_REQUEST['agefilterend']);
 
+// console.log("REACHED HERE");
+
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
 if (!$provincefilter || $provincefilter == "All") $provincefilter = "";
