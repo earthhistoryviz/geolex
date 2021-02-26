@@ -15,7 +15,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   $results = array();
 
   foreach($regionstosearch as $r) {
-    $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"];
+    $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"]."&agefilterstart=".$_REQUEST["agefilterstart"]."&agefilterend=".$_REQUEST["agefilterend"];
     $response = json_decode(file_get_contents($url));
     $results[$r["name"]] = array(
       "linkurl" => $r["linkurl"],

@@ -186,13 +186,13 @@ function docx_read($filename)
     $sql = $sql.$sql20;
     
      // CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
-    
+     
     if(!empty($vars[$geojsonindex]["value"]) && empty(json_decode($vars[$geojsonindex]["value"]))){
       echo "Error: Invalid geoJSON data.";
       exit("<br>Formation not parsed. Recheck word document.");
     } 
      
-    elseif ($conn->query($sql) === TRUE) {
+    else if ($conn->query($sql) === TRUE) {
       echo "Inserted Formation: ".$vars[$nameindex]["value"]."<br>";
     } else {
       echo "-------------------------------------------------\n\n<br><br>";

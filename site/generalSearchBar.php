@@ -113,15 +113,8 @@
        <!-- <button id="submitbtn2" type="button" onclick="viewAll()"> Advanced Search </button>!--> 
 	<br/>
 	<!-- <div style="display:inline" id="SearchCriteria"> <?php echo "<script>document.writeln(SearchCriteria)</script>"?> </div> -->
-  Search by Period
-  <select name="filterperiod">
-  <option value="All" <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option>
-    <?php foreach($periods as $p) {?>
-      <option value="<?=$p?>" <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?></option>
-    <?php }?>
-  </select>
-  
-    Region 
+
+  Search Region 
   <select name="filterregion">
     <option value="All" <?php echo (isset($_REQUEST['filterregion']) && $_REQUEST['filterregion'] == 'All') ? 'selected' : ''; ?>>All</option>
     <?php foreach($regions as $r) {?>
@@ -129,12 +122,39 @@
     <?php }?>
   </select>
 
+
+  <div id="searchcontainer" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+    <div style="padding: 5px;">
+      Search by 
+      <select name="searchtype">
+        <option value="Period">Period</option>
+        <option value="Period">Date</option>
+        <option value="Period">Date Range</option>
+      </select>
+    </div>
+    <div id="searchform" style="padding: 5px;">
+      <select name="filterperiod">
+      <option value="All" <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option>
+        <?php foreach($periods as $p) {?>
+          <option value="<?=$p?>" <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?></option>
+        <?php }?>
+      </select>
+      Stage: <select name="stage">
+        <option name="All">All</option>
+        <option name="Norian">Norian</option>
+      </select>
+    </div>
+    <div style="padding: 5px;">
+      <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
+    </div>
+  </div>
+
+<!--
     Beginning Date
   <input id="begDate" type="number" style="width: 75px" name="agefilterstart" min="0" value="<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>">
     Ending Date
   <input id="endDate" type="number" style="width: 75px" name="agefilterend" min="0" value="<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>">
-
-  <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
+-->
 
   </form>
     
