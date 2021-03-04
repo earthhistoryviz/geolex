@@ -125,7 +125,7 @@
             <?php }?>\
           </select>\
           Stage: \
-          <select name='filterstage'>\
+          <select id='filterStage' name='filterstage'>\
             <option name='All'>All</option>\
             <option name='Norian'>Norian</option>\
           </select>\
@@ -146,7 +146,11 @@
 
     /* Change the options in Stage based on user selection on Period */
     function changePeriod() {
+      var box = document.getElementById("selectPeriod");
+      var chosen = box.options[box.selectedIndex].value;
+      var stageBox = document.getElementById("filterStage");
 
+      // TODO: Implement switching stages
     }
 
     /* Keep selection on filter criteria (check previously selected option when page loads) */

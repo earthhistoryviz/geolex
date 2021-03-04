@@ -1,14 +1,14 @@
 <?php
 include("constants.php");
 
-// If we have a filterperiod and filterregion, send off the API requests
+/* If we have a filterperiod and filterregion, send off the API requests */
 if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   $didsearch = true;
 
   $regionstosearch = array();
   foreach($regions as $r) {
     if ($r["name"] == $_REQUEST["filterregion"] || $_REQUEST["filterregion"] == "All") {
-      array_push($regionstosearch,$r);
+      array_push($regionstosearch, $r);
     }
   }
 
@@ -32,20 +32,16 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
                                                 [groupbyperiod][cretaceous][taoziken fm]
                                                                [jurassic  ][baratan fm]
       */
-      // Figure out which periods overlap this formation
+      /* Figure out which periods overlap this formation */
       foreach($periods as $searchperiod) {
         if (stripos($finfo->period, $searchperiod) === false) continue;
         $results[$r["name"]]["groupbyprovince"][$p]["groupbyperiod"][$searchperiod][$fname] = $finfo;
       }
-
     }
-      
   }
-
 }
 
-
-// This is necessary to get generalSearchBar to send things back to us
+/* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php";
 ?>
 <link rel="stylesheet" href="generalStyling.css">
@@ -53,8 +49,8 @@ $formaction = "general.php";
 <?php include("navBar.php");?>
 <?php /* navBar will set $period for us */?>
 
-  <h2 align="center" style="color:blue;">Welcome to the International Geology Website and Database! <br>Please enter a formation name or group to retrieve more information.</h2>
-  <?php include("generalSearchBar.php");?>
+<h2 align="center" style="color:blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
+<?php include("generalSearchBar.php");?>
 
 <div style="display: flex; flex-direction: column;">
 <?php
@@ -62,15 +58,15 @@ $sorted = array();
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
-
   } else {  
     foreach($results as $regionname => $regioninfo) {?>
       <div class="formation-container" id="<?=$regionname?>">
         <h3 class="region-title"><?=$regionname?></h3>
         <hr/>
         <div><?php
-          $count = 0;
+          $count = 0; // What is this for?
           $sortByPeriod = array();
+          // echo "$regioninfo";
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) {?>
             <h3><?=$province?></h3>
             <div class="province-container"> <?php
@@ -96,5 +92,3 @@ if ($didsearch) {
   } 
 }?>
 </div>
-
-
