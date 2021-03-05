@@ -70,25 +70,10 @@
             <option value="Period" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Period') ? 'selected' : ''; ?>>Period</option>
             <option value="Date" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Date') ? 'selected' : ''; ?>>Date</option>
             <option value="Date Range" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Date Range') ? 'selected' : ''; ?>>Date Range</option>
+            <option value="Stage" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Stage') ? 'selected' : ''; ?>>Stage</option>
           </select>
         </div>
-        <div id="searchform" style="padding: 5px;">
-          <!--
-          <select id="selectPeriod" name="filterperiod" onchange="changePeriod()">
-          <option value="All" <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option>
-            <?php foreach($periods as $p) {?>
-              <option value="<?=$p?>" <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?></option>
-            <?php }?>
-          </select>
-          Stage: 
-          <select name="filterstage">
-            <option name="All">All</option>
-            <option name="Norian">Norian</option>
-          </select>
-          <input id="begDate" name="agefilterstart" type="hidden" value="">
-          <input id="endDate" name="agefilterend" type="hidden" value="">
-          -->
-        </div>
+        <div id="searchform" style="padding: 5px;"></div>
         <div style="padding: 5px;">
           <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
         </div>
@@ -124,11 +109,6 @@
               <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?></option>\
             <?php }?>\
           </select>\
-          Stage: \
-          <select id='filterStage' name='filterstage'>\
-            <option name='All'>All</option>\
-            <option name='Norian'>Norian</option>\
-          </select>\
           <input id='begDate' name='agefilterstart' type='hidden' value=''>\
           <input id='endDate' name='agefilterend' type='hidden' value=''>";
         searchForm.innerHTML = periodHTML;
@@ -141,6 +121,11 @@
           Ending Date: <input id='endDate' type='number' style='width: 90px' name='agefilterend' min='0' value='<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>'>\
           <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = rangeHTML;
+      } else if (chosen == "Stage") {
+        var stageHTML = "<!-- Enter stage name: <input id='stageBox' name='filterstage' type='text' value='<?php if (isset($_REQUEST['filterstage'])) echo $_REQUEST['filterstage']; ?>'> -->\
+        <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>\
+        <p style='color: red; font-size: 18px;'>Search by stage has not been implemented yet.</p>";
+        searchForm.innerHTML = stageHTML;
       }
     }
 
