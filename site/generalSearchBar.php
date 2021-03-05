@@ -134,12 +134,12 @@
         searchForm.innerHTML = periodHTML;
       } else if (chosen == "Date") {
         var dateHTML = "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>\
-          <input id='selectPeriod' name='filterpediod' type='hidden' value='All'>";
+          <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = dateHTML;
       } else if (chosen == "Date Range") {
         var rangeHTML = "Beginning Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>  \
           Ending Date: <input id='endDate' type='number' style='width: 90px' name='agefilterend' min='0' value='<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>'>\
-          <input id='selectPeriod' name='filterpediod' type='hidden' value='All'>";
+          <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = rangeHTML;
       }
     }

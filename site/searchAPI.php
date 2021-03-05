@@ -7,12 +7,10 @@ $provincefilter = addslashes($_REQUEST['provincefilter']);
 $agefilterstart = addslashes($_REQUEST['agefilterstart']);
 $agefilterend = addslashes($_REQUEST['agefilterend']);
 
-// console.log("REACHED HERE");
-
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
 if (!$provincefilter || $provincefilter == "All") $provincefilter = "";
-if (!isset($_REQUEST['agefilterend']) || $_REQUEST["agefilterend"] == "") {
+if (!isset($_REQUEST['agefilterend']) || $agefilterend == "") {
   $agefilterend = $agefilterstart;
 }
 
@@ -38,10 +36,11 @@ $sql = "SELECT * "
       ."       AND period LIKE '%$periodfilter%' "
       ."       AND province LIKE '%$provincefilter%'";
 
-if (isset($_REQUEST['agefilterstart'])) {
+if ($agefilterstart && $agefilterstart != "") {
   $sql .= "       AND NOT (beg_date < $agefilterend"
          ."                OR end_date > $agefilterstart)";
 }
+
 
 $result = mysqli_query($conn, $sql);
 //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
