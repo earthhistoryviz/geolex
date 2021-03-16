@@ -1,4 +1,7 @@
-<?php include("SqlConnection.php") ?>
+<?php
+include("SqlConnection.php");
+include("TimescaleLib.php");
+?>
 <!DOCTYPE html>
 <html>
 
@@ -25,7 +28,7 @@
   $sql = "SELECT name, period, province FROM formation";
   $result = mysqli_query($conn, $sql);
   $filters = array();
-  // We need to clean up the html tags from the periods and provices to get a canonical name
+  // We need to clean up the html tags from the periods and provinces to get a canonical name
   while ($row = mysqli_fetch_array($result)) {
     foreach (array("province", "period") as $v) {
       //$canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
@@ -44,6 +47,10 @@
   if (!$formaction) {
     $formaction = "searchFm.php";
   }
+
+  /* For Stage filter conversion */
+  $filepath = dirname(__FILE__)."/timescales/MasterChronostrat_StageLookupTable_2020.xlsx"; // TODO: should we use a certain filepath instead of hardcoding?
+  $timescale = parseTimescale($filepath);
 
   include("constants.php"); // gets us $periods and $regions
 ?>
@@ -92,7 +99,10 @@
       }
     }
 
-    function submitFilter() { // TODO: check if agefilterend is not greater than agefilterstart
+    function submitFilter() { // TODO: check if agefilterend is greater than agefilterstart and pop alert if so
+      if (document.getElementById("stageBox")) { // if currently on stage filter (stageBox exists)
+        stageToDate();
+      }
       document.getElementById('form').submit();
 	  }
 
@@ -103,28 +113,33 @@
       var searchForm = document.getElementById("searchform");
 
       if (chosen == "Period") {
-        var periodHTML = "<select id='selectPeriod' name='filterperiod' onchange='changePeriod()'>\
+        var periodHTML = 
+          "<select id='selectPeriod' name='filterperiod' onchange='changePeriod()'>\
           <option value='All' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option>\
           <?php foreach($periods as $p) {?>\
-              <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?></option>\
-            <?php }?>\
+            <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?></option>\
+          <?php }?>\
           </select>\
           <input id='begDate' name='agefilterstart' type='hidden' value=''>\
           <input id='endDate' name='agefilterend' type='hidden' value=''>";
         searchForm.innerHTML = periodHTML;
       } else if (chosen == "Date") {
-        var dateHTML = "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>\
+        var dateHTML = 
+          "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>\
           <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = dateHTML;
       } else if (chosen == "Date Range") {
-        var rangeHTML = "Beginning Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>  \
+        var rangeHTML = 
+          "Beginning Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>  \
           Ending Date: <input id='endDate' type='number' style='width: 90px' name='agefilterend' min='0' value='<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>'>\
           <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = rangeHTML;
       } else if (chosen == "Stage") {
-        var stageHTML = "<!-- Enter stage name: <input id='stageBox' name='filterstage' type='text' value='<?php if (isset($_REQUEST['filterstage'])) echo $_REQUEST['filterstage']; ?>'> -->\
-        <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>\
-        <p style='color: red; font-size: 18px;'>Search by stage has not been implemented yet.</p>";
+        var stageHTML = 
+          "Enter stage name: <input id='stageBox' name='filterstage' type='text' value='<?php if (isset($_REQUEST['filterstage'])) echo $_REQUEST['filterstage']; ?>'>\
+          <input id='selectPeriod' name='filterperiod' hidden='true' value=''>\
+          <input id='begDate' name='agefilterstart' type='hidden' value=''>\
+          <input id='endDate' name='agefilterend' type='hidden' value=''>";
         searchForm.innerHTML = stageHTML;
       }
     }
@@ -138,7 +153,31 @@
       // TODO: Implement switching stages
     }
 
-    /* Keep selection on filter criteria (check previously selected option when page loads) */
+    /* Temporary: implementation of Stage input textbox */
+    function stageToDate() {
+      var input = document.getElementById("stageBox").value;
+
+      /* Convert entered Stage to corresponding Start and End Date */
+      var timescale = <?php echo json_encode($timescale); ?>;
+      var rowIdx;
+      var found = false;
+      for (rowIdx = 0; rowIdx < timescale.length; rowIdx++) {
+        if (timescale[rowIdx]["stage"].toLowerCase() === input.toLowerCase()) {  // Compare each Stage with input, ignoring case
+          found = true;
+          break;
+        }
+      }
+      if (found) { // Change Period, Starting Date and Ending Date accordingly
+        var period = document.getElementById("selectPeriod");
+        period.value = timescale[rowIdx]["period"];
+        var begDate = document.getElementById("begDate");
+        begDate.value = timescale[rowIdx]["base"];
+        var endDate = document.getElementById("endDate");
+        endDate.value = timescale[rowIdx]["top"];
+      } 
+    }
+
+    /* Keep selection on filter criteria (check last selected option when page loads) */
     window.onload = changeFilter();
 
   </script>
