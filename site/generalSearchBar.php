@@ -49,8 +49,7 @@ include("TimescaleLib.php");
   }
 
   /* For Stage filter conversion */
-  $filepath = dirname(__FILE__)."/timescales/MasterChronostrat_StageLookupTable_2020.xlsx"; // TODO: should we use a certain filepath instead of hardcoding?
-  $timescale = parseTimescale($filepath);
+  $timescale = parseDefaultTimescale();
 
   include("constants.php"); // gets us $periods and $regions
 ?>
