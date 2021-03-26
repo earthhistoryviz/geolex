@@ -57,6 +57,23 @@ $formaction = "general.php";
 <div style="display: flex; flex-direction: column;">
 <?php
 $sorted = array();
+$info = parseDefaultTimescale();
+$stageConversion = array();
+$storedStage = "none";
+$count = 0; // used for indexing through the stageConversion array
+foreach($info as $element){
+   foreach($element as $key => $val){
+           if($key == "stage"){
+            array_push($stageConversion, array($val => "none"));
+            $storedStage = $val;
+           }
+           if($key == "color"){
+            $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
+            $count = $count + 1;
+           }
+   }
+}
+$stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
@@ -66,9 +83,14 @@ if ($didsearch) {
         <h3 class="region-title"><?=$regionname?></h3>
         <hr/>
         <div><?php
-          $count = 0; // What is this for?
+          //$count = 0; // What is this for?
           $sortByPeriod = array();
+          // this will be used to check if stage gets added successfully 
           // echo "$regioninfo";
+	 //echo '<pre>';
+       //print_r($regioninfo["groupbyprovince"]);
+    // print_r($regioninfo["groupbyprovince"]["Indochina block: Southeast Thailand"]["groupbyperiod"]["TRIASSIC"]["Pong Nam Ron Fm"]);
+    echo '</pre>';
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) {?>
             <h3><?=$province?></h3>
             <div class="province-container"> <?php
@@ -77,10 +99,13 @@ if ($didsearch) {
                   if($pname !== $p) continue;?>
                   <h5><?=$pname?></h5>
                   <div class="period-container"><?php
-                    foreach($formations as $fname => $finfo){?>
-                      <div class = "button">
+		  foreach($formations as $fname => $finfo){ 
+			    $finfoArr = json_decode(json_encode($finfo), true);
+                       // if($finfoArr["stage"]){?>
+                      <!--<div  class = "button"  > --!>
+                        <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button">
                         <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
-                      </div><?php 
+                        </div><?php
                     }?>
                   </div><?php 
                 }
