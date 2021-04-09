@@ -1,5 +1,6 @@
 <?php
 include("constants.php");
+include("TimescaleLib.php");
 
 /* If we have a filterperiod and filterregion, send off the API requests */
 if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
@@ -57,23 +58,28 @@ $formaction = "general.php";
 <div style="display: flex; flex-direction: column;">
 <?php
 $sorted = array();
+
+// get all of the associated stage data 
 $info = parseDefaultTimescale();
 $stageConversion = array();
 $storedStage = "none";
 $count = 0; // used for indexing through the stageConversion array
 foreach($info as $element){
    foreach($element as $key => $val){
-           if($key == "stage"){
-            array_push($stageConversion, array($val => "none"));
-            $storedStage = $val;
-           }
-           if($key == "color"){
-            $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
+	   if($key == "stage"){
+	    array_push($stageConversion, array($val => "none"));
+	    $storedStage = $val;
+	   }
+	   if($key == "color"){
+	    $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
             $count = $count + 1;
-           }
+	   }
    }
 }
-$stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
+$stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
+echo '<pre>';
+//print_r($stageArray);
+echo '</pre>';
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
@@ -85,29 +91,28 @@ if ($didsearch) {
         <div><?php
           //$count = 0; // What is this for?
           $sortByPeriod = array();
-          // this will be used to check if stage gets added successfully 
-          // echo "$regioninfo";
-	 //echo '<pre>';
-       //print_r($regioninfo["groupbyprovince"]);
-    // print_r($regioninfo["groupbyprovince"]["Indochina block: Southeast Thailand"]["groupbyperiod"]["TRIASSIC"]["Pong Nam Ron Fm"]);
-    echo '</pre>';
+	  // echo "$regioninfo";
+	  //echo '<pre>';
+	  //print_r($regioninfo);
+	  //echo '</pre>';
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) {?>
-	    <hr>
-            <h3><?=$province?></h3>
+	   <hr> 
+           <h3><?=$province?></h3>
             <div class="province-container"> <?php
               foreach($periods as $p) {
                 foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
                   if($pname !== $p) continue;?>
                   <h5><?=$pname?></h5>
                   <div class="period-container"><?php
-		  foreach($formations as $fname => $finfo){ 
-			    $finfoArr = json_decode(json_encode($finfo), true);
+		  foreach($formations as $fname => $finfo){
+			$finfoArr = json_decode(json_encode($finfo), true);
                        // if($finfoArr["stage"]){?>
-                      <!--<div  class = "button"  > --!>
-                        <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button">
+		      <!--<div  class = "button"  > --!>
+			<div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button">
                         <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
-                        </div><?php
-                    }?>
+			</div><?php 
+		      //	} 
+		        }?>
                   </div><?php 
                 }
               }?>

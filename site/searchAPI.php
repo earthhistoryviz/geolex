@@ -52,7 +52,7 @@ while ($row = mysqli_fetch_array($result)) {
   $name = $row["name"];
   $province = removeHTML($row['province']);
   $period = removeHTML($row['period']);
-  $stage = removeHTML($row["beginning_stage"]);
+  $stage = removeHTML($row['beginning_stage']);
   if (strlen($name) < 1) continue;
   $arr[$name] = array( "name" => $name, "province" => $province, "period" => $period, "stage" => $stage);
 }
