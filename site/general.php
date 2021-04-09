@@ -92,6 +92,7 @@ if ($didsearch) {
     // print_r($regioninfo["groupbyprovince"]["Indochina block: Southeast Thailand"]["groupbyperiod"]["TRIASSIC"]["Pong Nam Ron Fm"]);
     echo '</pre>';
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) {?>
+	    <hr>
             <h3><?=$province?></h3>
             <div class="province-container"> <?php
               foreach($periods as $p) {
