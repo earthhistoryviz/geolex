@@ -59,9 +59,9 @@ function docx_read($filename)
   $numvars=0;
   $vars = array(
     array("name" => "name",                              "matchoffset" => 0, "pattern" => "/([\s\w’]+\s)(Gr|Fm|Group|Formation)/",                          "index" => $numvars++),
-    array("name" => "period",           "clean" => true, "matchoffset" => 1, "pattern" => "/Period:\s*(.*)Age Interval/",                                   "index" => $numvars++ ),
+    array("name" => "period",           "clean" => true, "matchoffset" => 1, "pattern" => "/Period:\s*(.+)Age Interval(.+):/",                                   "index" => $numvars++ ),
     array("name" => "age_interval",                      "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/",               "index" => $numvars++ ),
-    array("name" => "province",         "clean" => true, "matchoffset" => 1, "pattern" => "/Province:\s*(.*)Type Locality and Naming:/",                    "index" => $numvars++ ),
+    array("name" => "province",         "clean" => true, "matchoffset" => 1, "pattern" => "/Province:\s*(.+)Type Locality and Naming:/",                    "index" => $numvars++ ),
     array("name" => "type_locality",                     "matchoffset" => 1, "pattern" => "/Type Locality and Naming:\s*(.+)Lithology and Thickness:/",     "index" => $numvars++,),
     array("name" => "lithology",                         "matchoffset" => 1, "pattern" => "/Lithology and Thickness:\s*(.+)Lithology-pattern:/",            "index" => $numvars++ ),
     array("name" => "lithology_pattern",                 "matchoffset" => 1, "pattern" => "/Lithology-pattern:\s*(.+)Relationships and Distribution:/",     "index" => $numvars++,),
@@ -104,6 +104,13 @@ function docx_read($filename)
       //preg_match($formpattern, $ministr, $form)
       //echo "Pattern = " . $v["pattern"] . ", ministr = $ministr";
       preg_match($v["pattern"], $ministr, $matches);
+
+      if ($v["name"] == "period" || $v["name"] == "age_interval" || $v["name"] == "province") {
+        if (!$matches || count($matches) < 1) {
+          echo "ERROR: Did not find any matches for ".$v["name"]." in the #$count formation (".$vars[$nameindex]["value"].").  Did you have a colon not bold?<br/>";
+        }
+      }
+
       $vars[$i]["matches"] = $matches;
       $vars[$i]["value"] = trim($matches[$v["matchoffset"]]); // get rid of newlines on the end
       if (preg_match("/\r\n/", $vars[$i]["value"])) { // only add paragraph tags if there are newlines in it (single-line doesn't have them)

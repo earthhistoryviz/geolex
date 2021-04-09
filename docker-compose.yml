@@ -1,68 +1,19 @@
 version: '3'
 services: 
 
-  china: 
+  dev: 
     build: .
     restart: always
-    container_name: china
+    container_name: dev
+    ports:
+      - "5100:80"
     expose:
       - 80
     volumes: 
       - ./site:/app
       - .:/code
       - ./run.sh:/run.sh
-      - china_mysqldata:/var/lib/mysql
-
-  india:
-    build: .
-    restart: always
-    container_name: india
-    expose:
-      - 80
-    volumes:
-      - ./site:/app
-      - .:/code
-      - ./run.sh:/run.sh
-      - india_mysqldata:/var/lib/mysql
-
-  thailex:
-    build: .
-    restart: always
-    container_name: thailex
-    expose:
-      - 80
-    volumes:
-      - ./site:/app
-      - .:/code
-      - ./run.sh:/run.sh
-      - thailex_mysqldata:/var/lib/mysql
-
-  vietlex:
-    build: .
-    restart: always
-    container_name: vietlex
-    expose:
-      - 80
-    volumes:
-      - ./site:/app
-      - .:/code
-      - ./run.sh:/run.sh
-      - vietlex_mysqldata:/var/lib/mysql
-
-
-  proxy:
-    image: nginx:latest
-    restart: always
-    container_name: proxy
-    volumes:
-      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"   
-    expose:
-      - 80  
+      - dev_mysqldata:/var/lib/mysql
 
 volumes:
-  china_mysqldata:
-  india_mysqldata:
-  thailex_mysqldata:
-  vietlex_mysqldata:
+  dev_mysqldata:

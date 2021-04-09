@@ -121,7 +121,7 @@ $sql2 = "CREATE TABLE formation (
 	depositional Text,
 	additional_info Text,
 	compiler text,
-	Geojson varchar(500),
+	geojson longtext,
         age_span varchar(255),
         beginning_stage varchar(255),
         frac_upB varchar(255),
