@@ -1,6 +1,6 @@
 <?php
 include("SqlConnection.php");
-include("TimescaleLib.php");
+include_once("TimescaleLib.php");
 ?>
 <!DOCTYPE html>
 <html>

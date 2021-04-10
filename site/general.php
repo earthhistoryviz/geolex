@@ -1,6 +1,6 @@
 <?php
 include("constants.php");
-include("TimescaleLib.php");
+include_once("TimescaleLib.php");
 
 /* If we have a filterperiod and filterregion, send off the API requests */
 if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
