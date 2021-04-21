@@ -25,10 +25,17 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       "formations" => $response,
       "groupbyprovince" => array(),
     );
+
     foreach($response as $fname => $finfo) {
       $p = $finfo->province;
       if (!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
-      $results[$r["name"]]["groupbyprovince"][$p]["formations"][$fname] = $finfo;
+      //$results[$r["name"]]["groupbyprovince"][$p]["formations"][$fname] = $finfo;
+      $newp = explode(", ", $p);
+      $overlapCount = 0; // counts number of overlaps
+      foreach($newp as $sepp){
+	      //$results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] =  $finfo;
+      $results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] = $finfo; 
+
       /*
       $results["china"][groupbyprovince][fujian][formations][taoziken Fm]
                                                             [Baratang Fm]
@@ -37,13 +44,16 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       */
       /* Figure out which periods overlap this formation */
       foreach($periods as $searchperiod) {
-        if (stripos($finfo->period, $searchperiod) === false) continue;
-        $results[$r["name"]]["groupbyprovince"][$p]["groupbyperiod"][$searchperiod][$fname] = $finfo;
+       if (stripos($finfo->period, $searchperiod) === false) continue;
+      $results[$r["name"]]["groupbyprovince"][$sepp]["groupbyperiod"][$searchperiod][$fname] = $finfo;
+       
       }
+      }
+
     }
+    ksort($results[$r["name"]]["groupbyprovince"]);
   }
 }
-
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php";
 ?>
@@ -92,20 +102,28 @@ if ($didsearch) {
           //$count = 0; // What is this for?
           $sortByPeriod = array();
 	  // echo "$regioninfo";
-	  //echo '<pre>';
+       	  //echo '<pre>';
 	  //print_r($regioninfo);
 	  //echo '</pre>';
-          foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) {?>
+    foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) { 
+            //$allProv = explode(',', $province);
+            //echo '<pre>';
+            //print_r($provinceinfo["formations"]);
+	   // echo '</pre>';
+	    ?>
 	   <hr> 
            <h3><?=$province?></h3>
             <div class="province-container"> <?php
               foreach($periods as $p) {
                 foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
-                  if($pname !== $p) continue;?>
+			if($pname !== $p) continue; ?>
                   <h5><?=$pname?></h5>
                   <div class="period-container"><?php
 		  foreach($formations as $fname => $finfo){
-			$finfoArr = json_decode(json_encode($finfo), true);
+			  //echo '<pre>';
+			  //print_r($finfo);
+			  //echo '</pre>';
+			  $finfoArr = json_decode(json_encode($finfo), true);
                        // if($finfoArr["stage"]){?>
 		      <!--<div  class = "button"  > --!>
 			<div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button">
