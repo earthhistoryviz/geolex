@@ -121,6 +121,7 @@ function docx_read($filename)
         //$vars[$i]["value"] = str_replace("(", "", $vars[$i]["value"]);
         //$vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
       }
+      // echo "Parsed variable before cleaning: <pre>"; print_r($vars[$i]); echo "</pre>, and parsed from string:<br/><pre>"; print_r($ministr); echo "</pre>";
       if (isset($vars[$i]["clean"])) {
         $vars[$i]["value"] = cleanupString($vars[$i]["value"]);
       }      
@@ -193,9 +194,12 @@ function docx_read($filename)
     $sql = $sql.$sql20;
     
      // CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
-     
     if(!empty($vars[$geojsonindex]["value"]) && empty(json_decode($vars[$geojsonindex]["value"]))){
-      echo "Error: Invalid geoJSON data.";
+      if (preg_match("/Fossils:/", $vars[$geojsonindex]["value"])) {
+        echo "Error: Your Fossils text contains the word \"Fossils:\".  Please change the F to lowercase or remove the colon.";
+      } else {
+        echo "Error: Invalid geoJSON data.  The data we parsed as geojson is: <pre>"; htmlspecialchars(print_r($vars[$geojsonindex]["value"])); echo "</pre>";
+      }
       exit("<br>Formation not parsed. Recheck word document.");
     } 
      
