@@ -86,11 +86,50 @@ foreach($info as $element) {
 }
 $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
 echo '<pre>';
-echo '</pre>'; // TODO: what's this for?
+echo '</pre>'; // TODO: what's <pre> for?
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
   } else {
+    /*
+      Provide option for showing reconstruction image when using Date search
+    */
+    if ($_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterstart] == $_REQUEST[agefilterend]
+        || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
+    ?>
+      <div class="reconstruction">
+        <button id="toggle_img" type="button" onclick="toggle_reconstruction()">Show/Hide Reconstruction Image</button>
+        <div id="reconstruction_image" style="display:none;">
+          <img src="/test.JPG" width="50%" height="auto">
+        </div>
+      </div>
+
+    <?php
+    }
+    /*
+      Show all returned formations in following format:
+        Region
+        ----------
+        Province
+        PERIOD
+        Formation_1 Formation_2 ...
+        PERIOD
+        Formation_3 Formation_4 ...
+        ----------
+        Province
+        PERIOD
+        Formation_5 Formation_6 ...
+        ----------
+        .
+        .
+        .
+        
+        Region
+        ----------
+        .
+        .
+        .
+    */
     foreach($results as $regionname => $regioninfo) {?>
       <div class="formation-container" id="<?=$regionname?>">
         <h3 class="region-title"><?=$regionname?></h3>
@@ -123,3 +162,14 @@ if ($didsearch) {
   } 
 } ?>
 </div>
+
+<script type="text/javascript">
+  function toggle_reconstruction() {
+    var img = document.getElementById("reconstruction_image");
+    if (img.style.display === "none") {
+      img.style.display = "block";
+    } else {
+      img.style.display = "none";
+    }
+  }
+</script>
