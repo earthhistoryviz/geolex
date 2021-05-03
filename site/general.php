@@ -85,22 +85,28 @@ foreach($info as $element) {
   }
 }
 $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
-echo '<pre>';
-echo '</pre>'; // TODO: what's <pre> for?
+// echo '<pre>';
+// echo '</pre>'; // TODO: what's <pre> for?
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
   } else {
+
     /*
-      Provide option for showing reconstruction image when using Date search
+      Provide option for showing reconstruction image when using:
+        1. Date
+        2. Date Range, with either:
+          a. no End Date
+          b. Start Date == End Date
     */
     if ($_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterstart] == $_REQUEST[agefilterend]
         || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
-    ?>
+      $image_encode = shell_exec("base64 test.JPG"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT
+      ?>
       <div class="reconstruction">
-        <button id="toggle_img" type="button" onclick="toggle_reconstruction()">Show/Hide Reconstruction Image</button>
+        <button id="toggle_img" type="button" style="padding: 5px;" onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
         <div id="reconstruction_image" style="display:none;">
-          <img src="/test.JPG" width="50%" height="auto">
+          <img src="data:image/jpg;base64, <?php echo $image_encode; ?>" width="50%" height="auto">
         </div>
       </div>
 
