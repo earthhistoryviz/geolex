@@ -1,6 +1,6 @@
 <?php
 include_once("SqlConnection.php");
-
+include_once("TimescaleLib.php");
 $arr = array();
 $count = -1;
 
@@ -19,7 +19,6 @@ if (isset($_REQUEST['search'])) {
     $periodfilter = ($_REQUEST['periodfilter']);
 
     $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
-
     $result = mysqli_query($conn, $sql);
     //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
     //echo '<pre>'.$sql.'</pre>';
@@ -30,10 +29,14 @@ if (isset($_REQUEST['search'])) {
       //  $output = '<h4>'.'Formation not found'.'</h4>';
     //}
     //else{
+    $formationLookup = array();
     while ($row = mysqli_fetch_array($result)){
-        $name = $row['name'];
+	$name = $row['name'];
+	$stage = $row['beginning_stage'];
+	//echo $stage;
         if (strlen($name) < 1) continue;
-        array_push($arr, $name);
+	array_push($arr, $name);
+	$formationLookup[$name] = $stage;
         $output = '<h4>'.$name.'</h4>';
     }
     //}
@@ -45,6 +48,34 @@ if (isset($_REQUEST['search'])) {
     sort($arr);    
 }
 
+/*
+ * CODE from general.php: This code uses the excel lookup table that can be found in the admin website, 
+ * and extracts the stages out of it as well as the RGB and creates an array with keys where the key
+ * represents the stage and the value is the RGB color code. This is stored in $stageArray
+ */
+// get all of the associated stage data
+$info = parseDefaultTimescale();
+$stageConversion = array();
+$storedStage = "none";
+$count = 0; // used for indexing through the stageConversion array
+foreach($info as $element) {
+  foreach($element as $key => $val) {
+    if($key == "stage"){
+      array_push($stageConversion, array($val => "none"));
+      $storedStage = $val;
+    }
+    if($key == "color") {
+      $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
+      $count = $count + 1;
+    }
+  }
+}
+$stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
+/*
+echo "<pre>";
+print_r($stageArray);
+echo "</pre>";
+*/ 
 ?>
 
 
@@ -64,9 +95,9 @@ if (isset($_REQUEST['search'])) {
       print($output);
     } else {
       foreach ($arr as $formation) { ?>
-        <div class="formationitem">
+        <div style="background-color:rgb(<?=$stageArray[$formationLookup[$formation]]?>, 0.8);" class="formationitem">
         <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
-        </div><?php
+	</div><?php	
       }
     } ?>
 </div>
