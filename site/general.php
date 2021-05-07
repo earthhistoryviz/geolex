@@ -104,7 +104,8 @@ if ($didsearch) {
       $image_encode = shell_exec("base64 test.JPG"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT
       ?>
       <div class="reconstruction">
-        <button id="toggle_img" type="button" style="padding: 5px;" onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
+        <button id="toggle_img" type="button" style="padding: 5px;" disabled="true" onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
+        This is still under construction, please come back later for Plate Reconstruction.
         <div id="reconstruction_image" style="display:none;">
           <img src="data:image/jpg;base64, <?php echo $image_encode; ?>" width="50%" height="auto">
         </div>
