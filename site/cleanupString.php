@@ -5,6 +5,7 @@ function cleanupString($str) {
 }
 
 function cleanupGeojson($str){
+  //echo "Cleaning up GeoJSON str: <pre>"; htmlspecialchars(print_r($str)); echo "</pre>";
 	$str = preg_replace("/(&QUOT;|&quot;)/", '"', $str);
 	$str = strip_tags($str);
 	$str = preg_replace('/"COORDINATES"/',' "coordinates"', $str);

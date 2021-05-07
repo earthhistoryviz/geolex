@@ -55,7 +55,8 @@ while ($row = mysqli_fetch_array($result)) {
   $stage = removeHTML($row['beginning_stage']);
   if (strlen($name) < 1) continue;
   $arr[$name] = array( "name" => $name, "province" => $province, "period" => $period, "stage" => $stage);
-}
+ 
+  }
 
 usort($arr, 'sortByProvince');
 $count = 0;
