@@ -387,6 +387,8 @@ if ($auth) {
         <?php displayImages($images, 'fossil') ?>
     </div>
 
+    <!-- this fixes any dangling strong tag that happens for age -->
+    </strong>
     <div id="age">
         <h3><b>Age&nbsp; </b></h3>
         <div id="age_value" class="minwidth"><?=eliminateParagraphs($fmdata["age"]["display"])?></div><br>
@@ -404,32 +406,32 @@ if ($auth) {
     </div> 
 
     <div id="beginning_stage" class="horiz">
-        <i>Beginning stage:&nbsp</i>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;Beginning stage:&nbsp;</b>
         <div id="beginning_stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["beginning_stage"]["display"])?></div><br>
     </div>
 
     <div id="frac_upB" class="horiz">
-        <b>Fraction up in beginning stage:&nbsp</b>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;Fraction up in beginning stage:&nbsp;</b>
     <div id="frac_upB_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upB"]["display"])?></div><br>
     </div>
 
     <div id="beg_date" class="horiz">
-        <b>Beginning date (Ma):&nbsp</b>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;Beginning date (Ma):&nbsp;</b>
         <div id="beg_date_value" class="minwidth"><?=eliminateParagraphs($fmdata["beg_date"]["display"])?></div><br>
     </div> 
 
     <div id="end_stage" class="horiz">
-        <b>Ending stage:&nbsp</b>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;Ending stage:&nbsp;</b>
         <div id="end_stage_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_stage"]["display"])?></div><br>
     </div>
 
     <div id="frac_upE" class = "horiz">
-        <b>Fraction up in the ending stage:&nbsp</b>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;Fraction up in the ending stage:&nbsp;</b>
         <div id="frac_upE_value" class="minwidth"><?=eliminateParagraphs($fmdata["frac_upE"]["display"])?></div><br>
     </div>
 
     <div id="end_date" class="horiz">
-        <b>Ending date (Ma): &nbsp</b>
+        <b>&nbsp;&nbsp;&nbsp;&nbsp;Ending date (Ma): &nbsp;</b>
         <div id="end_date_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_date"]["display"])?></div><br>
     </div>
 
