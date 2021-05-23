@@ -60,7 +60,7 @@ $formaction = "general.php"; ?>
 
 <?php include("navBar.php"); /* navBar will set $period for us */?>
 
-<h2 align="center" style="color:blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
+<h2 align="center" style="color: blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
 <?php include("generalSearchBar.php");?>
 
 <div style="display: flex; flex-direction: column;">
@@ -85,8 +85,6 @@ foreach($info as $element) {
   }
 }
 $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
-// echo '<pre>';
-// echo '</pre>'; // TODO: what's <pre> for?
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
@@ -99,12 +97,12 @@ if ($didsearch) {
           a. no End Date
           b. Start Date == End Date
     */
-    if ($_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterstart] == $_REQUEST[agefilterend]
-        || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
+    if ($_REQUEST["agefilterstart"] != "" && $_REQUEST["agefilterstart"] == $_REQUEST["agefilterend"]
+        || $_REQUEST["agefilterstart"] != "" && $_REQUEST["agefilterend"] == "") {
       $image_encode = shell_exec("base64 test.JPG"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT
       ?>
       <div class="reconstruction">
-        <button id="toggle_img" type="button" style="padding: 5px;" disabled="true" onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
+        <button id="toggle_img" type="button" style="padding: 5px;" disabled="true" onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST["agefilterstart"]; ?> Ma)</button>
         This is still under construction, please come back later for Plate Reconstruction.
         <div id="reconstruction_image" style="display:none;">
           <img src="data:image/jpg;base64, <?php echo $image_encode; ?>" width="50%" height="auto">
