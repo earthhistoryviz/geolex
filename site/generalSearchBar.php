@@ -55,7 +55,7 @@ include_once("TimescaleLib.php");
 ?>
 
 <body>
-  <div class = "search-container">
+  <div class="search-container">
     <form id='form' action="<?=$formaction?>" method="request">
       <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
       <input id="submitbtn1" type="submit" value="Submit" disabled>

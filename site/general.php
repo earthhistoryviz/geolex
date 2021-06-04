@@ -60,7 +60,7 @@ $formaction = "general.php"; ?>
 
 <?php include("navBar.php"); /* navBar will set $period for us */?>
 
-<h2 align="center" style="color:blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
+<h2 align="center" style="color: blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
 <?php include("generalSearchBar.php");?>
 
 <div style="display: flex; flex-direction: column;">
@@ -85,8 +85,7 @@ foreach($info as $element) {
   }
 }
 $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
-// echo '<pre>';
-// echo '</pre>'; // TODO: what's <pre> for? <pre> is used for formatting purposes. When you print out an array it'll be unreadable with just print_r.
+
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
@@ -117,10 +116,6 @@ if ($didsearch) {
      ?>
       <div class="reconstruction">
         <button id="toggle_img" type="button" style="padding: 5px;"  onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
-        This is still under construction, please come back later for Plate Reconstruction.
-        <div id="reconstruction_image" style="display:none;">
-          <img src="data:image/jpg;base64, <?php echo $image_encode; ?>" width="100%" height="auto">
-        </div>
       </div>
 
     <?php
