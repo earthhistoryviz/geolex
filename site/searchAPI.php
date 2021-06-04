@@ -113,13 +113,14 @@ else if($output["type"] == "FeatureCollection"){
   if (strlen($name) < 1) continue;
   $arr[$name] = array( "name" => $name, "province" => $province, "period" => $period, "stage" => $stage, "filename" => $filename);
 }
-$output = shell_exec("chmod +rwx pygplates-pygmt_WenDu\'s\ playground.py");
 file_put_contents($filename, "
 ]
 }", FILE_APPEND);
 //fclose($recongeoJSON);
 
-exec("./data/pygplates-pygmt_WenDu\'s\ playground.py", $ending);
+if ($_REQUEST["generateImage"] == "1") {
+  exec("./data/pygplates-pygmt_WenDu\'s\ playground.py", $ending);
+}
 $last = "testing Fm";
 $arr[$last] = $ending;
 usort($arr, 'sortByProvince');

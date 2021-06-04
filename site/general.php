@@ -17,6 +17,9 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   foreach($regionstosearch as $r) {
     $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"]."&agefilterstart=".$_REQUEST["agefilterstart"]."&agefilterend=".$_REQUEST["agefilterend"];
+    if ($_REQUEST["generateImage"]) {
+      $url .= "&generateImage=1";
+    }
     $raw = file_get_contents($url);
     $response = json_decode($raw);
 
@@ -105,17 +108,27 @@ if ($didsearch) {
 	    || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
       //$testing = file_get_contents('testing.py', true);
 	    //echo $testing;
-      exec('./data/testing.py', $test);
-     $filename =  $_REQUEST[agefilterstart]. "_". $_REQUEST[filterregion]. "_". $store; 
-      echo $filename. "<br>";
-     echo md5($filename); 
-     echo "<pre>";
-     print_r($test);
-     echo "</pre>";     
+    //  exec('./data/testing.py', $test);
+   //  $filename =  $_REQUEST[agefilterstart]. "_". $_REQUEST[filterregion]. "_". $store; 
+    //  echo $filename. "<br>";
+   //  echo md5($filename); 
+   //  echo "<pre>";
+   //  print_r($test);
+   //  echo "</pre>";     
      $image_encode = shell_exec("base64 data/my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
      ?>
       <div class="reconstruction">
-        <button id="toggle_img" type="button" style="padding: 5px;"  onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
+        <?php if ($_REQUEST["generateImage"] == "1") {?>
+          Under construction: when done, the plate reconstruction image will be shown here.
+        <?php } else { ?>
+          <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
+            <input type="submit" value="Under Construction: Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" style="padding: 5px;" />
+            <?php foreach($_REQUEST as $k => $v) {?>
+              <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
+            <?php } ?>
+            <input type="hidden" name="generateImage" value="1" />
+          </form>
+        <?php } ?>
       </div>
 
     <?php
@@ -177,13 +190,4 @@ if ($didsearch) {
 } ?>
 </div>
 
-<script type="text/javascript">
-  function toggle_reconstruction() {
-    var img = document.getElementById("reconstruction_image");
-    if (img.style.display === "none") {
-      img.style.display = "block";
-    } else {
-      img.style.display = "none";
-    }
-  }
-</script>
+
