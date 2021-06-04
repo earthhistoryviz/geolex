@@ -167,12 +167,13 @@ include_once("TimescaleLib.php");
         endDate.value = '';
       } else { // When a Period is selected
         var stageHTML = "<select id='filterstage' name='filterstage' onchange='stageToDate()'>";
-        var rowIdx;
+	var rowIdx;
+	stageHTML = stageHTML + "<option value='All'>All</option>";
         for (rowIdx = 0; rowIdx < timescale.length; rowIdx++) {
           if (timescale[rowIdx]["period"].toLowerCase() === chosen.toLowerCase()) { // Ignoring case to prevent errors from database
             stageHTML = stageHTML + "<option value='" + timescale[rowIdx]["stage"] + "'>" + timescale[rowIdx]["stage"] + "</option>";
           }
-        }
+	}
         stageHTML += "</select>";
         stageBox.innerHTML = stageHTML;
       }
@@ -184,6 +185,17 @@ include_once("TimescaleLib.php");
 
       /* Convert entered Stage to corresponding Start and End Date */
       var timescale = <?php echo json_encode($timescale); ?>;
+
+      /* If user selected option All for stage, we clear the begDate and endDate and only use the Period filter */
+      if (input === "All") {
+	var begDate = document.getElementById("begDate");
+	begDate.value = "";
+	var endDate = document.getElementById("endDate");
+	endDate.value = "";
+
+	return;
+      }
+
       var rowIdx;
       var found = false;
       for (rowIdx = 0; rowIdx < timescale.length; rowIdx++) {

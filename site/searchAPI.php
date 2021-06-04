@@ -1,5 +1,22 @@
 <?php
 include_once("SqlConnection.php");
+//file_put_contents("recon.json", '{"type": "FeatureCollection",');
+/*
+date_default_timezone_set("America/New_York");      
+$store = date("Y_m_d_h:i:sa");
+$filename =   $_REQUEST[agefilterstart]. "_". $_REQUEST[provincefilter]. "_". $store. ".geojson";
+$encFilename = md5($filename). ".geojson";
+ */
+
+$filename = "data/recon.json";
+// *** PLACE 1 TO CHANGE THE FILE NAME *** 
+file_put_contents($filename, '{
+"type": "FeatureCollection",
+"name": "Triassic strata_10Feb2021",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+	');
+
 
 $searchquery = addslashes($_REQUEST['searchquery']);
 $periodfilter = addslashes($_REQUEST['periodfilter']);
@@ -46,18 +63,65 @@ $result = mysqli_query($conn, $sql);
 //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
 //echo '<pre>'.$sql.'</pre>';
 $count = mysqli_num_rows($result);
-
+$whileIter = 0; // checks if on the first run of the while loop for output file purposes
 $arr = array();
+$firstRun = 1; 
 while ($row = mysqli_fetch_array($result)) {
+  if($whileIter != 0 && $row["geojson"] != ""){
+         file_put_contents($filename, ", 
+", FILE_APPEND);
+  }
   $name = $row["name"];
   $province = removeHTML($row['province']);
   $period = removeHTML($row['period']);
   $stage = removeHTML($row['beginning_stage']);
-  if (strlen($name) < 1) continue;
-  $arr[$name] = array( "name" => $name, "province" => $province, "period" => $period, "stage" => $stage);
- 
-  }
 
+  // geojson processing before writing to output file
+  // format without properties tag 
+  $output = json_decode(strip_tags($row["geojson"]), true);
+  if(!(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output) {
+  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); // creating properties array
+  $appendProp["properties"] = $properties;
+  array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson
+  $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
+  unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
+  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
+  $output = json_encode($output["features"]["0"]); // altering displayed geojson
+  }
+  // format with properties tag but each formation is feature collection 
+else if($output["type"] == "FeatureCollection"){
+    $output["features"][0]["properties"]["NAME"] = $name;  
+    $output["features"][0]["properties"]["FROMAGE"] = null;
+    $output["features"][0]["properties"]["TOAGE"] = null;
+    $output =  json_encode($output["features"][0]);
+    
+}
+ // format by hand 
+  else{
+    $output = json_encode($output);
+  }
+  if($row["geojson"] && $firstRun == 1){
+	  file_put_contents($filename, 
+		  $output, FILE_APPEND);
+  $whileIter = 1; 
+  $firstRun = 0;
+  }
+  else if($row["geojson"]){
+  file_put_contents($filename, $geospacial, FILE_APPEND);
+  $whileIter = 1; 
+  }
+  if (strlen($name) < 1) continue;
+  $arr[$name] = array( "name" => $name, "province" => $province, "period" => $period, "stage" => $stage, "filename" => $filename);
+}
+$output = shell_exec("chmod +rwx pygplates-pygmt_WenDu\'s\ playground.py");
+file_put_contents($filename, "
+]
+}", FILE_APPEND);
+//fclose($recongeoJSON);
+
+exec("./data/pygplates-pygmt_WenDu\'s\ playground.py", $ending);
+$last = "testing Fm";
+$arr[$last] = $ending;
 usort($arr, 'sortByProvince');
 $count = 0;
 while($count < count($arr)){
@@ -67,8 +131,6 @@ while($count < count($arr)){
 	unset($arr[$count]);
 	$count = $count + 1;
 }
-
-
 
 echo json_encode($arr);
 ?>

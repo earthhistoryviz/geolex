@@ -86,7 +86,7 @@ foreach($info as $element) {
 }
 $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
 // echo '<pre>';
-// echo '</pre>'; // TODO: what's <pre> for?
+// echo '</pre>'; // TODO: what's <pre> for? <pre> is used for formatting purposes. When you print out an array it'll be unreadable with just print_r.
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
@@ -98,16 +98,28 @@ if ($didsearch) {
         2. Date Range, with either:
           a. no End Date
           b. Start Date == End Date
-    */
+     */
+    date_default_timezone_set("America/New_York");	  
+    $store = date("Y_m_d_h:i:sa");
+    
     if ($_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterstart] == $_REQUEST[agefilterend]
-        || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
-      $image_encode = shell_exec("base64 test.JPG"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT
-      ?>
+	    || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
+      //$testing = file_get_contents('testing.py', true);
+	    //echo $testing;
+      exec('./data/testing.py', $test);
+     $filename =  $_REQUEST[agefilterstart]. "_". $_REQUEST[filterregion]. "_". $store; 
+      echo $filename. "<br>";
+     echo md5($filename); 
+     echo "<pre>";
+     print_r($test);
+     echo "</pre>";     
+     $image_encode = shell_exec("base64 data/my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
+     ?>
       <div class="reconstruction">
-        <button id="toggle_img" type="button" style="padding: 5px;" disabled="true" onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
+        <button id="toggle_img" type="button" style="padding: 5px;"  onclick="toggle_reconstruction()">Press to Display on a Plate Reconstruction (<?php echo $_REQUEST[agefilterstart]; ?> Ma)</button>
         This is still under construction, please come back later for Plate Reconstruction.
         <div id="reconstruction_image" style="display:none;">
-          <img src="data:image/jpg;base64, <?php echo $image_encode; ?>" width="50%" height="auto">
+          <img src="data:image/jpg;base64, <?php echo $image_encode; ?>" width="100%" height="auto">
         </div>
       </div>
 
@@ -141,8 +153,8 @@ if ($didsearch) {
       <div class="formation-container" id="<?=$regionname?>">
         <h3 class="region-title"><?=$regionname?></h3>
         <hr>
-        <div> <?php
-          $sortByPeriod = array();
+	<div> <?php
+	 $sortByPeriod = array();
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
             <hr> 
             <h3><?=$province?></h3>

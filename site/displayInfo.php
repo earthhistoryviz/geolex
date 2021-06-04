@@ -2,6 +2,7 @@
 include_once("navBar.php");
 include_once("SearchBar.php");
 include_once("SqlConnection.php");
+//$recongeoJSON = fopen("reconstruct.txt", "w"); // output file to write all geojson information to
 $formation = $_REQUEST;
 $auth = $_SESSION["loggedIn"];
 //echo $auth;
@@ -168,17 +169,53 @@ if ($dirs) {
   }
 }
 
+//** BEGINNING OF PROCESSING THREE GEOJSONS FORMAT:
+//Format 1: Thailand strata completely done by hand (i.e. Chaiburi Fm)
+//Format 2: Digitized geojson where each formation is its own feature collection (i.e. Zanskar region)
+//Format 3: Geojsons without a properties aspect once you get to the "type": "Feature" (See database for Milliolite for this)
+//(It becomes easier to see these three formats when looking at the database too) 
 
-$output = json_decode(strip_tags($fmdata["geojson"]["display"]), true);
-$isThere = $output; // only want to output geojson if there was stuff there in the first place
-//echo var_dump($fmdata["geojson"]["display"]);
-if($fmdata["beg_date"]["display"] && $fmdata["end_date"]["display"]){
+
+$output = json_decode(strip_tags($fmdata["geojson"]["display"]), true); // decoding one of the three formats from the database (database stores some HTML tags)
+
+
+// if no where in the three formats there is a "properties" attribute (format 3)
+//   CONDITION 1 DIRECTLY BELOW(for format 2)                 CONDITION 2 DIRECTLY BELOW (for format 1)      CONDITION 3 DIRECTLY BELOW (don't want to append if there's nothing)
+if(!(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $fmdata["geojson"]["display"]) {
+  $properties = array("NAME" => $fmdata["name"]["display"], "FROMAGE" => $fmdata["beg_date"]["display"], "TOAGE" => $fmdata["end_date"]["display"]); // creating properties array
+  $appendProp["properties"] = $properties;
+  array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson 
+  $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
+  unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
+  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly 
+  $fmdata["geojson"]["display"] = json_encode($output["features"]["0"]); // altering displayed geojson 
+}
+
+ 
+// if there is a properties attribute (deals w format one and two)
+else if($fmdata["geojson"]["display"]){
+// format 2 (with feature collection)
+if($fmdata["beg_date"]["display"] && $fmdata["end_date"]["display"] && $output["type"] == "FeatureCollection"){
+$output["features"][0]["properties"]["NAME"] = $fmdata["name"]["display"];	
+$output["features"][0]["properties"]["FROMAGE"] = $fmdata["beg_date"]["display"];
+$output["features"][0]["properties"]["TOAGE"] = $fmdata["end_date"]["display"];
+} 
+
+// format 1 geojsons by hand 
+else if($fmdata["beg_date"]["display"] && $fmdata["end_date"]["display"]){
 $output["properties"]["FROMAGE"] = $fmdata["beg_date"]["display"];
 $output["properties"]["TOAGE"] = $fmdata["end_date"]["display"];
+} 
+
+// don't want changes if geojson from database was null 
+if($isThere && $output["type"] == "FeatureCollection"){
+$fmdata["geojson"]["display"] =  json_encode($output["features"][0]);
 }
-if($isThere){
-$fmdata["geojson"]["display"] =  json_encode($output);
+else if($isThere){
+$fmdata["geojson"]["display"] = json_encode($output);
 }
+}
+ 
 
 
 // display information below
