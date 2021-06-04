@@ -35,6 +35,9 @@ RUN pip3 install pygmt
 #downloading pygplates
 RUN wget -O pygplates-src.deb https://sourceforge.net/projects/gplates/files/pygplates/beta-revision-28/ubuntu/pygplates-py3-ubuntu-bionic_2.2_1_amd64.deb/download
 RUN apt-get install -y ./pygplates-src.deb
+
+RUN mkdir /.gmt && chown -R www-data /.gmt
+
 #RUN apt-get install -y download.deb
 #RUN apt-get install -f
 
