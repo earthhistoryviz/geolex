@@ -180,14 +180,29 @@ $output = json_decode(strip_tags($fmdata["geojson"]["display"]), true); // decod
 
 // if no where in the three formats there is a "properties" attribute (format 3)
 //   CONDITION 1 DIRECTLY BELOW(for format 2)                 CONDITION 2 DIRECTLY BELOW (for format 1)      CONDITION 3 DIRECTLY BELOW (don't want to append if there's nothing)
-if(!(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $fmdata["geojson"]["display"]) {
-  $properties = array("NAME" => $fmdata["name"]["display"], "FROMAGE" => $fmdata["beg_date"]["display"], "TOAGE" => $fmdata["end_date"]["display"]); // creating properties array
+if(array_key_exists("features", $output) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $fmdata["geojson"]["display"]) {
+$properties = array("NAME" => $fmdata["name"]["display"], "FROMAGE" => $fmdata["beg_date"]["display"], "TOAGE" => $fmdata["end_date"]["display"]); // creating properties array
   $appendProp["properties"] = $properties;
   array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson 
   $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
   unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
-  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly 
+  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
+ // echo "<pre>";
+ // print_r($output);
+ // echo "</pre>"; 
   $fmdata["geojson"]["display"] = json_encode($output["features"]["0"]); // altering displayed geojson 
+}
+else if(!(array_key_exists("features", $output)) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $fmdata["geojson"]["display"]){
+  $properties = array("NAME" => $fmdata["name"]["display"], "FROMAGE" => $fmdata["beg_date"]["display"], "TOAGE" => $fmdata["end_date"]["display"]); // creating properties array	
+  $appendProp["properties"] = $properties;
+  array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
+  $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
+  unset($output[0]); // renaming the key 0 to be properties instead
+  krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
+  //echo "<pre>";
+  //print_r($output);
+  //echo "</pre>";
+  $fmdata["geojson"]["display"] = json_encode($output);
 }
 
  

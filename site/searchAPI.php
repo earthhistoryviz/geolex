@@ -8,7 +8,7 @@ $filename =   $_REQUEST[agefilterstart]. "_". $_REQUEST[provincefilter]. "_". $s
 $encFilename = md5($filename). ".geojson";
  */
 
-$filename = "data/recon.json";
+$filename = "data/recon.geojson";
 // *** PLACE 1 TO CHANGE THE FILE NAME *** 
 file_put_contents($filename, '{
 "type": "FeatureCollection",
@@ -79,7 +79,9 @@ while ($row = mysqli_fetch_array($result)) {
   // geojson processing before writing to output file
   // format without properties tag 
   $output = json_decode(strip_tags($row["geojson"]), true);
-  if(!(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output) {
+
+  // condition 1 of geojson processing 
+  if(array_key_exists("features", $output) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output) {
   $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); // creating properties array
   $appendProp["properties"] = $properties;
   array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson
@@ -88,6 +90,23 @@ while ($row = mysqli_fetch_array($result)) {
   krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
   $output = json_encode($output["features"]["0"]); // altering displayed geojson
   }
+  
+  
+  else if(!(array_key_exists("features", $output)) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output){
+  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); 	  
+  $appendProp["properties"] = $properties;
+  array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
+  $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
+  unset($output[0]); // renaming the key 0 to be properties instead
+  krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
+  //echo "<pre>";
+  //print_r($output);
+  //echo "</pre>";
+  $output = json_encode($output);
+  }
+  
+  
+  // condition 3 of geojson processing 
   // format with properties tag but each formation is feature collection 
 else if($output["type"] == "FeatureCollection"){
     $output["features"][0]["properties"]["NAME"] = $name;  
@@ -96,7 +115,7 @@ else if($output["type"] == "FeatureCollection"){
     $output =  json_encode($output["features"][0]);
     
 }
- // format by hand 
+ // condition four of geojson format 
   else{
     $output = json_encode($output);
   }
@@ -107,7 +126,7 @@ else if($output["type"] == "FeatureCollection"){
   $firstRun = 0;
   }
   else if($row["geojson"]){
-  file_put_contents($filename, $geospacial, FILE_APPEND);
+  file_put_contents($filename, $output, FILE_APPEND);
   $whileIter = 1; 
   }
   if (strlen($name) < 1) continue;
