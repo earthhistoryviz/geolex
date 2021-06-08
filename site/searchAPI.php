@@ -130,7 +130,7 @@ else if($output["type"] == "FeatureCollection"){
   $whileIter = 1; 
   }
   if (strlen($name) < 1) continue;
-  $arr[$name] = array( "name" => $name, "province" => $province, "period" => $period, "stage" => $stage, "filename" => $filename);
+  $arr[$name] = array( "name" => $name, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, /*"filename" => $filename*/);
 }
 file_put_contents($filename, "
 ]
@@ -138,7 +138,7 @@ file_put_contents($filename, "
 //fclose($recongeoJSON);
 
 if ($_REQUEST["generateImage"] == "1") {
-  exec("./data/pygplates-pygmt_WenDu\'s\ playground.py", $ending);
+  exec("./data/pygplates-pygmt_WenDu\'s\ playground.py ".$_REQUEST['agefilterstart'], $ending);
 }
 $last = "testing Fm";
 $arr[$last] = $ending;
