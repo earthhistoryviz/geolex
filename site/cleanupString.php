@@ -49,7 +49,7 @@ function cleanupGeojson($str){
   $json = json_decode($str, true);
 
   $cleaned = keepOnlyTheseKeys($json, array("type", "geometry", "features"), array("coordinates", "crs"));
-	$str = json_encode($cleaned);
+  $str = json_encode($cleaned);
   if ($_SERVER["HTTP_HOST"] == "dev.timescalecreator.com:5100") {
     echo "<hr/>Inserting cleaned GeoJSON: $str<hr/>";
   }

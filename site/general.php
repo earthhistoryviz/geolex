@@ -14,7 +14,13 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   }
 
   $results = array();
-
+  $recongeojson = '{
+    "type": "FeatureCollection",
+    "name": "Triassic strata_10Feb2021",
+    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+    "features": [
+	    ';
+  $firstRun = 1; 
   foreach($regionstosearch as $r) {
     $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"]."&agefilterstart=".$_REQUEST["agefilterstart"]."&agefilterend=".$_REQUEST["agefilterend"];
     if ($_REQUEST["generateImage"]) {
@@ -28,10 +34,18 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       "formations" => $response,
       "groupbyprovince" => array(),
     );
-
+    
     foreach($response as $fname => $finfo) {
-      $p = $finfo->province;
-      if(!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
+     $p = $finfo->province;
+     $geo = $finfo->geojson;
+     if($geo && $geo != "null"){
+      if(!$firstRun){
+        $recongeojson .= ",\n";
+      }
+      $recongeojson .= $geo;
+      $firstRun = 0;
+     }
+     if(!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
       //$results[$r["name"]]["groupbyprovince"][$p]["formations"][$fname] = $finfo;
       $newp = explode(", ", $p);
       $overlapCount = 0; // counts number of overlaps
@@ -56,7 +70,25 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     }
     ksort($results[$r["name"]]["groupbyprovince"]);
   }
+  $recongeojson .= "]}";
+
+  $outdirhash = md5($recongeojson + $_REQUEST["agefilterstart"]);
+  // outdirname is what pygplates should see
+  $outdirname = "livedata/$outdirhash";
+  // and php is running one level up:
+  $outdirname_php = "pygplates/$outdirname";
+  if (!file_exists($outdirname_php)) {
+    mkdir($outdirname_php, 0777, true);
+  }
+  $reconfilename = "$outdirname_php/recon.geojson";
+  if (!file_exists($reconfilename)) {
+    file_put_contents($reconfilename, $recongeojson);
+  }
+
 }
+// including write geoJSON
+//include_once("writegeoJSON.php");
+
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
 <link rel="stylesheet" href="generalStyling.css">
@@ -115,14 +147,18 @@ if ($didsearch) {
    //  echo "<pre>";
    //  print_r($test);
    //  echo "</pre>";     
-     $image_encode = shell_exec("base64 data/my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
+     //$image_encode = shell_exec("base64 data/my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
      ?>
       <div class="reconstruction">
         <?php if ($_REQUEST["generateImage"] == "1") {?>
           Under construction: when done, the plate reconstruction image will be shown here.
-        <?php } else { ?>
+	 <?php 
+	  exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
+    //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
+	 ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > <?php
+      } else { ?>
           <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
-            <input type="submit" value="Under Construction: Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" style="padding: 5px;" />
+            <input type="submit" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" style="padding: 5px;" />
             <?php foreach($_REQUEST as $k => $v) {?>
               <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
             <?php } ?>
@@ -162,6 +198,9 @@ if ($didsearch) {
         <h3 class="region-title"><?=$regionname?></h3>
         <hr>
 	<div> <?php
+       //	 echo "<pre>";
+        // print_r($results);
+	// echo "</pre>";
 	 $sortByPeriod = array();
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
             <hr> 

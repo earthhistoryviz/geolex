@@ -6,7 +6,7 @@ date_default_timezone_set("America/New_York");
 $store = date("Y_m_d_h:i:sa");
 $filename =   $_REQUEST[agefilterstart]. "_". $_REQUEST[provincefilter]. "_". $store. ".geojson";
 $encFilename = md5($filename). ".geojson";
- */
+ 
 
 $filename = "data/recon.geojson";
 // *** PLACE 1 TO CHANGE THE FILE NAME *** 
@@ -16,7 +16,7 @@ file_put_contents($filename, '{
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 	');
-
+ */
 
 $searchquery = addslashes($_REQUEST['searchquery']);
 $periodfilter = addslashes($_REQUEST['periodfilter']);
@@ -67,10 +67,11 @@ $whileIter = 0; // checks if on the first run of the while loop for output file 
 $arr = array();
 $firstRun = 1; 
 while ($row = mysqli_fetch_array($result)) {
+  /*	
   if($whileIter != 0 && $row["geojson"] != ""){
          file_put_contents($filename, ", 
 ", FILE_APPEND);
-  }
+  } */
   $name = $row["name"];
   $province = removeHTML($row['province']);
   $period = removeHTML($row['period']);
@@ -88,7 +89,7 @@ while ($row = mysqli_fetch_array($result)) {
   $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
   unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
   krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
-  $output = json_encode($output["features"]["0"]); // altering displayed geojson
+  $output = json_encode($output["features"]["0"], JSON_PRETTY_PRINT); // altering displayed geojson
   }
   
   
@@ -102,7 +103,7 @@ while ($row = mysqli_fetch_array($result)) {
   //echo "<pre>";
   //print_r($output);
   //echo "</pre>";
-  $output = json_encode($output);
+  $output = json_encode($output, JSON_PRETTY_PRINT);
   }
   
   
@@ -112,13 +113,14 @@ else if($output["type"] == "FeatureCollection"){
     $output["features"][0]["properties"]["NAME"] = $name;  
     $output["features"][0]["properties"]["FROMAGE"] = null;
     $output["features"][0]["properties"]["TOAGE"] = null;
-    $output =  json_encode($output["features"][0]);
+    $output =  json_encode($output["features"][0], JSON_PRETTY_PRINT);
     
 }
  // condition four of geojson format 
   else{
-    $output = json_encode($output);
+    $output = json_encode($output, JSON_PRETTY_PRINT);
   }
+  /*
   if($row["geojson"] && $firstRun == 1){
 	  file_put_contents($filename, 
 		  $output, FILE_APPEND);
@@ -129,9 +131,11 @@ else if($output["type"] == "FeatureCollection"){
   file_put_contents($filename, $output, FILE_APPEND);
   $whileIter = 1; 
   }
+   */
   if (strlen($name) < 1) continue;
   $arr[$name] = array( "name" => $name, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, /*"filename" => $filename*/);
 }
+/*
 file_put_contents($filename, "
 ]
 }", FILE_APPEND);
@@ -142,6 +146,7 @@ if ($_REQUEST["generateImage"] == "1") {
 }
 $last = "testing Fm";
 $arr[$last] = $ending;
+ */
 usort($arr, 'sortByProvince');
 $count = 0;
 while($count < count($arr)){

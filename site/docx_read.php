@@ -193,8 +193,9 @@ function docx_read($filename)
     $sql .= ")";
     $sql = $sql.$sql20;
     
-     // CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
-    if(!empty($vars[$geojsonindex]["value"]) && empty(json_decode($vars[$geojsonindex]["value"]))){
+    
+    // CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
+    if(!empty($vars[$geojsonindex]["value"])   && empty(json_decode($vars[$geojsonindex]["value"]))){
       if (preg_match("/Fossils:/", $vars[$geojsonindex]["value"])) {
         echo "Error: Your Fossils text contains the word \"Fossils:\".  Please change the F to lowercase or remove the colon.";
       } else {
@@ -203,7 +204,8 @@ function docx_read($filename)
       exit("<br>Formation not parsed. Recheck word document.");
     } 
      
-    else if ($conn->query($sql) === TRUE) {
+     
+    if ($conn->query($sql) === TRUE) {
       echo "Inserted Formation: ".$vars[$nameindex]["value"]."<br>";
     } else {
       echo "-------------------------------------------------\n\n<br><br>";
