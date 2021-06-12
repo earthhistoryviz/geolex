@@ -12,7 +12,13 @@ import pygplates
 import pandas as pd
 # The geometries are the 'features to partition'
 print("before step 1")
-input_geometries = pygplates.FeatureCollection('./config/recon.geojson')
+
+# Command-line params:
+age = float(sys.argv[1])
+outdirname = sys.argv[2]
+
+
+input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
 print(input_geometries)
 # static polygons are the 'partitioning features'
 static_polygons = pygplates.FeatureCollection('./config/shapes_static_polygons_Merdith_et_al.gpml')
@@ -33,8 +39,6 @@ partitioned_geometries = pygplates.partition_into_plates(static_polygons,
 # output_feature_collection = pygplates.FeatureCollection(partitioned_geometries)
 # output_feature_collection.write('data/thai_partitioned.gpml')
 
-age = float(sys.argv[1])
-outdirname = sys.argv[2]
 print(age)
 # Reconstruct the geometries
 print("before output writing")
