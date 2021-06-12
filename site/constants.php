@@ -22,9 +22,9 @@ $periodsOrdered = array(0 => "QUATERNARY", 1 => "NEOGENE", 2 => "PALEOGENE", 3 =
 
 
   $regions = array (
-    array( "name" => "China", "searchurl" => "http://chinalex.oada-dev.com/searchAPI.php", "linkurl" => "http://chinalex.oada-dev.com/displayInfo.php"),
-    array( "name" => "Indian Plate", "searchurl" => "http://indplex.oada-dev.com/searchAPI.php", "linkurl" => "http://indplex.oada-dev.com/displayInfo.php"),
-    array( "name" => "Thailand", "searchurl" => "http://thailex.oada-dev.com/searchAPI.php", "linkurl" => "http://thailex.oada-dev.com/displayInfo.php"),
+    array( "name" => "China", "searchurl" => "http://chinalex.geolex.org/searchAPI.php", "linkurl" => "http://chinalex.geolex.org/displayInfo.php"),
+    array( "name" => "Indian Plate", "searchurl" => "http://indplex.geolex.org/searchAPI.php", "linkurl" => "http://indplex.geolex.org/displayInfo.php"),
+    array( "name" => "Thailand", "searchurl" => "http://thailex.geolex.org/searchAPI.php", "linkurl" => "http://thailex.geolex.org/displayInfo.php"),
   );
 
 ?>
