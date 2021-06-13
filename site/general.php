@@ -36,21 +36,26 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     );
     
     foreach($response as $fname => $finfo) {
-     $p = $finfo->province;
-     $geo = $finfo->geojson;
-     if($geo && $geo != "null"){
-      if(!$firstRun){
-        $recongeojson .= ",\n";
+      // Compiling all geoJSON strings from the returned formations into recon.geojson	    
+      $p = $finfo->province;
+      $geo = $finfo->geojson;
+      if ($geo && $geo != "null") {
+	
+	//echo $fname;
+	
+	if(!$firstRun) {
+          $recongeojson .= ",\n";
+        }
+        $recongeojson .= $geo;
+        $firstRun = 0;
       }
-      $recongeojson .= $geo;
-      $firstRun = 0;
-     }
-     if(!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
+
+      if(!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
       //$results[$r["name"]]["groupbyprovince"][$p]["formations"][$fname] = $finfo;
       $newp = explode(", ", $p);
       $overlapCount = 0; // counts number of overlaps
-      foreach($newp as $sepp){
-	      // $results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] = $finfo;
+      foreach($newp as $sepp) {
+	// $results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] = $finfo;
         $results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] = $finfo; 
 
         /*
@@ -72,22 +77,26 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   }
   $recongeojson .= "]}";
 
-  $outdirhash = md5($recongeojson + $_REQUEST["agefilterstart"]);
+  //echo $recongeojson;
+
+  $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
+  //echo $toBeHashed;
+
+  $outdirhash = md5($toBeHashed);
   // outdirname is what pygplates should see
   $outdirname = "livedata/$outdirhash";
   // and php is running one level up:
   $outdirname_php = "pygplates/$outdirname";
+  //echo $outdirname_php;
   if (!file_exists($outdirname_php)) {
+    //echo "Creating a new folder!!!";
     mkdir($outdirname_php, 0777, true);
   }
   $reconfilename = "$outdirname_php/recon.geojson";
   if (!file_exists($reconfilename)) {
     file_put_contents($reconfilename, $recongeojson);
   }
-
 }
-// including write geoJSON
-//include_once("writegeoJSON.php");
 
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
