@@ -197,7 +197,7 @@ function docx_read($filename)
     
     // CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
     if($vars[$geojsonindex]["value"] == "null" && !empty($origgeoJSON)){
-      if (preg_match("/Fossils:/", $vars[$geojsonindex]["value"])) {
+      if (preg_match("/Fossils:/", $origgeoJSON)) {
         echo "Error: Your Fossils text contains the word \"Fossils:\".  Please change the F to lowercase or remove the colon.";
       } else {
       echo "Error: Invalid geoJSON data. Please recheck for misplaced punctuation or brackets. The invalid geoJSON that was in the document was: <pre>"; htmlspecialchars(print_r($origgeoJSON)); echo "</pre>";
