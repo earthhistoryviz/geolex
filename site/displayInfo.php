@@ -175,7 +175,7 @@ if ($dirs) {
 //Format 3: Geojsons without a properties aspect once you get to the "type": "Feature" (See database for Milliolite for this)
 //(It becomes easier to see these three formats when looking at the database too) 
 
-
+if($fmdata["geojson"]["display"] != "null"){
 $output = json_decode(strip_tags($fmdata["geojson"]["display"]), true); // decoding one of the three formats from the database (database stores some HTML tags)
 
 // if no where in the three formats there is a "properties" attribute (format 3)
@@ -229,7 +229,10 @@ else{
 $fmdata["geojson"]["display"] = json_encode($output);
 }
 }
- 
+}
+else {
+ $fmdata["geojson"]["display"] = "";
+}
 
 
 // display information below

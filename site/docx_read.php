@@ -126,6 +126,8 @@ function docx_read($filename)
         $vars[$i]["value"] = cleanupString($vars[$i]["value"]);
       }      
       if(isset($vars[$i]["cleanjson"])){
+       //var_dump(strip_tags($vars[$i]["value"]));
+        $origgeoJSON = strip_tags($vars[$i]["value"]);
         $vars[$i]["value"] = cleanupGeojson($vars[$i]["value"]);
       } 
        
@@ -193,17 +195,16 @@ function docx_read($filename)
     $sql .= ")";
     $sql = $sql.$sql20;
     
-    
     // CODE WILL PREVENT INVALID GEOJSON DATA FROM BEING PARSED INTO THE DOCUMENT, BUT FIRST THE GEOJSON NEEDS TO BE CLEANED UP
-    if(!empty($vars[$geojsonindex]["value"])   && empty(json_decode($vars[$geojsonindex]["value"]))){
+    if($vars[$geojsonindex]["value"] == "null" && !empty($origgeoJSON)){
       if (preg_match("/Fossils:/", $vars[$geojsonindex]["value"])) {
         echo "Error: Your Fossils text contains the word \"Fossils:\".  Please change the F to lowercase or remove the colon.";
       } else {
-        echo "Error: Invalid geoJSON data.  The data we parsed as geojson is: <pre>"; htmlspecialchars(print_r($vars[$geojsonindex]["value"])); echo "</pre>";
+      echo "Error: Invalid geoJSON data. Please recheck for misplaced punctuation or brackets. The invalid geoJSON that was in the document was: <pre>"; htmlspecialchars(print_r($origgeoJSON)); echo "</pre>";
       }
       exit("<br>Formation not parsed. Recheck word document.");
     } 
-     
+    
      
     if ($conn->query($sql) === TRUE) {
       echo "Inserted Formation: ".$vars[$nameindex]["value"]."<br>";
