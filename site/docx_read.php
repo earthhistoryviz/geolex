@@ -58,8 +58,8 @@ function docx_read($filename)
 
   $numvars=0;
   $vars = array(
-    array("name" => "name",                              "matchoffset" => 0, "pattern" => "/([\s\w’\-]+\s)(Gr|Fm|Group|Formation)/",                          "index" => $numvars++),
-    array("name" => "period",           "clean" => true, "matchoffset" => 1, "pattern" => "/Period:\s*(.+)Age Interval(.+):/",                                   "index" => $numvars++ ),
+    array("name" => "name",             "clean" => true,  "matchoffset" => 0, "pattern" => "/([\s\w’'\-]+\s)(Gr|Fm|Group|Formation)/",                      "index" => $numvars++),
+    array("name" => "period",           "clean" => true, "matchoffset" => 1, "pattern" => "/Period:\s*(.+)Age Interval(.+):/",                              "index" => $numvars++ ),
     array("name" => "age_interval",                      "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/",               "index" => $numvars++ ),
     array("name" => "province",         "clean" => true, "matchoffset" => 1, "pattern" => "/Province:\s*(.+)Type Locality and Naming:/",                    "index" => $numvars++ ),
     array("name" => "type_locality",                     "matchoffset" => 1, "pattern" => "/Type Locality and Naming:\s*(.+)Lithology and Thickness:/",     "index" => $numvars++,),
@@ -70,8 +70,8 @@ function docx_read($filename)
     array("name" => "regional_extent",                   "matchoffset" => 1, "pattern" => "/Regional extent:\s*(.+)GeoJSON:/",                              "index" => $numvars++ ),
     array("name" => "geojson",      "cleanjson" => true, "matchoffset" => 1, "pattern" => "/GeoJSON:\s*(.+)Fossils:/",                                      "index" => $numvars++ ),
     array("name" => "fossils",                           "matchoffset" => 1, "pattern" => "/Fossils:\s*(.+)Age:/",                                          "index" => $numvars++ ),
-    array("name" => "age",              "clean" => true, "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Age span:/",                                         "index" => $numvars++ ),
-    array("name" => "age_span",         "clean" => true, "matchoffset" => 1, "pattern" => "/Age Span:\s*(.+)Beginning stage:/",                             "index" => $numvars++ ),
+    array("name" => "age",              "clean" => true, "matchoffset" => 1, "pattern" => "/Age:\s*(.+)Age (s|S)pan:/",                                     "index" => $numvars++ ),
+    array("name" => "age_span",         "clean" => true, "matchoffset" => 1, "pattern" => "/Age (s|S)pan:\s*(.+)Beginning stage:/",                         "index" => $numvars++ ),
     array("name" => "beginning_stage",  "clean" => true, "matchoffset" => 1, "pattern" => "/Beginning stage:\s*(.+)Fraction up in beginning stage:/",       "index" => $numvars++ ),
     array("name" => "frac_upB",         "clean" => true, "matchoffset" => 1, "pattern" => "/Fraction up in beginning stage:\s*(.+)Beginning date \(Ma\):/", "index" => $numvars++ ),
     array("name" => "beg_date",         "clean" => true, "matchoffset" => 1, "pattern" => "/Beginning date \(Ma\):\s*(.+)Ending stage:/",                   "index" => $numvars++ ),
