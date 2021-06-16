@@ -108,7 +108,7 @@ if ($conn->query($sql4)==TRUE && $conn->query($sql3)===TRUE) {
 $sql2 = "CREATE TABLE formation (
 	name Varchar(255) PRIMARY KEY NOT NULL,
 	period Varchar(255),
-	age_interval Varchar(255),
+	age_interval text,
 	province Varchar(255),
  	type_locality Text,
 	lithology Text,
