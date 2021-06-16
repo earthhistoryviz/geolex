@@ -54,13 +54,13 @@ while($row = mysqli_fetch_array($result)) {
   preg_replace("/ /g", " \*", $rname);
   array_push($nameregexes, array(
     "name" => $rname,
-    "regex" => "/($rname)/i"
+    "regex" => "/\b($rname)/i"
   ));
 }
 //echo "nameregexes = <pre>"; print_r($nameregexes); echo "</pre>";
 
 function findAndMakeFormationLinks($str, $nameregexes) {
-  $orig = $str;
+   $orig = $str;
   for($i=0; $i<count($nameregexes); $i++) {
     $n = $nameregexes[$i];
     $str = preg_replace($n["regex"], "<a href=\"displayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>", $str);
@@ -69,7 +69,8 @@ function findAndMakeFormationLinks($str, $nameregexes) {
 }
 
 
-$sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'";
+//$sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'"; old query that won't work with Kali vs. Warkali formations or characters needing to be escaped
+$sql = sprintf("SELECT * FROM formation WHERE name= '%s'", mysqli_real_escape_string($conn, $formation["formation"]));
 $result = mysqli_query($conn, $sql);
 $fmdata = array(
    'name'                                  => array("needlinks" => false),
@@ -97,7 +98,6 @@ $fmdata = array(
    'additional_info'                       => array("needlinks" => true),
    'compiler'                              => array("needlinks" => false),
 );
-
 /*
 if($fmdata['geojson']){
 	$index = 0; // used to get the name, from age and to age once geojson strings identified
