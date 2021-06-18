@@ -40,10 +40,9 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       $p = $finfo->province;
       $geo = $finfo->geojson;
       if ($geo && $geo != "null") {
+	      //echo $fname;
 	
-	//echo $fname;
-	
-	if(!$firstRun) {
+        if(!$firstRun) {
           $recongeojson .= ",\n";
         }
         $recongeojson .= $geo;
@@ -79,22 +78,27 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   //echo $recongeojson;
 
-  $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
-  //echo $toBeHashed;
+  // Only create the output directory if we are generating an image:
+  if ($_REQUEST["generateImage"]) {
+    $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
+    //echo $toBeHashed;
 
-  $outdirhash = md5($toBeHashed);
-  // outdirname is what pygplates should see
-  $outdirname = "livedata/$outdirhash";
-  // and php is running one level up:
-  $outdirname_php = "pygplates/$outdirname";
-  //echo $outdirname_php;
-  if (!file_exists($outdirname_php)) {
-    //echo "Creating a new folder!!!";
-    mkdir($outdirname_php, 0777, true);
-  }
-  $reconfilename = "$outdirname_php/recon.geojson";
-  if (!file_exists($reconfilename)) {
-    file_put_contents($reconfilename, $recongeojson);
+    $outdirhash = md5($toBeHashed);
+    // outdirname is what pygplates should see
+    $outdirname = "livedata/$outdirhash";
+    // and php is running one level up:
+    $outdirname_php = "pygplates/$outdirname";
+    //echo $outdirname_php;
+    $initial_creation_outdir = false; // did we have to make the output hash directory name?
+    if (!file_exists($outdirname_php)) {
+      $initial_creation_outdir = true;
+      //echo "Creating a new folder!!!";
+      mkdir($outdirname_php, 0777, true);
+    }
+    $reconfilename = "$outdirname_php/recon.geojson";
+    if (!file_exists($reconfilename)) {
+      file_put_contents($reconfilename, $recongeojson);
+    }
   }
 }
 
@@ -160,9 +164,29 @@ if ($didsearch) {
      ?>
       <div class="reconstruction">
         <?php if ($_REQUEST["generateImage"] == "1") {?>
-          Under construction: when done, the plate reconstruction image will be shown here.
+          A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their 
+          <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pygplates</a> software as well as
+          <a href="https://www.pygmt.org/latest/">PyGMT</a> which work together to create these images.
+          <br/><br/>
 	 <?php 
-	  exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
+      $timedout = false;
+      if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
+        $count=0;
+        while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
+          usleep(500);
+          $count++;
+          if ($count > 30) { // we've tried for 20 seconds, just fail it
+            $timedout = true;
+            break;
+          }
+        }
+        // If we get here, image should exist, or we gave up waiting
+      }
+
+      if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
+        // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
+    	  exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
+      }
     //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
 	 ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > <?php
       } else { ?>
@@ -207,9 +231,6 @@ if ($didsearch) {
         <h3 class="region-title"><?=$regionname?></h3>
         <hr>
 	<div> <?php
-       //	 echo "<pre>";
-        // print_r($results);
-	// echo "</pre>";
 	 $sortByPeriod = array();
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
             <hr> 
@@ -236,6 +257,12 @@ if ($didsearch) {
     }
   } 
 } ?>
+
+<?php
+  if ($timedout) {
+    ?>NOTE: Timed out awaiting external image creation, had to re-start<?php
+  }
+?>
 </div>
 
 
