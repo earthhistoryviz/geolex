@@ -39,8 +39,8 @@ function removeHTML($str) {
 }
 
 function sortByProvince($a, $b){
-	$a1 = $a['province'];
-	$b1 = $b['province'];
+	$a1 = $a['Beginning age'];
+	$b1 = $b['Beginning age'];
 
 	if($a1 == $b1) return 0;
 	return ($a1 < $b1) ? -1: 1;
@@ -76,7 +76,7 @@ while ($row = mysqli_fetch_array($result)) {
   $province = removeHTML($row['province']);
   $period = removeHTML($row['period']);
   $stage = removeHTML($row['beginning_stage']);
-
+  $begAge = removeHTML($row['beg_date']);
   // geojson processing before writing to output file
   // format without properties tag 
   $output = json_decode(strip_tags($row["geojson"]), true);
@@ -133,7 +133,7 @@ else if($output["type"] == "FeatureCollection"){
   }
    */
   if (strlen($name) < 1) continue;
-  $arr[$name] = array( "name" => $name, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, /*"filename" => $filename*/);
+  $arr[$name] = array( "name" => $name, "Beginning age" => $begAge, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, /*"filename" => $filename*/);
 }
 /*
 file_put_contents($filename, "
@@ -147,8 +147,8 @@ if ($_REQUEST["generateImage"] == "1") {
 $last = "testing Fm";
 $arr[$last] = $ending;
  */
-usort($arr, 'sortByProvince');
-$count = 0;
+uasort($arr, 'sortByProvince');
+/*
 while($count < count($arr)){
 	$currentElement = $arr[$count];
 	$name = $currentElement["name"];
@@ -156,6 +156,6 @@ while($count < count($arr)){
 	unset($arr[$count]);
 	$count = $count + 1;
 }
-
+ */
 echo json_encode($arr);
 ?>
