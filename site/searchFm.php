@@ -50,10 +50,10 @@ if (isset($_REQUEST['search'])) {
         $count++;
     }
     //}
-
+    /* 
     if ($count == 1) {
       header("Location: displayInfo.php?formation=".$arr[0]);
-    }
+    }*/
 
 }
 
@@ -120,7 +120,7 @@ echo "</pre>";
       $output = '<h4>'.'Formation not found'.'</h4>';
       print($output);
     } else {
-      foreach ($newArr as $formation) { ?>
+	foreach ($newArr as $formation) { ?>
         <div style="background-color:rgb(<?=$stageArray[$formationLookup[$formation]]?>, 0.8);" class="formationitem">
         <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
 	</div><?php	
