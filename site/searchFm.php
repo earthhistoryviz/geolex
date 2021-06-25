@@ -30,14 +30,24 @@ if (isset($_REQUEST['search'])) {
     //}
     //else{
     $formationLookup = array();
+    $count = 0;
     while ($row = mysqli_fetch_array($result)){
 	$name = $row['name'];
 	$stage = $row['beginning_stage'];
+	$begAge = $row['beg_date'];
+	//echo $begAge;
 	//echo $stage;
-        if (strlen($name) < 1) continue;
-	array_push($arr, $name);
+	if (strlen($name) < 1) continue;
+	//array_push($arr, $name);
+	
+	$nameObj =  [
+	  'name' => $name,
+	  'beginning age' => $begAge
+  ];    
+	array_push($arr, $nameObj);
 	$formationLookup[$name] = $stage;
-        $output = '<h4>'.$name.'</h4>';
+	$output = '<h4>'.$name.'</h4>';
+        $count++;
     }
     //}
 
@@ -45,9 +55,25 @@ if (isset($_REQUEST['search'])) {
       header("Location: displayInfo.php?formation=".$arr[0]);
     }
 
-    sort($arr);    
 }
 
+function sortByAge($a, $b){
+        $a1 = $a['beginning age'];
+        $b1 = $b['beginning age'];
+
+        if($a1 == $b1) return 0;
+        return ($a1 < $b1) ? -1: 1;
+
+}
+
+uasort($arr, "sortByAge");
+
+$newArr = array();
+foreach($arr as $arrayNum => $finfo){
+   array_push($newArr, $finfo["name"]);
+}
+
+ 
 /*
  * CODE from general.php: This code uses the excel lookup table that can be found in the admin website, 
  * and extracts the stages out of it as well as the RGB and creates an array with keys where the key
@@ -94,7 +120,7 @@ echo "</pre>";
       $output = '<h4>'.'Formation not found'.'</h4>';
       print($output);
     } else {
-      foreach ($arr as $formation) { ?>
+      foreach ($newArr as $formation) { ?>
         <div style="background-color:rgb(<?=$stageArray[$formationLookup[$formation]]?>, 0.8);" class="formationitem">
         <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
 	</div><?php	
