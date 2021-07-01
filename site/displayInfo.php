@@ -132,8 +132,10 @@ while($row = mysqli_fetch_array($result)) {
   }
 }
 //var_dump($fmdata);
-
-
+var_dump($fmdata["beg_date"]["display"]);
+if ((float) $fmdata["beg_date"]["display"] > 0){
+	echo "True";
+}
 //-----------------------------------------------------------
 // Start outputting the page
 //-----------------------------------------------------------

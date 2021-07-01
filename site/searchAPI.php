@@ -22,7 +22,7 @@ $searchquery = addslashes($_REQUEST['searchquery']);
 $periodfilter = addslashes($_REQUEST['periodfilter']);
 $provincefilter = addslashes($_REQUEST['provincefilter']);
 $agefilterstart = addslashes($_REQUEST['agefilterstart']);
-$agefilterend = addslashes($_REQUEST['agefilterend']);
+$agefilterend =  addslashes($_REQUEST['agefilterend']);
 
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
@@ -53,9 +53,11 @@ $sql = "SELECT * "
       ."       AND period LIKE '%$periodfilter%' "
       ."       AND province LIKE '%$provincefilter%'";
 
-if ($agefilterstart && $agefilterstart != "") {
-  $sql .= "       AND NOT (beg_date < $agefilterend"
-         ."                OR end_date > $agefilterstart)";
+if ($agefilterstart != "") {
+  $sql .= "       AND NOT (beg_date < $agefilterend" // the cast make sure a float is compared with a float
+	  ."                OR end_date > $agefilterstart)"
+	  ."      AND beg_date != ''" // with 0 ma formatins without a beginning date and end date get returned (this avoids that)
+          ."      AND end_date != ''"; // same comment as line above
 }
 
 
@@ -133,7 +135,7 @@ else if($output["type"] == "FeatureCollection"){
   }
    */
   if (strlen($name) < 1) continue;
-  $arr[$name] = array( "name" => $name, "Beginning age" => $begAge, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, /*"filename" => $filename*/);
+  $arr[$name] = array( "name" => $name, "Beginning age" => $begAge, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, "ageFilterStart" => gettype($agefilterstart));
 }
 /*
 file_put_contents($filename, "
