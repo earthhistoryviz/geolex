@@ -34,7 +34,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       "formations" => $response,
       "groupbyprovince" => array(),
     );
-    
     foreach($response as $fname => $finfo) {
       // Compiling all geoJSON strings from the returned formations into recon.geojson	    
       $p = $finfo->province;
@@ -65,9 +64,9 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
         */
 
         /* Figure out which periods overlap this formation */
-        foreach($periods as $searchperiod) {
-          if(stripos($finfo->period, $searchperiod) === false) continue;
-          $results[$r["name"]]["groupbyprovince"][$sepp]["groupbyperiod"][$searchperiod][$fname] = $finfo;
+        foreach($periodsDate as $searchperiod) {
+          if(stripos($finfo->period, $searchperiod["period"]) === false) continue;
+          $results[$r["name"]]["groupbyprovince"][$sepp]["groupbyperiod"][$searchperiod["period"]][$fname] = $finfo;
         
         }
       }
@@ -75,9 +74,11 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     ksort($results[$r["name"]]["groupbyprovince"]);
   }
   $recongeojson .= "]}";
-
+  
   //echo $recongeojson;
-
+  //echo "<pre>";
+  //print_r($periodsDate);
+  //echo "</pre>";
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
     $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
@@ -133,7 +134,6 @@ foreach($info as $element) {
   }
 }
 $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
-
 if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
@@ -182,14 +182,22 @@ if ($didsearch) {
         }
         // If we get here, image should exist, or we gave up waiting
       }
-
+      
       if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
         // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
     	  exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
       }
     //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
 	 ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > <?php
-      } else { ?>
+      } else {
+        // User selection of reconstruction model
+        ?>
+        Please select reconstruction model
+        <select name="selectModel">
+          <option value="Default"> Default Model</option>
+          <option value="Chris">Chris' Model</option>
+        </select>
+       
           <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
             <input type="submit" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" style="padding: 5px;" />
             <?php foreach($_REQUEST as $k => $v) {?>
@@ -225,7 +233,8 @@ if ($didsearch) {
         .
         .
         .
-    */
+     */
+    
     foreach($results as $regionname => $regioninfo) {?>
       <div class="formation-container" id="<?=$regionname?>">
         <h3 class="region-title"><?=$regionname?></h3>
@@ -236,9 +245,10 @@ if ($didsearch) {
             <hr> 
             <h3><?=$province?></h3>
             <div class="province-container"> <?php
-              foreach($periods as $p) {
-                foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
-                  if($pname !== $p) continue; ?>
+              foreach($periodsDate as $p) {
+		      //echo $p["period"];
+	      foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
+		      if( $pname !== $p["period"]) continue; ?> 
                   <h5><?=$pname?></h5>
                   <div class="period-container"> <?php
                     foreach($formations as $fname => $finfo){
