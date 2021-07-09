@@ -40,6 +40,6 @@ RUN mkdir /.gmt && chown -R www-data /.gmt
 
 #RUN apt-get install -y download.deb
 #RUN apt-get install -f
-
+RUN pip3 install geopandas
 
 CMD ["/run.sh"]

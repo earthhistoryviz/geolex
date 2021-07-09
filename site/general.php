@@ -148,8 +148,7 @@ if ($didsearch) {
      */
     date_default_timezone_set("America/New_York");	  
     $store = date("Y_m_d_h:i:sa");
-    
-    if ($_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterstart] == $_REQUEST[agefilterend]
+    if ($_REQUEST[agefilterstart] != "" /*&& $_REQUEST[agefilterstart] == $_REQUEST[agefilterend] */
 	    || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
       //$testing = file_get_contents('testing.py', true);
 	    //echo $testing;

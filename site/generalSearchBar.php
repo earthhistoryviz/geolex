@@ -177,11 +177,22 @@ include_once("TimescaleLib.php");
         var stageHTML = "<select id='filterstage' name='filterstage' onchange='stageToDate()'>";
 	var rowIdx;
 	stageHTML = stageHTML + "<option value='All'>All</option>";
+        var prev_series = false;            
         for (rowIdx = 0; rowIdx < timescale.length; rowIdx++) {
           if (timescale[rowIdx]["period"].toLowerCase() === chosen.toLowerCase()) { // Ignoring case to prevent errors from database
-            stageHTML = stageHTML + "<option value='" + timescale[rowIdx]["stage"] + "'>" + timescale[rowIdx]["stage"] + " (" + timescale[rowIdx]["base"] + " - " + timescale[rowIdx]["top"] + ")"  + "</option>";
+            var cur_series = timescale[rowIdx]["series"];
+            if (cur_series !== prev_series) {                                            
+              stageHTML = stageHTML + "<option value='" + cur_series + "'>" + cur_series + '(date range here)';
+            }
+            prev_series = cur_series;
+            stageHTML = stageHTML + "<option value='" 
+              + timescale[rowIdx]["stage"] 
+              + "'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" 
+              + timescale[rowIdx]["stage"] + " (" 
+              + timescale[rowIdx]["base"].toFixed(2) + " - " 
+              + timescale[rowIdx]["top"].toFixed(2) + ")"  + "</option>";
           }
-	}
+	      }
         stageHTML += "</select>";
         stageBox.innerHTML = stageHTML;
 
