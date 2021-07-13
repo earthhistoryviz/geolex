@@ -4,7 +4,8 @@
 include_once("TimescaleLib.php");
 
 $timescale = parseDefaultTimescale();
-$periodsDate = array(); // TODO Need to know why: if use variable name '$periods', the entire algorithm breaks - the selection list will only have 0-12 as numbers instead of the actual period names.
+$periodsDate = array();
+$epochDate = array();
 
 foreach($timescale as $stage) {
   if (!array_key_exists($stage["period"], $periodsDate)) {
@@ -18,6 +19,20 @@ foreach($timescale as $stage) {
       $periodsDate[$stage["period"]]["begDate"] = $stage["base"];
     } else if ($periodsDate[$stage["period"]]["endDate"] > $stage["top"]) {  
       $periodsDate[$stage["period"]]["endDate"] = $stage["top"];
+    }
+  }
+
+  // get Epoch information
+  if (!array_key_exists($stage["series"], $epochDate)) {
+    $epochDate[$stage["series"]] = array(
+      "begDate" => $stage["base"],
+      "endDate" => $stage["top"],
+    );
+  } else {
+    if ($epochDate[$stage["series"]]["begDate"] < $stage["base"]) {
+      $epochDate[$stage["series"]]["begDate"] = $stage["base"];
+    } else if ($epochDate[$stage["series"]]["endDate"] > $stage["top"]) {
+      $epochDate[$stage["series"]]["endDate"] = $stage["top"];
     }
   }
 }
