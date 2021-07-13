@@ -116,9 +116,9 @@ include_once("TimescaleLib.php");
         var periodHTML = 
           "<select id='selectPeriod' name='filterperiod' onchange='changePeriod()'>\
             <option value='All' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option>\
-	    <?php foreach($periodsDate as $p => $d) { 
+	    <?php foreach($periodsDate as $p => $d) {
                if($p) {?>\
-	         <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?> (<?=$d["begDate"]?> - <?=$d["endDate"]?>)</option>\
+	         <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?> (<?=number_format($d["begDate"], 2)?> - <?=number_format($d["endDate"], 2)?>)</option>\
                <?php 
 	       } 
             }?>\
@@ -161,11 +161,14 @@ include_once("TimescaleLib.php");
       /* Timescale Array */
       var timescale = <?php echo json_encode($timescale); ?>;
 
+      /* Epoch information*/
+      var epochDate = <?php echo json_encode($epochDate); ?>;
+
       /* When Period = All, Stage has nothing */
       if (chosen == "All") {
         var AllHTML = 
         "<select id='filterstage' name='filterstage' disabled>\
-          <option value='All'>--Select Period First--</option>\
+	  <option value='All'>--Select Period First--</option>\
         </select>";
         stageBox.innerHTML = AllHTML;
         /* Since Stage filter is not used, both Dates are set to empty. */
@@ -182,17 +185,21 @@ include_once("TimescaleLib.php");
           if (timescale[rowIdx]["period"].toLowerCase() === chosen.toLowerCase()) { // Ignoring case to prevent errors from database
             var cur_series = timescale[rowIdx]["series"];
             if (cur_series !== prev_series) {                                            
-              stageHTML = stageHTML + "<option value='" + cur_series + "'>" + cur_series + '(date range here)';
-            }
-            prev_series = cur_series;
-            stageHTML = stageHTML + "<option value='" 
-              + timescale[rowIdx]["stage"] 
+              stageHTML = stageHTML + "<option value='" + cur_series + "'>" + cur_series + " (" + epochDate[cur_series]["begDate"].toFixed(2) + " - " + epochDate[cur_series]["endDate"].toFixed(2) + ")";
+	    }
+	    prev_series = cur_series;
+
+	    var stageName = timescale[rowIdx]["stage"];
+	    stageHTML = stageHTML 
+	      + "<option value='"
+              + timescale[rowIdx]["stage"]
               + "'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" 
               + timescale[rowIdx]["stage"] + " (" 
               + timescale[rowIdx]["base"].toFixed(2) + " - " 
-              + timescale[rowIdx]["top"].toFixed(2) + ")"  + "</option>";
+	      + timescale[rowIdx]["top"].toFixed(2) + ")"
+	      + "</option>";
           }
-	      }
+	}
         stageHTML += "</select>";
         stageBox.innerHTML = stageHTML;
 
@@ -201,13 +208,15 @@ include_once("TimescaleLib.php");
       }
     }
 
-    /* Temporary: implementation of Stage input textbox */
     function stageToDate() {
       var input = document.getElementById("filterstage").value;
 
       /* Period Date lookup table */
       var periodsDate = <?php echo json_encode($periodsDate); ?>;
       var periodChosen = document.getElementById("selectPeriod").value;
+
+      /* Epoch Date lookup table */
+      var epochDate = <?php echo json_encode($epochDate); ?>;
 
       /* If user selected option All for stage, we use the begDate and endDate of the period selected */
       if (input === "All") {
@@ -223,19 +232,21 @@ include_once("TimescaleLib.php");
       var timescale = <?php echo json_encode($timescale); ?>;
 
       var rowIdx;
-      var found = false;
       for (rowIdx = 0; rowIdx < timescale.length; rowIdx++) {
         if (timescale[rowIdx]["stage"].toLowerCase() === input.toLowerCase()) {  // Compare each Stage with input, ignoring case
-          found = true;
+	  var begDate = document.getElementById("begDate");
+          begDate.value = timescale[rowIdx]["base"];
+          var endDate = document.getElementById("endDate");
+          endDate.value = timescale[rowIdx]["top"];
           break;
-        }
+	} else if (timescale[rowIdx]["series"].toLowerCase() === input.toLowerCase()) { // If epoch matches
+	  var begDate = document.getElementById("begDate");
+	  begDate.value = epochDate[timescale[rowIdx]["series"]]["begDate"];
+	  var endDate = document.getElementById("endDate");
+	  endDate.value = epochDate[timescale[rowIdx]["series"]]["endDate"];
+	  break;
+	}
       }
-      if (found) { // Change Starting Date and Ending Date accordingly
-        var begDate = document.getElementById("begDate");
-        begDate.value = timescale[rowIdx]["base"];
-        var endDate = document.getElementById("endDate");
-        endDate.value = timescale[rowIdx]["top"];
-      } 
     }
 
     /* Keep selection on filter criteria and, if applicable, stage filter (check last selected options when page loads) */
