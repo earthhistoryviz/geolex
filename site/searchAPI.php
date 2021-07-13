@@ -41,7 +41,12 @@ function removeHTML($str) {
 function sortByProvince($a, $b){
 	$a1 = $a['Beginning age'];
 	$b1 = $b['Beginning age'];
-
+        if($a1 == "" && $b1 != ""){
+	   return 1;
+	}
+	if($a1 != "" && $b1 == ""){
+           return -1;
+	}
 	if($a1 == $b1) return 0;
 	return ($a1 < $b1) ? -1: 1;
 }
