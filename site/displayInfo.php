@@ -171,12 +171,66 @@ if ($dirs) {
   }
 }
 
+
+$header = '{
+    "type": "FeatureCollection",
+    "name": "Triassic strata_10Feb2021",
+    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+    "features": [
+';
+
+$reconForm = $header;
+
+// geojson processing to output file 
 //** BEGINNING OF PROCESSING THREE GEOJSONS FORMAT:
 //Format 1: Thailand strata completely done by hand (i.e. Chaiburi Fm)
 //Format 2: Digitized geojson where each formation is its own feature collection (i.e. Zanskar region)
 //Format 3: Geojsons without a properties aspect once you get to the "type": "Feature" (See database for Milliolite for this)
 //(It becomes easier to see these three formats when looking at the database too) 
 
+   $output = json_decode(strip_tags($fmdata["geojson"]["display"]), true); // what will be sent to recon.geojson for reconstruction purposes (basically geoJSON wo FROMAGE and TOAGE)
+   // will have another variable for the display under geoJSON section (that will have the from age and to age)
+  // condition 1 of geojson processing 
+  if(array_key_exists("features", $output) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output) {
+  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); // creating properties array
+  $appendProp["properties"] = $properties;
+  array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson
+  $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
+  unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
+  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
+  $output = json_encode($output["features"]["0"], JSON_PRETTY_PRINT); // altering displayed geojson
+  }
+
+
+  else if(!(array_key_exists("features", $output)) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output){
+  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null);
+  $appendProp["properties"] = $properties;
+  array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
+  $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
+  unset($output[0]); // renaming the key 0 to be properties instead
+  krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
+  $output = json_encode($output, JSON_PRETTY_PRINT);
+  }
+
+
+  // condition 3 of geojson processing 
+  // format with properties tag but each formation is feature collection 
+else if($output["type"] == "FeatureCollection"){
+    $output["features"][0]["properties"]["NAME"] = $name;
+    $output["features"][0]["properties"]["FROMAGE"] = null;
+    $output["features"][0]["properties"]["TOAGE"] = null;
+    $output = json_encode($output["features"][0], JSON_PRETTY_PRINT);
+}
+ // condition four of geojson format 
+else{
+     $output = json_encode($output);
+  }
+
+$reconForm .= $output;
+$reconForm .= ']}';
+  
+
+// geojson processing for under field called geoJSON on display page 
 if($fmdata["geojson"]["display"] != "null"){
 $output = json_decode(strip_tags($fmdata["geojson"]["display"]), true); // decoding one of the three formats from the database (database stores some HTML tags)
 
@@ -236,6 +290,79 @@ else {
  $fmdata["geojson"]["display"] = "";
 }
 
+// create output directory for json file to be processed by pygplates (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
+if ($_REQUEST["generateImage"]) {
+    $toBeHashed = $reconForm.$fmdata["beg_date"]["display"];
+    $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name 
+    // outdirname is what pygplates should see
+    $outdirname = "livedata/$outdirhash";
+    // and php is running one level up:
+    $outdirname_php = "pygplates/$outdirname";
+    //echo $outdirname_php;
+    $initial_creation_outdir = false; // did we have to make the output hash directory name?
+    if (!file_exists($outdirname_php)) {
+      $initial_creation_outdir = true;
+      //echo "Creating a new folder!!!";
+      mkdir($outdirname_php, 0777, true);
+    }
+    $reconfilename = "$outdirname_php/recon.geojson";
+    if (!file_exists($reconfilename)) {
+      file_put_contents($reconfilename, $reconForm);
+    }
+ }
+//}
+
+// dispalying the button as well as what happens after the press to reconstruct button is clicked 
+if($fmdata["beg_date"]["display"] && $fmdata["geojson"]["display"]){
+?>
+      <div class="reconstruction">
+        <?php if ($_REQUEST["generateImage"] == "1") {?>
+          A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
+          <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pygplates</a> software as well as
+          <a href="https://www.pygmt.org/latest/">PyGMT</a> which work together to create these images.
+          <br/><br/>
+         <?php
+      $timedout = false;
+      if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
+        $count=0;
+        while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
+          usleep(500);
+          $count++;
+          if ($count > 30) { // we've tried for 20 seconds, just fail it
+            $timedout = true;
+            break;
+          }
+        }
+        // If we get here, image should exist, or we gave up waiting
+      }
+      if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
+        // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
+          exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$fmdata["beg_date"]["display"]." $outdirname", $ending);
+      }
+    //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
+         ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > <?php
+      } else {
+        // User selection of reconstruction model
+        ?>
+        <!-- Please select reconstruction model !-->
+    <!--    <select name="selectModel">
+          <option value="Default"> Default Model</option>
+          <option value="Chris">Chris' Model</option>
+        </select> !-->
+
+          <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
+            <input type="submit" value="Press to Display on a Plate Reconstruction (<?=$fmdata["name"]["display"]?>)" style="padding: 5px;" />
+            <?php foreach($_REQUEST as $k => $v) {?>
+              <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
+            <?php } ?>
+            <input type="hidden" name="generateImage" value="1" />
+          </form>
+        <?php } ?>
+      </div>
+
+    <?php
+    }
+//}
 
 // display information below
 ?>
