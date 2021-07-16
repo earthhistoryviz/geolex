@@ -51,7 +51,7 @@ function sortByProvince($a, $b){
 	return ($a1 < $b1) ? -1: 1;
 }
 
-
+preg_replace("+", "%", $searchquery);
 $sql = "SELECT * "
       ."  FROM formation "
       ." WHERE name LIKE '%$searchquery%' "
@@ -84,6 +84,7 @@ while ($row = mysqli_fetch_array($result)) {
   $period = removeHTML($row['period']);
   $stage = removeHTML($row['beginning_stage']);
   $begAge = removeHTML($row['beg_date']);
+  $endAge = removeHTML($row['end_date']);
   // geojson processing before writing to output file
   // format without properties tag 
   $output = json_decode(strip_tags($row["geojson"]), true);
@@ -140,7 +141,7 @@ else if($output["type"] == "FeatureCollection"){
   }
    */
   if (strlen($name) < 1) continue;
-  $arr[$name] = array( "name" => $name, "Beginning age" => $begAge, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, "ageFilterStart" => gettype($agefilterstart));
+  $arr[$name] = array( "name" => $name, "endAge" => $endAge, "begAge" => $begAge, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, "ageFilterStart" => gettype($agefilterstart));
 }
 /*
 file_put_contents($filename, "

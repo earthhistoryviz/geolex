@@ -13,13 +13,14 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     }
   }
 
+  $retgeoJSON = array();
   $results = array();
-  $recongeojson = '{
+  $header = '{
     "type": "FeatureCollection",
     "name": "Triassic strata_10Feb2021",
     "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-    "features": [
-	    ';
+    "features": [';
+  $recongeojson = $header;
   $firstRun = 1; 
   foreach($regionstosearch as $r) {
     $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"]."&agefilterstart=".$_REQUEST["agefilterstart"]."&agefilterend=".$_REQUEST["agefilterend"];
@@ -35,12 +36,15 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       "groupbyprovince" => array(),
     );
     foreach($response as $fname => $finfo) {
-      // Compiling all geoJSON strings from the returned formations into recon.geojson	    
+      // Compiling all geoJSON strings from the returned formations into recon.geojson
       $p = $finfo->province;
       $geo = $finfo->geojson;
+      $name = $finfo->name;
+      $begAge = $finfo->begAge;
+      $endAge = $finfo->endAge;
       if ($geo && $geo != "null") {
-	      //echo $fname;
-	
+        //echo $fname;
+        $retgeoJSON[$name] = array("name" => $name, "midAge" => ($begAge + $endAge) / 2);      
         if(!$firstRun) {
           $recongeojson .= ",\n";
         }
@@ -53,7 +57,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       $newp = explode(", ", $p);
       $overlapCount = 0; // counts number of overlaps
       foreach($newp as $sepp) {
-	// $results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] = $finfo;
+        // $results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] = $finfo;
         $results[$r["name"]]["groupbyprovince"][$sepp]["formations"][$fname] = $finfo; 
 
         /*
@@ -82,7 +86,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
     $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
-    //echo $toBeHashed;
 
     $outdirhash = md5($toBeHashed);
     // outdirname is what pygplates should see
@@ -145,68 +148,69 @@ if ($didsearch) {
           a. no End Date
           b. Start Date == End Date
      */
-    date_default_timezone_set("America/New_York");	  
+    date_default_timezone_set("America/New_York");    
     $store = date("Y_m_d_h:i:sa");
     if ($_REQUEST[agefilterstart] != "" /*&& $_REQUEST[agefilterstart] == $_REQUEST[agefilterend] */
-	    || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
+      || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
       //$testing = file_get_contents('testing.py', true);
-	    //echo $testing;
-    //  exec('./data/testing.py', $test);
-   //  $filename =  $_REQUEST[agefilterstart]. "_". $_REQUEST[filterregion]. "_". $store; 
-    //  echo $filename. "<br>";
-   //  echo md5($filename); 
-   //  echo "<pre>";
-   //  print_r($test);
-   //  echo "</pre>";     
-     //$image_encode = shell_exec("base64 data/my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
-     ?>
+      //echo $testing;
+      //  exec('./data/testing.py', $test);
+      //  $filename =  $_REQUEST[agefilterstart]. "_". $_REQUEST[filterregion]. "_". $store; 
+      //  echo $filename. "<br>";
+      //  echo md5($filename); 
+      //  echo "<pre>";
+      //  print_r($test);
+      //  echo "</pre>";     
+      //$image_encode = shell_exec("base64 data/my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
+      ?>
       <div class="reconstruction">
         <?php if ($_REQUEST["generateImage"] == "1") {?>
           A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their 
           <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pygplates</a> software as well as
           <a href="https://www.pygmt.org/latest/">PyGMT</a> which work together to create these images.
           <br/><br/>
-	 <?php 
-      $timedout = false;
-      if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
-        $count=0;
-        while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
-          usleep(500);
-          $count++;
-          if ($count > 30) { // we've tried for 20 seconds, just fail it
-            $timedout = true;
-            break;
-          }
-        }
-        // If we get here, image should exist, or we gave up waiting
-      }
+          <?php 
+           $timedout = false;
+           if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
+             $count=0;
+             while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
+               usleep(500);
+               $count++;
+               if ($count > 30) { // we've tried for 20 seconds, just fail it
+                 $timedout = true;
+                 break;
+               }
+             }
+             // If we get here, image should exist, or we gave up waiting
+           }
       
-      if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
-        // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
-    	  exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
-      }
-    //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
-	 ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > <?php
-      } else {
-        // User selection of reconstruction model
-        ?>
-        Please select reconstruction model
-        <select name="selectModel">
-          <option value="Default"> Default Model</option>
-          <option value="Chris">Chris' Model</option>
-        </select>
-       
+           if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
+             // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
+             exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
+           }
+           if(isset($_REQUEST["filterperiod"]) && $_REQUEST["filterperiod"] != "All"){
+             ?> <h1> <?="Beginning of ". $_REQUEST["filterperiod"]. " with a base age of ". $_REQUEST["agefilterstart"]. " Million Years Ago"; ?> </h1> <?php
+           }
+           //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
+           ?>  <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center"  width ="80%" > <?php
+        } else {
+          // User selection of reconstruction model
+          ?>
+          <!--   Please select reconstruction model
+          <select name="selectModel">
+            <option value="Default"> Default Model</option>
+            <option value="Chris">Chris' Model</option>
+          </select> !-->
+         
           <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
-            <input type="submit" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" style="padding: 5px;" />
+            <input type="submit" style="float:left;display:inline-block;" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" />
             <?php foreach($_REQUEST as $k => $v) {?>
               <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
             <?php } ?>
             <input type="hidden" name="generateImage" value="1" />
           </form>
         <?php } ?>
-      </div>
-
-    <?php
+      </div><?php
     }
     /*
       Show all returned formations in following format:
@@ -237,16 +241,16 @@ if ($didsearch) {
       <div class="formation-container" id="<?=$regionname?>">
         <h3 class="region-title"><?=$regionname?></h3>
         <hr>
-	<div> <?php
-	 $sortByPeriod = array();
+  <div> <?php
+   $sortByPeriod = array();
           foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
             <hr> 
             <h3><?=$province?></h3>
             <div class="province-container"> <?php
               foreach($periodsDate as $p) {
-		      //echo $p["period"];
-	      foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
-		      if( $pname !== $p["period"]) continue; ?> 
+          //echo $p["period"];
+        foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
+          if( $pname !== $p["period"]) continue; ?> 
                   <h5><?=$pname?></h5>
                   <div class="period-container"> <?php
                     foreach($formations as $fname => $finfo){
@@ -272,5 +276,4 @@ if ($didsearch) {
   }
 ?>
 </div>
-
 

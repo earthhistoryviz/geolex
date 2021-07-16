@@ -59,7 +59,10 @@ except Exception as Ex:
 import itertools as it
 
 def extract(outdirname):
-    filename = outdirname+'/reconstructed_geom.gmt'
+    try:
+        filename = outdirname+'/reconstructed_geom.gmt'
+    except Exception as Ex:
+        print(Ex);
     with open(filename, 'r') as f:
         file = f.read()
         sections = file.split('>') # A list of the entire file separated by >
@@ -81,10 +84,11 @@ fig = pygmt.Figure()
 print("after creating fig")
 # Make a regional Mercator map with grid interval=30 degree; land and water= skyblue create a blue basemap. 
 # Otherwise, if use the basemap format, the base-color cannot be filled with blue.
+print("Before function")
 edge_info = extract(outdirname)
 region_edge = str(edge_info[0]-60) + "/" + str(edge_info[1]+60) + "/" + str(edge_info[2]-20) + "/" + str(edge_info[3]+20)
 
-
+print("done")
 
 if edge_info[2] < -40 or edge_info[3] > 40:
 
@@ -132,7 +136,7 @@ if edge_info[2] >= -40 and edge_info[3] <= 40:
    #plot reconstructed polygons and coastlines onto the inset map
         
         fig.plot(data = outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt',G="seashell",pen="0.1p,black")
-        fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="1p,red")
+       # fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="1p,red")
   # place reconstruction age in the inset map : fig.text(text="TEST", x=lon, y=lat, font="22p,Helvetica-Bold,black")
   #somehow, X=180, Y=45 is an ideal position to place the text.
         fig.text(text=age_label, x=180, y=45, N=True, D="0/1c", font="12p,Helvetica-Bold,black")  
