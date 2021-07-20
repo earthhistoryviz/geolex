@@ -151,24 +151,9 @@ if ($didsearch) {
     date_default_timezone_set("America/New_York");    
     $store = date("Y_m_d_h:i:sa");
     if ($_REQUEST[agefilterstart] != "" /*&& $_REQUEST[agefilterstart] == $_REQUEST[agefilterend] */
-      || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
-      //$testing = file_get_contents('testing.py', true);
-      //echo $testing;
-      //  exec('./data/testing.py', $test);
-      //  $filename =  $_REQUEST[agefilterstart]. "_". $_REQUEST[filterregion]. "_". $store; 
-      //  echo $filename. "<br>";
-      //  echo md5($filename); 
-      //  echo "<pre>";
-      //  print_r($test);
-      //  echo "</pre>";     
-      //$image_encode = shell_exec("base64 data/my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
-      ?>
+      || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") { ?>
       <div class="reconstruction">
-        <?php if ($_REQUEST["generateImage"] == "1") {?>
-          A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their 
-          <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pygplates</a> software as well as
-          <a href="https://www.pygmt.org/latest/">PyGMT</a> which work together to create these images.
-          <br/><br/>
+        <?php if ($_REQUEST["generateImage"] == "1") { ?>
           <?php 
            $timedout = false;
            if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
@@ -187,12 +172,19 @@ if ($didsearch) {
            if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
              // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
              exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
-           }
-           if(isset($_REQUEST["filterperiod"]) && $_REQUEST["filterperiod"] != "All"){
-             ?> <h1> <?="Beginning of ". $_REQUEST["filterperiod"]. " with a base age of ". $_REQUEST["agefilterstart"]. " Million Years Ago"; ?> </h1> <?php
-           }
-           //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
-           ?>  <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center"  width ="80%" > <?php
+	   }
+/*           if (isset($_REQUEST["filterperiod"]) && $_REQUEST["filterperiod"] != "All") { ?> 
+             <h1> <?="Beginning of ". $_REQUEST["filterperiod"]. " with a base age of ". $_REQUEST["agefilterstart"]. " Million Years Ago"; ?> </h1> 
+	   <?php } ?> 
+ */ ?>
+           <div id="reconImg" align="center">
+           <!--  <figcaption style="text-align: center; font-size: 45px;"> This is a caption! </figcaption> -->
+             <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%">
+             <br/><br/>
+             A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
+             <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pyGPlates</a> software as well as
+             <a href="https://www.pygmt.org/latest/">pyGMT</a> which work together to create these images.
+           </div> <?php
         } else {
           // User selection of reconstruction model
           ?>
@@ -201,16 +193,73 @@ if ($didsearch) {
             <option value="Default"> Default Model</option>
             <option value="Chris">Chris' Model</option>
           </select> !-->
-         
-          <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
-            <input type="submit" style="float:left;display:inline-block;" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" />
-            <?php foreach($_REQUEST as $k => $v) {?>
-              <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
-            <?php } ?>
-            <input type="hidden" name="generateImage" value="1" />
+        
+          <?php
+            $base = number_format($_REQUEST["agefilterstart"], 2);
+	    $top = number_format($_REQUEST["agefilterend"], 2);
+	    //$useperiod = false;
+            if ($_REQUEST["searchtype"] == "Period") {
+              $middle = number_format(($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2.0, 2);
+              //$useperiod = true;
+              if ($_REQUEST["filterstage"] && $_REQUEST["filterstage"] != "All") {
+                $name = $_REQUEST["filterstage"];
+              } else {
+                $name = $_REQUEST["filterperiod"];
+              }
+            }
+          ?>
+          <style>
+            .reconbutton {
+              width:250px; 
+              display: flex; 
+              flex-grow: 0; 
+              flex-direction: row; 
+              justify-content: center; 
+              align-items: center; 
+              border: 3px solid #E67603; 
+              border-radius: 8px; 
+              padding: 10px; 
+              cursor: hand; 
+              margin-left: 10px
+            }
+          </style>
+          <?php
+          function reconbutton($text) { ?>
+            <div class="reconbutton"
+              onclick="document.getElementById('reconstruction_form').submit()"
+            >
+              <div style="flex-grow: 0">
+                <img src="noun_Earth_2199992.svg" width="50px" height="50px"/>
+              </div>
+              <div style="margin-left: 5px; flex-grow: 0; color: #E67603; font-family: arial">
+                <?=$text?>
+              </div>
+            </div>
+          <?php } ?>
+          <form id="reconstruction_form" method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
+            <div style="display: flex; flex-direction: row;">
+              <?php
+                if ($_REQUEST["searchtype"] == "Date") {
+                  reconbutton("Map of Ancient World at $base Ma");
+                } else if ($_REQUEST["searchtype"] == "Period") {
+                  reconbutton("Map of Ancient World at <b>Base</b> of $name<br/>($base Ma)", $base);
+                  reconbutton("Map of Ancient World at <b>Middle</b> of $name<br/>($middle Ma)", $middle);
+		} else {
+		  reconbutton("Map of Ancient World at $base Ma");
+		  reconbutton("Map of Ancient World at $top Ma");
+		}
+                
+              ?>
+
+              <!-- <input type="submit" style="float:left;display:inline-block;" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" /> -->
+              <?php foreach($_REQUEST as $k => $v) {?>
+                <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
+              <?php } ?>
+              <input type="hidden" name="generateImage" value="1" />
+            </div>
           </form>
         <?php } ?>
-      </div><?php
+      </div> <?php
     }
     /*
       Show all returned formations in following format:
