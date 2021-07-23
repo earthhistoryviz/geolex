@@ -244,7 +244,8 @@ if ($didsearch) {
               border-radius: 8px; 
               padding: 10px; 
               cursor: hand; 
-              margin-left: 10px
+              margin-left: 10px;
+              box-shadow: 3px 3px 5px grey;
             }
           </style>
           <?php
@@ -260,7 +261,8 @@ if ($didsearch) {
             </div>
           <?php } ?>
           <form id="reconstruction_form" method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
-            <div style="display: flex; flex-direction: row;">
+            <div style="display: flex; flex-direction: row; align-items: center">
+              <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Click to Display On:</div>
               <?php
                 if ($_REQUEST["searchtype"] == "Date") {
                   reconbutton("Map of Ancient World at $base Ma", "1st");
@@ -336,13 +338,7 @@ if ($didsearch) {
            </div> <?php
         } else {
 
-
-
-
-
-
-
-     ?>  <form id="middlereconstruction_form" method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=2">
+     ?>  <form style="margin: 0; padding: 0; visibility: hidden;" id="middlereconstruction_form" method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=2">
             <div style="display: flex; flex-direction: row;">
               <?php foreach($_REQUEST as $k => $v) {?>
                 <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
