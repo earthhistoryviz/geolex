@@ -600,7 +600,7 @@ if ($auth) {
 
     <div id="beg_date" class="horiz">
         <b>&nbsp;&nbsp;&nbsp;&nbsp;Beginning date (Ma):&nbsp;</b>
-        <div id="beg_date_value" class="minwidth"><?=eliminateParagraphs($fmdata["beg_date"]["display"])?></div><br>
+        <div id="beg_date_value" class="minwidth"><?=number_format(eliminateParagraphs($fmdata["beg_date"]["display"]), 2)?></div><br>
     </div> 
 
     <div id="end_stage" class="horiz">
@@ -615,7 +615,7 @@ if ($auth) {
 
     <div id="end_date" class="horiz">
         <b>&nbsp;&nbsp;&nbsp;&nbsp;Ending date (Ma): &nbsp;</b>
-        <div id="end_date_value" class="minwidth"><?=eliminateParagraphs($fmdata["end_date"]["display"])?></div><br>
+        <div id="end_date_value" class="minwidth"><?=number_format(eliminateParagraphs($fmdata["end_date"]["display"]), 2)?></div><br>
     </div>
 
     <div id="depositional">

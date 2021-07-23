@@ -2,7 +2,8 @@
 include_once("cleanupString.php");
 include("SimpleXLSX.php");
 
-function computeAgeFromPercentUp($stage, $percent, $timescale) {
+// unformatted = true => don't include the commas in the result
+function computeAgeFromPercentUp($stage, $percent, $timescale, $unformatted=false) {
   $percent = cleanupString($percent);
   if (strlen($percent) < 1) return false;
   if ($percent > 1) $percent /= 100.0;
@@ -16,6 +17,11 @@ function computeAgeFromPercentUp($stage, $percent, $timescale) {
   $sbase = $stage_info["base"];
   $span = $sbase - $stop;
   $comp = ($span * $percent)-$sbase;
+
+  // If they want unformatted int, return it, otherwise format it
+  if ($unformatted) {
+    return abs($comp);
+  }
   return number_format(abs($comp), 2); // need absolute value b/c millions of years ago should not actually be negative
 }
 

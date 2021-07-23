@@ -100,8 +100,8 @@ if (isset($_REQUEST["existing_timescale"])) {
       $form["end_stage"] = cleanupString($form["end_stage"]);
       $form["frac_upB"] = cleanupString($form["frac_upB"]);
       $form["frac_upE"] = cleanupString($form["frac_upE"]);
-      $newbase = computeAgeFromPercentUp($form["beginning_stage"], $form["frac_upB"], $timescale);
-      $newtop = computeAgeFromPercentUp($form["end_stage"], $form["frac_upE"], $timescale);
+      $newbase = computeAgeFromPercentUp($form["beginning_stage"], $form["frac_upB"], $timescale, true);
+      $newtop = computeAgeFromPercentUp($form["end_stage"], $form["frac_upE"], $timescale, true);
       if ($newbase !== false && $newtop !== false) {
         if (!updateFormationAges($form["name"], $newtop, $newbase)) {
           $failures++;
