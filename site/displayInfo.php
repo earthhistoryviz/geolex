@@ -292,10 +292,21 @@ else {
 
 // create output directory for json file to be processed by pygplates (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
 if ($_REQUEST["generateImage"]) {
+    if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Marcilly"){
+    $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
+    }
+    else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Default"){    
     $toBeHashed = $reconForm.$fmdata["beg_date"]["display"];
+    }
     $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name 
     // outdirname is what pygplates should see
-    $outdirname = "livedata/$outdirhash";
+    if($_REQUEST["selectModel"] == "Default"){
+      $outdirname = "livedata/$outdirhash";
+    }
+    else {
+      $outdirname .= $_REQUEST["selectModel"].'/';
+      $outdirname .= $outdirhash;
+    }
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
     //echo $outdirname_php;
@@ -317,10 +328,6 @@ if($fmdata["beg_date"]["display"] && $fmdata["geojson"]["display"]){
 ?>
       <div class="reconstruction">
         <?php if ($_REQUEST["generateImage"] == "1") {?>
-          A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
-          <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pygplates</a> software as well as
-          <a href="https://www.pygmt.org/latest/">PyGMT</a> which work together to create these images.
-          <br/><br/>
          <?php
       $timedout = false;
       if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
@@ -335,33 +342,52 @@ if($fmdata["beg_date"]["display"] && $fmdata["geojson"]["display"]){
         }
         // If we get here, image should exist, or we gave up waiting
       }
-      if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
+      if ($_REQUEST["selectModel"] == "Default" && ($initial_creation_outdir || $timedout)) { // if this is the first time, or we timed out waiting for image, create it:
         // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
           exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$fmdata["beg_date"]["display"]." $outdirname", $ending);
       }
+      else if($_REQUEST["selectModel"] == "Marcilly" && ($initial_creation_outdir || $timedout)) {
+         exec("cd pygplates && ./MarcillyModel.py ".$fmdata["beg_date"]["display"]." $outdirname", $ending);
+      }
     //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
-         ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > <?php
+      ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > 
+         <br/>A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
+          <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pygplates</a> software as well as
+          <a href="https://www.pygmt.org/latest/">PyGMT</a> which work together to create these images.
+          <br/><br/> <?php
       } else {
         // User selection of reconstruction model
-        ?>
-        <!-- Please select reconstruction model !-->
-    <!--    <select name="selectModel">
-          <option value="Default"> Default Model</option>
-          <option value="Chris">Chris' Model</option>
-        </select> !-->
+
+?>
+      
+     Please select reconstruction model to view the base reconstruction of <?= $fmdata["name"]["display"] ?> 
+     <form action = "" method="POST">	
+        <select name="selectModel" multiple>
+          <option value="Default"> GPlates Default (Meredith, Williams, et al. 2021)</option>
+          <option value="Marcilly">Continental flooding model (Marcilly, Torsvik et al., 2021)</option>
+	</select> 
+     <input type="submit">
+     </form>
 
           <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
-            <input type="submit" value="Press to Display on a Plate Reconstruction (<?=$fmdata["name"]["display"]?>)" style="padding: 5px;" />
+            <input id="reconstruction" style="display:none;" type="submit" value="Press to Display on a Plate Reconstruction (<?=$fmdata["name"]["display"]?>)" style="padding: 5px;" />
             <?php foreach($_REQUEST as $k => $v) {?>
               <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
             <?php } ?>
             <input type="hidden" name="generateImage" value="1" />
           </form>
-        <?php } ?>
-      </div>
+	<?php } 
+       if(isset($_REQUEST["selectModel"])){
+?>      <script>
+           document.getElementById("reconstruction").style.display = "block";
+        </script>
+<?php  }
 
-    <?php
-    }
+
+?>
+      </div>
+<?php   
+   }
 //}
 
 // display information below

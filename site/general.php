@@ -45,7 +45,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       if ($geo && $geo != "null") {
         //geoJSONmid below filters out all formations that end by the middle of a date range/period
         $geoJSONmid[$name] = array("name" => $name, "begAge" => $begAge, "endAge" => $endAge, "geojson" => $geo);      
-	if(!$firstRun) {
+  if(!$firstRun) {
           $recongeojson .= ",\n";
         }
         $recongeojson .= $geo;
@@ -102,17 +102,31 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   //echo "<pre>";
   //print_r($periodsDate);
   //echo "</pre>";
+ 
   // Only create the output directory if we are generating an image:
+  
   if ($_REQUEST["generateImage"]) {
-    if($_REQUEST["generateImage"] == 1){	  
-    $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
-    }
-    if($_REQUEST["generateImage"] == 2){
-    $toBeHashed = $recongeojsonmid.($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2;
-    }
-    $outdirhash = md5($toBeHashed);
+    if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Marcilly"){    
+    $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
+    } else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Default"){
+     $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
+    } 
+    if($_REQUEST["generateImage"] == 2 && $_REQUEST["selectModel"] == "Marcilly"){
+      $toBeHashed = $recongeojsonmid.(($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2).$REQUEST["selectModel"];
+    } else if($_REQUEST["generateImage"] == 2 && $_REQUEST["selectModel"] == "Default"){
+      $toBeHashed = $recongeojsonmid.($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2;
+    } 
+    
+    //$outdirhash = md5($toBeHashed);
+    $outdirhash = md5($toBeHashed);    
     // outdirname is what pygplates should see
-    $outdirname = "livedata/$outdirhash";
+    if($_REQUEST["selectModel"] == "Default"){
+      $outdirname = "livedata/$outdirhash";
+    }
+    else {
+      $outdirname .= $_REQUEST["selectModel"].'/';      
+      $outdirname .= $outdirhash;
+    }
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
     //echo $outdirname_php;
@@ -128,8 +142,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     }
   }
 }
-
-
+   
  
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
@@ -166,7 +179,6 @@ if ($didsearch) {
   if (count($results) < 0) {
     echo "No results found.";
   } else {
-
     /*
       Provide option for showing reconstruction image when using:
         1. Date
@@ -193,37 +205,39 @@ if ($didsearch) {
              // If we get here, image should exist, or we gave up waiting
            }
       
-           if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
+           if ($_REQUEST["selectModel"] == "Default" && ($initial_creation_outdir || $timedout)) { // if this is the first time, or we timed out waiting for image, create it:
              // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
-             exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['agefilterstart']." $outdirname", $ending);
-	   }
-/*           if (isset($_REQUEST["filterperiod"]) && $_REQUEST["filterperiod"] != "All") { ?> 
-             <h1> <?="Beginning of ". $_REQUEST["filterperiod"]. " with a base age of ". $_REQUEST["agefilterstart"]. " Million Years Ago"; ?> </h1> 
-	   <?php } ?> 
- */ ?>
-           <div id="reconImg" align="center">
-           <!--  <figcaption style="text-align: center; font-size: 45px;"> This is a caption! </figcaption> -->
-             <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%">
-             <br/><br/>
-             A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
-             <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pyGPlates</a> software as well as
-             <a href="https://www.pygmt.org/latest/">pyGMT</a> which work together to create these images.
-           </div> <?php
-        } else {
+             exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname", $ending);
+	   } else if($_REQUEST["selectModel"] == "Marcilly" && ($initial_creation_outdir || $timedout)) {
+             exec("cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
+           }?>
+
+     <div id="reconImg" align="center">
+       <?php
+         if($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All"){?>
+           <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterstage"] ?> </figcaption>
+         <?php } else if($_REQUEST["searchtype"] == "Period") { ?>
+           <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterperiod"] ?> </figcaption>
+         <?php }
+       ?>
+       <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%">
+       <br/><br/>
+       A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
+       <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pyGPlates</a> software as well as
+       <a href="https://www.pygmt.org/latest/">pyGMT</a> which work together to create these images.
+     </div> <?php
+        } else if($_REQUEST["generateImage"] != "2") {
           // User selection of reconstruction model
-          ?>
-          <!--   Please select reconstruction model
-          <select name="selectModel">
-            <option value="Default"> Default Model</option>
-            <option value="Chris">Chris' Model</option>
-          </select> !-->
-        
-          <?php
-            $base = number_format($_REQUEST["agefilterstart"], 2);
-	    $top = number_format($_REQUEST["agefilterend"], 2);
-	    //$useperiod = false;
+?>
+         <?php
+            $baseraw = $_REQUEST["agefilterstart"];
+            $basepretty = number_format($baseraw, 2);
+            $topraw = $_REQUEST["agefilterend"];
+            $toppretty = number_format($topraw, 2);
+      //$useperiod = false;
             if ($_REQUEST["searchtype"] == "Period") {
-              $middle = number_format(($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2.0, 2);
+              $middleraw = ($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2.0;
+              $middlepretty = number_format($middleraw, 2);
               //$useperiod = true;
               if ($_REQUEST["filterstage"] && $_REQUEST["filterstage"] != "All") {
                 $name = $_REQUEST["filterstage"];
@@ -248,10 +262,10 @@ if ($didsearch) {
               box-shadow: 3px 3px 5px grey;
             }
           </style>
-          <?php
-          function reconbutton($text, $id) { ?>
-	    <div class="reconbutton" id= <?= $id ?>
-              onclick="submitForm(this.id)"> <!-- Rather than both buttons submitting form, each button will go to submitForm function and approratie instructions happen then --> 
+        <?php
+          function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
+            <div class="reconbutton"  id="<?=$id?>"
+              onclick="submitForm('<?=$recondate?>', '<?=$recondate_desc?>')"> <!-- Rather than both buttons submitting form, each button will go to submitForm function and approratie instructions happen then --> 
               <div style="flex-grow: 0">
                 <img src="noun_Earth_2199992.svg" width="50px" height="50px"/>
               </div>
@@ -261,95 +275,58 @@ if ($didsearch) {
             </div>
           <?php } ?>
           <form id="reconstruction_form" method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
-            <div style="display: flex; flex-direction: row; align-items: center">
-              <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Click to Display On:</div>
-              <?php
-                if ($_REQUEST["searchtype"] == "Date") {
-                  reconbutton("Map of Ancient World at $base Ma", "1st");
-                } else if ($_REQUEST["searchtype"] == "Period") {
-                  reconbutton("Map of Ancient World at <b>Base</b> of $name<br/>($base Ma)",  "1st");
-                  reconbutton("Map of Ancient World at <b>Middle</b> of $name<br/>($middle Ma)",  "2nd");
-		} else {
-		  reconbutton("Map of Ancient World at $base Ma", "1st");
-		  reconbutton("Map of Ancient World at $top Ma", "2nd");
-		}
-                
-              ?>
-              
-              <!-- <input type="submit" style="float:left;display:inline-block;" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" /> -->
+            <div style="display: flex; flex-direction: column; align-items: center">
+              <div id="reconbutton-message" style="padding-bottom: 5px">
+                Click to display on map of the Ancient World at:
+              </div>
+              <div style="display: flex; flex-direction: row; align-items: center; padding-bottom: 10px;">
+                <?php
+                  if ($_REQUEST["searchtype"] == "Date") {
+                    reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'on date');
+                  } else if ($_REQUEST["searchtype"] == "Period") {
+                    reconbutton("<b>Base</b> of $name<br/>($basepretty Ma)",  "reconbutton-base", $baseraw, 'base');
+                    reconbutton("<b>Middle</b> of $name<br/>($middlepretty Ma)",  "reconbutton-middle", $middleraw, 'middle');
+                  } else {
+                    reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'base');
+                    reconbutton("$middlepretty Ma", "reconbutton-middle", $middleraw, 'middle');
+                  }
+                ?>
+                <!-- <input type="submit" style="float:left;display:inline-block;" value="Press to Display on a Plate Reconstruction (<?=$_REQUEST["agefilterstart"]?> Ma)" /> -->
+              </div>
+              <div>
+                <select id="selectModel"  name="selectModel" size="2" style="overflow: auto">
+                  <option value="Default" <?php if ($_REQUEST["selectModel"] == "Default" || !$_REQUEST["selectModel"]) echo "SELECTED"; ?>>
+                    Reconstruction Model: GPlates Default (Meredith, Williams, et al. 2021)
+                  </option>
+                  <!--      <option value="Chris" <?php if ($_REQUEST["selectModel"] == "Chris") echo "SELECTED"; ?>>Chris' Model</option> !-->
+                  <option value="Marcilly" <?php if ($_REQUEST["selectModel"] == "Macilly") echo "SELECTED"; ?>>
+                    Reconstruction Model: Continental flooding model (Marcilly, Torsvik et al., 2021)
+                  </option> 
+                </select> 
+              </div>
+   
+              <?php /* Create placeholders for the buttons to fill in when they are clicked for middle/base */ ?>
+              <input type="hidden" name="recondate" id="recondate" value="<?=$_REQUEST["recondate"]?>" />
+              <input type="hidden" name="recondate_description" id="recondate_description" value="<?=$_REQUEST["recondate_description"]?>" />
               <?php foreach($_REQUEST as $k => $v) {?>
-                <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
+                <input type="hidden" name="<?=$k?>" id="<?=$k?>" value="<?=$v?>" />
               <?php } ?>
               <input type="hidden" name="generateImage" value="1" />
             </div>
           </form>
-        <?php } ?>
-      </div> <?php
-    }
+          <?php } ?>
+        </div> <?php
+      }
 
-            ?> <script>
-            // javascript function should control reconstruction that gets displayed 
-            function submitForm(id) {
-              if (id == "1st"){
-                document.getElementById('reconstruction_form').submit();
-              }
-              if (id == "2nd"){
-                document.getElementById('middlereconstruction_form').submit();
-              }
-            }
-	    </script>
-          <?php
+      ?><script type="text/javascript">
+        // javascript function should control reconstruction that gets displayed 
+        function submitForm(recondate, recondate_description) {
+          document.getElementById('recondate').value = recondate;
+          document.getElementById('recondate_description').value = recondate_description;
+          document.getElementById('reconstruction_form').submit();
+        }
+      </script><?php
 
-    if ($_REQUEST[agefilterstart] != "" /*&& $_REQUEST[agefilterstart] == $_REQUEST[agefilterend] */
-      || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") { ?>
-      <div class="reconstruction">
-        <?php if ($_REQUEST["generateImage"] == "2") { ?>
-          <?php
-           $timedout = false;
-           if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
-             $count=0;
-             while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
-               usleep(500);
-               $count++;
-               if ($count > 30) { // we've tried for 20 seconds, just fail it
-                 $timedout = true;
-                 break;
-               }
-             }
-             // If we get here, image should exist, or we gave up waiting
-           }
-
-   	   $mid = ($_REQUEST['agefilterstart'] + $_REQUEST['agefilterend']) / 2;	   
-           if ($initial_creation_outdir || $timedout) { // if this is the first time, or we timed out waiting for image, create it:
-             // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
-             exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$mid." $outdirname", $ending);
-           }
-/*           if (isset($_REQUEST["filterperiod"]) && $_REQUEST["filterperiod"] != "All") { ?> 
-             <h1> <?="Beginning of ". $_REQUEST["filterperiod"]. " with a base age of ". $_REQUEST["agefilterstart"]. " Million Years Ago"; ?> </h1> 
-           <?php } ?> 
- */ ?>
-           <div id="reconImg" align="center">
-	     <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?= number_format($mid, 2) ?> Ma </figcaption>
-             <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%">
-             <br/><br/>
-             A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
-             <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pyGPlates</a> software as well as
-             <a href="https://www.pygmt.org/latest/">pyGMT</a> which work together to create these images.
-           </div> <?php
-        } else {
-
-     ?>  <form style="margin: 0; padding: 0; visibility: hidden;" id="middlereconstruction_form" method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=2">
-            <div style="display: flex; flex-direction: row;">
-              <?php foreach($_REQUEST as $k => $v) {?>
-                <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
-              <?php } ?>
-              <input type="hidden" name="generateImage" value="2" />
-            </div>
-          </form> 
-       <?php
-    
-	}
-    }
     ?> </div> <?php
     /*
       Show all returned formations in following format:
