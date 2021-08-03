@@ -99,21 +99,18 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
 
   //echo $recongeojson;
-  //echo "<pre>";
-  //print_r($periodsDate);
-  //echo "</pre>";
  
   // Only create the output directory if we are generating an image:
   
   if ($_REQUEST["generateImage"]) {
-    if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Marcilly"){    
+    if($_REQUEST["recondate_description"] == "base" && $_REQUEST["selectModel"] == "Marcilly"){    
     $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
-    } else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Default"){
+    } else if($_REQUEST["recondate_description"] == "base" && $_REQUEST["selectModel"] == "Default"){
      $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
     } 
-    if($_REQUEST["generateImage"] == 2 && $_REQUEST["selectModel"] == "Marcilly"){
+    if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] == "Marcilly"){
       $toBeHashed = $recongeojsonmid.(($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2).$REQUEST["selectModel"];
-    } else if($_REQUEST["generateImage"] == 2 && $_REQUEST["selectModel"] == "Default"){
+    } else if($_REQUEST["recon_description"] == "middle"  && $_REQUEST["selectModel"] == "Default"){
       $toBeHashed = $recongeojsonmid.($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2;
     } 
     
@@ -143,7 +140,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   }
 }
    
- 
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
 <link rel="stylesheet" href="generalStyling.css">
@@ -210,7 +206,7 @@ if ($didsearch) {
              exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname", $ending);
 	   } else if($_REQUEST["selectModel"] == "Marcilly" && ($initial_creation_outdir || $timedout)) {
              exec("cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
-           }?>
+        }?>
 
      <div id="reconImg" align="center">
        <?php
