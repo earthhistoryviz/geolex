@@ -337,7 +337,7 @@ $formaction = "general.php"; ?>
      */
     
     foreach($results as $regionname => $regioninfo) {?>
-      <div class="formation-container" id="<?=$regionname?>">
+      <div class="formation-container">
         <h3 class="region-title"><?=$regionname?></h3>
         <hr>
         <div> <?php
