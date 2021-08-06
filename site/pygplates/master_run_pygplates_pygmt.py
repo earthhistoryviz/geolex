@@ -16,8 +16,12 @@ import pandas as pd
 age = float(sys.argv[1])
 outdirname = sys.argv[2]
 
+print("Before")
 
-input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
+try:
+    input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
+except Exception as e:
+    print(e)
 # static polygons are the 'partitioning features'
 static_polygons = pygplates.FeatureCollection('./config/shapes_static_polygons_Merdith_et_al.gpml')
 
