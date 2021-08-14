@@ -53,19 +53,23 @@ pygplates.reconstruct(static_polygons,
                       rotation_model,
                       outdirname+ '/reconstructed_CEED_land_simple.gmt',
                      age, anchor_plate_id=1) 
-
-pygplates.reconstruct(exposed_Land,
+try:
+    pygplates.reconstruct(exposed_Land,
                       rotation_model,
                       outdirname+ '/reconstructed_CEED_Exposed_Land.gmt',
                      age, anchor_plate_id=1) 
-
+except Exception as e:
+   print(e)
 
 
 
 
 # Plot using pyGMT
 import os
-import pygmt
+try:
+   import pygmt
+except Exception as e:
+   print(e)
 import itertools as it
 
 
@@ -136,6 +140,6 @@ with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabe
     
 
     
-fig.savefig(outdirname+"/final_image.png",dpi="300")
+fig.savefig(outdirname+"/final_image.png",dpi="150")
 
 

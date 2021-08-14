@@ -15,9 +15,16 @@ RUN apt-get install -y ghostscript
 RUN apt-get install -y cmake
 RUN apt-get install -y libnetcdf-dev libnetcdff-dev 
 RUN apt-get install -y curl
-RUN apt-get install -y gdal-bin
+
+RUN apt-get install -y python3.6-dev
+RUN add-apt-repository ppa:ubuntugis/ppa &&  apt-get update
+RUN  apt-get install -y --allow-downgrades libssl1.1=1.1.1-1ubuntu2.1~18.04.9
+RUN apt-get install -y libmysqlclient-dev
+RUN apt-get install -y  gdal-bin=2.2.3+dfsg-2 libgdal20=2.2.3+dfsg-2 libgdal-dev=2.2.3+dfsg-2 libgdal-java=2.2.3+dfsg-2 gdal-data=2.2.3+dfsg-2 python-gdal=2.2.3+dfsg-2 python3-gdal=2.2.3+dfsg-2
+
 RUN apt-get install -y graphicsmagick
 RUN apt-get install -y python3-sphinx
+
 RUN apt-get install -y ffmpeg
 
 # need to actually get gmt
@@ -37,9 +44,6 @@ RUN wget -O pygplates-src.deb https://sourceforge.net/projects/gplates/files/pyg
 RUN apt-get install -y ./pygplates-src.deb
 
 RUN mkdir /.gmt && chown -R www-data /.gmt
-
-#RUN apt-get install -y download.deb
-#RUN apt-get install -f
-RUN pip3 install geopandas
+RUN pip3 install numpy --upgrade
 
 CMD ["/run.sh"]

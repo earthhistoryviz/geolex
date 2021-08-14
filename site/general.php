@@ -94,7 +94,8 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     }
   }
   $recongeojsonmid = substr($recongeojsonmid, 0, -1);
-  $recongeojsonmid .= "]}";
+
+$recongeojsonmid .= "]}";
 
 
   //echo $recongeojson;
@@ -102,41 +103,62 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   // Only create the output directory if we are generating an image:
   
   if ($_REQUEST["generateImage"]) {
+      if($_REQUEST["recondate_description"] == "base"){
+        switch($_REQUEST["selectModel"]){
+          case "Default":  $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
+          default: $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
+        }
+      
+      
+      }
+ 
+ else if($_REQUEST["recondate_description"] == "middle"){
+          switch($_REQUEST["selectModel"]){
+          case "Default":  $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"];
+          default: $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
+        }
+      } 
+ 
+
+    /*
     if($_REQUEST["recondate_description"] == "base" && $_REQUEST["selectModel"] == "Marcilly") {    
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
     } else if($_REQUEST["recondate_description"] == "base" && $_REQUEST["selectModel"] == "Default") {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
-    } 
-    if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] == "Marcilly"){
+
+} 
+
+
+if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] == "Marcilly"){
       $toBeHashed = $recongeojsonmid.(($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2).$REQUEST["selectModel"];
     } else if($_REQUEST["recon_description"] == "middle"  && $_REQUEST["selectModel"] == "Default"){
       $toBeHashed = $recongeojsonmid.($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2;
     } 
-    
+  */    
     //$outdirhash = md5($toBeHashed);
     $outdirhash = md5($toBeHashed);    
     // outdirname is what pygplates should see
-    if($_REQUEST["selectModel"] == "Default"){
-      $outdirname = "livedata/$outdirhash";
-    }
-    else {
-      $outdirname .= $_REQUEST["selectModel"].'/';      
-      $outdirname .= $outdirhash;
-    }
+    switch($_REQUEST["selectModel"]) {
+      case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
+      case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
+      case  "Scotese": $outdirname = "livedata/scotese/$outdirhash"; break;
+      default:         $outdirname = "livedata/unknown/$outdirhash"; 
+
+}
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
-    //echo $outdirname_php;
     $initial_creation_outdir = false; // did we have to make the output hash directory name?
+
     if (!file_exists($outdirname_php)) {
       $initial_creation_outdir = true;
-      //echo "Creating a new folder!!!";
       mkdir($outdirname_php, 0777, true);
     }
     $reconfilename = "$outdirname_php/recon.geojson";
     if (!file_exists($reconfilename)) {
       file_put_contents($reconfilename, $recongeojson);
     }
-  }
+
+}
 }
    
 /* This is necessary to get generalSearchBar to send things back to us */
@@ -159,10 +181,12 @@ $formaction = "general.php"; ?>
   $count = 0; // used for indexing through the stageConversion array
   foreach($info as $element) {
     foreach($element as $key => $val) {
+  
       if($key == "stage"){
         array_push($stageConversion, array($val => "none"));
         $storedStage = $val;
       }
+    
       if($key == "color") {
         $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
         $count = $count + 1;
@@ -198,21 +222,32 @@ $formaction = "general.php"; ?>
               }
               // If we get here, image should exist, or we gave up waiting
             }
-        
-            if ($_REQUEST["selectModel"] == "Default" && ($initial_creation_outdir || $timedout)) { // if this is the first time, or we timed out waiting for image, create it:
-              // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
-              exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname", $ending);
-            } else if($_REQUEST["selectModel"] == "Marcilly" && ($initial_creation_outdir || $timedout)) {
-              exec("cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
+
+            // Run pygplates if either a) we had to make the hash folder because it didn't exist, or b) we timed out (try again)
+            if ($initial_creation_outdir || $timedout) {
+              switch($_REQUEST["selectModel"]) {
+                case "Default":
+                  exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname", $ending);
+                break;
+                case "Marcilly": 
+                  exec("cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
+                break;
+                case "Scotese":
+                  exec("cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
+                  echo "<pre> Result: "; print_r($ending); echo "</pre>";
+                break;
+              }
             }?>
  
             <div id="reconImg" align="center"><?php
               if($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All"){?>
-                <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterstage"] ?> </figcaption>
-              <?php } else if($_REQUEST["searchtype"] == "Period") { ?>
-                <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterperiod"] ?> </figcaption>
-              <?php } ?>
-              <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%" />
+                <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterstage"] ?> </figcaption><?php
+              } else if($_REQUEST["searchtype"] == "Period") { ?>
+                <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterperiod"] ?> </figcaption><?php
+              } ?>
+              <a href="<?=$outdirname_php?>/final_image.png">
+                <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%" />
+              </a>
               <br/><br/>
               A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
               <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pyGPlates</a> software as well as
@@ -278,13 +313,16 @@ $formaction = "general.php"; ?>
                   }?>
                 </div>
                 <div>
-                  <select id="selectModel"  name="selectModel" size="2" style="overflow: auto">
+                  <select id="selectModel"  name="selectModel" size="3" style="overflow: auto">
                     <option value="Default" <?php if ($_REQUEST["selectModel"] == "Default" || !$_REQUEST["selectModel"]) echo "SELECTED"; ?>>
-                      Reconstruction Model: GPlates Default (Meredith, Williams, et al. 2021)
+                      Reconstruction Model: GPlates Default (Merdith, Williams, et al., 2021)
                     </option>
                     <!--      <option value="Chris" <?php if ($_REQUEST["selectModel"] == "Chris") echo "SELECTED"; ?>>Chris' Model</option> !-->
-                    <option value="Marcilly" <?php if ($_REQUEST["selectModel"] == "Macilly") echo "SELECTED"; ?>>
+                    <option value="Marcilly" <?php if ($_REQUEST["selectModel"] == "Marcilly") echo "SELECTED"; ?>>
                       Reconstruction Model: Continental flooding model (Marcilly, Torsvik et al., 2021)
+                    </option> 
+                    <option value="Scotese" <?php if ($_REQUEST["selectModel"] == "Scotese") echo "SELECTED"; ?>>
+                      Reconstruction Model: Paleo-topography (Chris Scotese, 2020)
                     </option> 
                   </select> 
                 </div>
@@ -298,9 +336,11 @@ $formaction = "general.php"; ?>
                 <input type="hidden" name="generateImage" value="1" />
               </div>
             </form>
-          <?php } ?>
+
+<?php } ?>
         </div> <?php
-      }
+
+}
 
       ?><script type="text/javascript">
         // javascript function should control reconstruction that gets displayed 
@@ -366,7 +406,9 @@ $formaction = "general.php"; ?>
         </div>
       </div> <?php
     }
-  } 
+
+} 
+
 } ?>
 
 <?php
