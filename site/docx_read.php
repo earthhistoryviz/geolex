@@ -95,6 +95,8 @@ function docx_read($filename)
   $efracindex = vindex("frac_upE", $vars);
   $edateindex = vindex("end_date", $vars);
   $geojsonindex = vindex("geojson", $vars);
+  $fossilsindex = vindex("fossils", $vars);
+  $regionalindex = vindex("regional_extent", $vars);
 
   foreach ($splitcontent as $ministr) {
     if ($count++ < $skipFirstNFormations) continue;
@@ -112,6 +114,11 @@ function docx_read($filename)
       }
 
       $vars[$i]["matches"] = $matches;
+      // Uncomment to help you debug a particular word doc:
+      //if ($i == $regionalindex && preg_match("/Bailong Fm/", $ministr)) {
+      //  echo "ministr = <div style=\"width: 1024px\">";print_r(htmlspecialchars($ministr));echo "</div><br><br>";
+      //  echo "pattern = ".$v[pattern].", matches = <pre>";print_r(htmlspecialchars($matches));echo"</pre><br><br>";
+      //}
       $vars[$i]["value"] = trim($matches[$v["matchoffset"]]); // get rid of newlines on the end
       if (preg_match("/\r\n/", $vars[$i]["value"])) { // only add paragraph tags if there are newlines in it (single-line doesn't have them)
         $vars[$i]["value"] = "<p>" . str_replace("\r\n", "</p>\r\n<p>", $vars[$i]["value"]) . "</p>";
