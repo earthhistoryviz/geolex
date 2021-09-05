@@ -116,22 +116,27 @@ $recongeojsonmid .= "]}";
  
   // Only create the output directory if we are generating an image:
   
+
 if ($_REQUEST["generateImage"]) {
 if($_REQUEST["recondate_description"] == "on date"){
 
 switch($_REQUEST["selectModel"]){
           case "Default":  $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
           default: $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
-        }
+
+}
       
-      }
+
+}
  
  else if($_REQUEST["recondate_description"] == "middle"){
           switch($_REQUEST["selectModel"]){
           case "Default":  $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"];
           default: $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
 
+
 }
+
 
 } 
  
@@ -142,6 +147,7 @@ switch($_REQUEST["selectModel"]){
     } else if($_REQUEST["recondate_description"] == "base" && $_REQUEST["selectModel"] == "Default") {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
 
+
 } 
 
 
@@ -150,7 +156,8 @@ if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] =
       $toBeHashed = $recongeojsonmid.(($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2).$REQUEST["selectModel"];
     } else if($_REQUEST["recon_description"] == "middle"  && $_REQUEST["selectModel"] == "Default"){
       $toBeHashed = $recongeojsonmid.($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2;
-    } 
+
+} 
   */    
     //$outdirhash = md5($toBeHashed);
     $outdirhash = md5($toBeHashed);    
@@ -162,6 +169,8 @@ if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] =
       default:         $outdirname = "livedata/unknown/$outdirhash"; 
 
 
+
+
 }
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
@@ -171,18 +180,22 @@ if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] =
 if (!file_exists($outdirname_php)) {
       $initial_creation_outdir = true;
       mkdir($outdirname_php, 0777, true);
-    }
+
+
+}
     $reconfilename = "$outdirname_php/recon.geojson";
-    if (!file_exists($reconfilename)) {
+
+if (!file_exists($reconfilename)) {
       file_put_contents($reconfilename, $recongeojson);
+
 
 }
      
 
+
 }
 }
 
-echo $outdirname_php;
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
 <link rel="stylesheet" href="generalStyling.css">
@@ -201,16 +214,20 @@ $formaction = "general.php"; ?>
   $stageConversion = array();
   $storedStage = "none";
   $count = 0; // used for indexing through the stageConversion array
-  foreach($info as $element) {
+
+foreach($info as $element) {
+
 
 foreach($element as $key => $val) {
   
+
 
 if($key == "stage"){
         array_push($stageConversion, array($val => "none"));
         $storedStage = $val;
       }
     
+
 
 if($key == "color") {
         $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
@@ -249,17 +266,24 @@ while (!file_exists("$outdirname_php/final_image.png")) { // assume another thin
                 $count++;
 
 
+
 if ($count > 30) { // we've tried for 20 seconds, just fail it
                   $timedout = true;
                   break;
                 }
-              }
+
+}
               // If we get here, image should exist, or we gave up waiting
-            }
+
+}
 
             // Run pygplates if either a) we had to make the hash folder because it didn't exist, or b) we timed out (try again)
 
+
+
 if ($initial_creation_outdir || $timedout) {
+
+
 
 switch($_REQUEST["selectModel"]) {
                 case "Default":
@@ -281,12 +305,16 @@ switch($_REQUEST["selectModel"]) {
  
             <div id="reconImg" align="center"><?php
 
+
 if($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All"){?>
                 <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterstage"] ?> </figcaption><?php
               } else if($_REQUEST["searchtype"] == "Period") { ?>
                 <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterperiod"] ?> </figcaption><?php
-              } 
-              if(file_exists($outdirname_php."final_image.png")){?>
+
+} 
+
+
+if(file_exists($outdirname_php."/final_image.png")){?>
               <a href="<?=$outdirname_php?>/final_image.png">
                 <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%" />
               </a>
@@ -316,9 +344,12 @@ if ($_REQUEST["filterstage"] && $_REQUEST["filterstage"] != "All") {
               } else {
                 $name = $_REQUEST["filterperiod"];
 
+
 }
-            }?>
+
+}?>
             <style>
+
 
 
 .reconbutton {
@@ -347,14 +378,16 @@ function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
                   <?=$text?>
                 </div>
               </div>
-            <?php } ?>
+
+<?php } ?>
             <form id="reconstruction_form" method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
               <div style="display: flex; flex-direction: column; align-items: center">
                 <div id="reconbutton-message" style="padding-bottom: 5px">
                   Click to display on map of the Ancient World at:
                 </div>
                 <div style="display: flex; flex-direction: row; align-items: center; padding-bottom: 10px;"><?php
-                  if ($_REQUEST["searchtype"] == "Date") {
+
+if ($_REQUEST["searchtype"] == "Date") {
                     reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'on date');
                   } else if ($_REQUEST["searchtype"] == "Period") {
                     reconbutton("<b>Base</b> of $name<br/>($basepretty Ma)",  "reconbutton-base", $baseraw, 'base');
@@ -386,15 +419,20 @@ function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
 
 <?php foreach($_REQUEST as $k => $v) {?>
                   <input type="hidden" name="<?=$k?>" id="<?=$k?>" value="<?=$v?>" />
-                <?php } ?>
+
+
+<?php } ?>
                 <input type="hidden" name="generateImage" value="1" />
               </div>
             </form>
 
 
 
-<?php } ?>
+
+<?php } 
+?>
         </div> <?php
+
 
 
 
