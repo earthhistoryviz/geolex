@@ -10,8 +10,10 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   foreach($regions as $r) {
     if ($r["name"] == $_REQUEST["filterregion"] || $_REQUEST["filterregion"] == "All") {
       array_push($regionstosearch, $r);
-    }
-  }
+
+}
+
+}
 
   $retgeoJSON = array();
   $results = array();
@@ -26,7 +28,8 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"]."&agefilterstart=".$_REQUEST["agefilterstart"]."&agefilterend=".$_REQUEST["agefilterend"];
     if ($_REQUEST["generateImage"]) {
       $url .= "&generateImage=1";
-    }
+
+}
     $raw = file_get_contents($url);
     $response = json_decode($raw);
 
@@ -47,10 +50,12 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
         $geoJSONmid[$name] = array("name" => $name, "begAge" => $begAge, "endAge" => $endAge, "geojson" => $geo);      
         if(!$firstRun) {
           $recongeojson .= ",\n";
-        }
+
+}
         $recongeojson .= $geo;
         $firstRun = 0;
-      }
+
+}
 
       if(!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
       //$results[$r["name"]]["groupbyprovince"][$p]["formations"][$fname] = $finfo;
@@ -71,13 +76,18 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
         foreach($periodsDate as $searchperiod) {
           if(stripos($finfo->period, $searchperiod["period"]) === false) continue;
           $results[$r["name"]]["groupbyprovince"][$sepp]["groupbyperiod"][$searchperiod["period"]][$fname] = $finfo;
-        }
-      }
-    }
-    ksort($results[$r["name"]]["groupbyprovince"]);
-  }
 
-  $recongeojson .= "]}"; 
+}
+
+}
+
+}
+    ksort($results[$r["name"]]["groupbyprovince"]);
+
+}
+
+
+$recongeojson .= "]}"; 
 
 // recongeojsonmid is what needs to be put into the geojson file when the middle reconstruction button gets pressed 
   $recongeojsonmid = $header;
@@ -89,11 +99,15 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       if ($midAge <= $midForm["begAge"] ||  $midAge >= $midForm["endAge"]){
         $recongeojsonmid .= $midForm["geojson"];
         $recongeojsonmid .= ",";
-      }
+
+}
       $firstform = 0;
-    }
-  }
+
+}
+
+}
   $recongeojsonmid = substr($recongeojsonmid, 0, -1);
+
 
 $recongeojsonmid .= "]}";
 
@@ -102,13 +116,13 @@ $recongeojsonmid .= "]}";
  
   // Only create the output directory if we are generating an image:
   
-  if ($_REQUEST["generateImage"]) {
-      if($_REQUEST["recondate_description"] == "base"){
-        switch($_REQUEST["selectModel"]){
+if ($_REQUEST["generateImage"]) {
+if($_REQUEST["recondate_description"] == "on date"){
+
+switch($_REQUEST["selectModel"]){
           case "Default":  $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
           default: $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
         }
-      
       
       }
  
@@ -116,8 +130,10 @@ $recongeojsonmid .= "]}";
           switch($_REQUEST["selectModel"]){
           case "Default":  $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"];
           default: $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
-        }
-      } 
+
+}
+
+} 
  
 
     /*
@@ -127,6 +143,7 @@ $recongeojsonmid .= "]}";
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
 
 } 
+
 
 
 if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] == "Marcilly"){
@@ -144,23 +161,28 @@ if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] =
       case  "Scotese": $outdirname = "livedata/scotese/$outdirhash"; break;
       default:         $outdirname = "livedata/unknown/$outdirhash"; 
 
+
 }
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
     $initial_creation_outdir = false; // did we have to make the output hash directory name?
 
-    if (!file_exists($outdirname_php)) {
+
+if (!file_exists($outdirname_php)) {
       $initial_creation_outdir = true;
       mkdir($outdirname_php, 0777, true);
     }
     $reconfilename = "$outdirname_php/recon.geojson";
     if (!file_exists($reconfilename)) {
       file_put_contents($reconfilename, $recongeojson);
-    }
+
+}
+     
 
 }
 }
-   
+
+echo $outdirname_php;
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
 <link rel="stylesheet" href="generalStyling.css">
@@ -180,14 +202,17 @@ $formaction = "general.php"; ?>
   $storedStage = "none";
   $count = 0; // used for indexing through the stageConversion array
   foreach($info as $element) {
-    foreach($element as $key => $val) {
+
+foreach($element as $key => $val) {
   
-      if($key == "stage"){
+
+if($key == "stage"){
         array_push($stageConversion, array($val => "none"));
         $storedStage = $val;
       }
     
-      if($key == "color") {
+
+if($key == "color") {
         $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
         $count = $count + 1;
       }
@@ -195,7 +220,8 @@ $formaction = "general.php"; ?>
   }
   $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
   if ($didsearch) {
-    if (count($results) < 0) {
+
+if (count($results) < 0) {
       echo "No results found.";
     } else {
       /*
@@ -206,16 +232,24 @@ $formaction = "general.php"; ?>
             b. Start Date == End Date
        */
       if ($_REQUEST[agefilterstart] != "" /*&& $_REQUEST[agefilterstart] == $_REQUEST[agefilterend] */
-        || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") { ?>
+
+|| $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") { ?>
         <div class="reconstruction">
-          <?php if ($_REQUEST["generateImage"] == "1") {
+
+<?php if ($_REQUEST["generateImage"] == "1") {
             $timedout = false;
-            if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
+
+
+if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
               $count=0;
-              while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
+
+
+while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
                 usleep(500);
                 $count++;
-                if ($count > 30) { // we've tried for 20 seconds, just fail it
+
+
+if ($count > 30) { // we've tried for 20 seconds, just fail it
                   $timedout = true;
                   break;
                 }
@@ -224,8 +258,10 @@ $formaction = "general.php"; ?>
             }
 
             // Run pygplates if either a) we had to make the hash folder because it didn't exist, or b) we timed out (try again)
-            if ($initial_creation_outdir || $timedout) {
-              switch($_REQUEST["selectModel"]) {
+
+if ($initial_creation_outdir || $timedout) {
+
+switch($_REQUEST["selectModel"]) {
                 case "Default":
                   exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname", $ending);
                 break;
@@ -234,17 +270,23 @@ $formaction = "general.php"; ?>
                 break;
                 case "Scotese":
                   exec("cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
-                  echo "<pre> Result: "; print_r($ending); echo "</pre>";
+                  //echo "<pre> Result: "; print_r($ending); echo "</pre>";
                 break;
-              }
-            }?>
+
+
+}
+
+
+}?>
  
             <div id="reconImg" align="center"><?php
-              if($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All"){?>
+
+if($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All"){?>
                 <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterstage"] ?> </figcaption><?php
               } else if($_REQUEST["searchtype"] == "Period") { ?>
                 <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterperiod"] ?> </figcaption><?php
-              } ?>
+              } 
+              if(file_exists($outdirname_php."final_image.png")){?>
               <a href="<?=$outdirname_php?>/final_image.png">
                 <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width ="80%" />
               </a>
@@ -253,24 +295,33 @@ $formaction = "general.php"; ?>
               <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pyGPlates</a> software as well as
               <a href="https://www.pygmt.org/latest/">pyGMT</a> which work together to create these images.
             </div> <?php
+            } else {
+              echo "No available reconstruction image";
+            }
           } else if($_REQUEST["generateImage"] != "2") {
             // User selection of reconstruction model
             $baseraw = $_REQUEST["agefilterstart"];
             $basepretty = number_format($baseraw, 2);
             $topraw = $_REQUEST["agefilterend"];
             $toppretty = number_format($topraw, 2);
-            if ($_REQUEST["searchtype"] == "Period") {
+
+
+if ($_REQUEST["searchtype"] == "Period") {
               $middleraw = ($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2.0;
               $middlepretty = number_format($middleraw, 2);
               //$useperiod = true;
-              if ($_REQUEST["filterstage"] && $_REQUEST["filterstage"] != "All") {
+
+if ($_REQUEST["filterstage"] && $_REQUEST["filterstage"] != "All") {
                 $name = $_REQUEST["filterstage"];
               } else {
                 $name = $_REQUEST["filterperiod"];
-              }
+
+}
             }?>
             <style>
-              .reconbutton {
+
+
+.reconbutton {
                 width:250px; 
                 display: flex; 
                 flex-grow: 0; 
@@ -285,7 +336,8 @@ $formaction = "general.php"; ?>
                 box-shadow: 3px 3px 5px grey;
               }
             </style><?php
-            function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
+
+function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
               <div class="reconbutton"  id="<?=$id?>"
                 onclick="submitForm('<?=$recondate?>', '<?=$recondate_desc?>')"> <!-- Rather than both buttons submitting form, each button will go to submitForm function and approratie instructions happen then --> 
                 <div style="flex-grow: 0">
@@ -310,7 +362,8 @@ $formaction = "general.php"; ?>
                   } else {
                     reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'base');
                     reconbutton("$middlepretty Ma", "reconbutton-middle", $middleraw, 'middle');
-                  }?>
+
+}?>
                 </div>
                 <div>
                   <select id="selectModel"  name="selectModel" size="3" style="overflow: auto">
@@ -330,21 +383,27 @@ $formaction = "general.php"; ?>
                 <?php /* Create placeholders for the buttons to fill in when they are clicked for middle/base */ ?>
                 <input type="hidden" name="recondate" id="recondate" value="<?=$_REQUEST["recondate"]?>" />
                 <input type="hidden" name="recondate_description" id="recondate_description" value="<?=$_REQUEST["recondate_description"]?>" />
-                <?php foreach($_REQUEST as $k => $v) {?>
+
+<?php foreach($_REQUEST as $k => $v) {?>
                   <input type="hidden" name="<?=$k?>" id="<?=$k?>" value="<?=$v?>" />
                 <?php } ?>
                 <input type="hidden" name="generateImage" value="1" />
               </div>
             </form>
 
+
+
 <?php } ?>
         </div> <?php
+
+
 
 }
 
       ?><script type="text/javascript">
         // javascript function should control reconstruction that gets displayed 
-        function submitForm(recondate, recondate_description) {
+
+function submitForm(recondate, recondate_description) {
           document.getElementById('recondate').value = recondate;
           document.getElementById('recondate_description').value = recondate_description;
           document.getElementById('reconstruction_form').submit();
@@ -405,9 +464,12 @@ $formaction = "general.php"; ?>
           } ?>
         </div>
       </div> <?php
-    }
+
+}
+
 
 } 
+
 
 } ?>
 
