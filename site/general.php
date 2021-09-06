@@ -118,7 +118,9 @@ $recongeojsonmid .= "]}";
   
 
 if ($_REQUEST["generateImage"]) {
-if($_REQUEST["recondate_description"] == "on date"){
+
+if($_REQUEST["recondate_description"] == "on date" || $_REQUEST["recondate_description"] == "base"){
+
 
 switch($_REQUEST["selectModel"]){
           case "Default":  $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
@@ -129,8 +131,10 @@ switch($_REQUEST["selectModel"]){
 
 }
  
- else if($_REQUEST["recondate_description"] == "middle"){
-          switch($_REQUEST["selectModel"]){
+
+else if($_REQUEST["recondate_description"] == "middle"){
+
+switch($_REQUEST["selectModel"]){
           case "Default":  $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"];
           default: $toBeHashed = $recongeojsonmid.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
 
@@ -148,6 +152,7 @@ switch($_REQUEST["selectModel"]){
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"];
 
 
+
 } 
 
 
@@ -156,6 +161,7 @@ if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] =
       $toBeHashed = $recongeojsonmid.(($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2).$REQUEST["selectModel"];
     } else if($_REQUEST["recon_description"] == "middle"  && $_REQUEST["selectModel"] == "Default"){
       $toBeHashed = $recongeojsonmid.($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"])/2;
+
 
 } 
   */    
@@ -167,6 +173,7 @@ if($_REQUEST["recondate_description"] == "middle"  && $_REQUEST["selectModel"] =
       case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
       case  "Scotese": $outdirname = "livedata/scotese/$outdirhash"; break;
       default:         $outdirname = "livedata/unknown/$outdirhash"; 
+
 
 
 
