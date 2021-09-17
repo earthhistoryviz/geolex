@@ -1,6 +1,11 @@
 <?php
+/* 
+ * Copy this file, name it as Period_Region.php, then fix the "wells_pic/<image>.jpg" at the top.
+ * Then fix the map areas below to your new image.
+ */
 include("./wells-header.php");
 ?>
+
 
 <h2><img src="wells_pic/Devonian_Guangxi.jpg" width="700" height="1000" border="0" usemap="#Map" />
 	<map name="Map" id="Map">
