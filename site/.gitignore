@@ -2,8 +2,8 @@ timescales/*
 uploads/*
 pygplates/livedata/*
 pygplates/Marcilly/*
-MapInfo/*
-!MapInfo/TEMPLATE.php
+Mapinfo/*
+!Mapinfo/TEMPLATE.php
 wells/*
 !wells/TEMPLATE.php
 !wells/wells_pic
