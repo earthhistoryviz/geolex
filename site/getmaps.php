@@ -3,15 +3,24 @@
 global $maps;
 $maps  = glob("./Mapinfo/*_Country_Map.php");
 function mapPeriodFromFilename($name) {
-  $parts = explode("_",$name);
+  // Order_Period_Color_whatever_Country_Map.php
+  $parts = explode("_",str_replace("./Mapinfo/", "", $name));
   return array(
-    "period" => str_replace("./Mapinfo/", "", $parts[0]),
+    "order" => $parts[0],
+    "period" => $parts[1],
+    "color" => $parts[2],
     "filename" => $name,
   );
 }
 global $mapperiods;
 
-$mapperiods = array_map('mapPeriodFromFilename', $maps);
+$unsorted_periods = array_map('mapPeriodFromFilename', $maps);
+$mapperiods = array(count($unsorted_periods));
+foreach ($unsorted_periods as $up) {
+  $order = (int)($up["order"]);
+  $mapperiods[$order] = $up;
+}
+ksort($mapperiods); // they are still in insertion order until you re-sort by numeric keys
 
 function mapForPeriod($period) {
   global $mapperiods;

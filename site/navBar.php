@@ -73,35 +73,27 @@ if ($_SESSION["loggedIn"]) {
          $period = "Devonian";
        }
 
-      
+      /* 
       $periods = array(
-         array( "name" => "Quaternary", "color" => "#F9F97F"),
-         array( "name" => "Neogene", "color" => "#FFE619"),
-         array( "name" => "Paleogene", "color" => "#FD9A52"),
-         array( "name" => "Cretaceous", "color" => "#7FC64E"),
-         array( "name" => "Jurassic", "color" => "#34B2C9"),
-         array( "name" => "Triassic", "color" => "#812B92"),
-         array( "name" => "Permian", "color" => "#F04028"),
-         array( "name" => "Carboniferous", "color" => "#67A599"),
-         array( "name" => "Devonian", "color" => "#CB8C37"),
-         array( "name" => "Silurian", "color" => "#B3E1B6"),
-         array( "name" => "Ordovician", "color" => "#009270"),
-         array( "name" => "Cambrian", "color" => "#7FA056"),
-         array( "name" => "Ediacaran", "color" => "#FED96A"),
+        array( "name" => "Quaternary", "color" => "#F9F97F"),
+        array( "name" => "Neogene", "color" => "#FFE619"),
+        array( "name" => "Paleogene", "color" => "#FD9A52"),
+        array( "name" => "Cretaceous", "color" => "#7FC64E"),
+        array( "name" => "Jurassic", "color" => "#34B2C9"),
+        array( "name" => "Triassic", "color" => "#812B92"),
+        array( "name" => "Permian", "color" => "#F04028"),
+        array( "name" => "Carboniferous", "color" => "#67A599"),
+        array( "name" => "Devonian", "color" => "#CB8C37"),
+        array( "name" => "Silurian", "color" => "#B3E1B6"),
+        array( "name" => "Ordovician", "color" => "#009270"),
+        array( "name" => "Cambrian", "color" => "#7FA056"),
+        array( "name" => "Ediacaran", "color" => "#FED96A"),
       );
-      // Remove any periods whose names are not in the $mapperiods list (i.e. we don't have a map for them)
-      function filterPeriod($p) {
-        global $mapperiods;
-        foreach ($mapperiods as $mp) {
-          if (strtoupper(trim($p["name"])) == strtoupper(trim($mp["period"]))) return true;
-        }
-        return false;
-      }
-      $periods = array_filter($periods, 'filterPeriod');
+      */
 
-      foreach($periods as $p) {?>
-        <div style="background-color: <?php echo $p["color"]?>; padding: 5px; ">
-          <a href="/index.php?period=<?php echo $p["name"]?>"><?php echo $p["name"]?></a>
+      foreach($mapperiods as $p) {?>
+        <div style="background-color: #<?php echo $p["color"]?>; padding: 5px; ">
+          <a href="/index.php?period=<?php echo $p["period"]?>"><?php echo $p["period"]?></a>
         </div>
       <?php } ?>
     </div>
