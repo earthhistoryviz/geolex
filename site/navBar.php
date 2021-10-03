@@ -1,7 +1,7 @@
 <?php
   session_start();
   // Gives us $maps and $mapperiods
-  include_once("./getmaps.php");
+  include(dirname(__FILE__) . "/getmaps.php");
 ?>
 <!DOCTYPE html>
 <html>

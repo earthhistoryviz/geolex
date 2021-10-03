@@ -1,10 +1,14 @@
 <?php
 
 global $maps;
-$maps  = glob("./Mapinfo/*_Country_Map.php");
+$dir = dirname(__FILE__) . "/Mapinfo";
+$maps  = glob("$dir/*_Country_Map.php");
+
+
 function mapPeriodFromFilename($name) {
+  global $dir;
   // Order_Period_Color_whatever_Country_Map.php
-  $parts = explode("_",str_replace("./Mapinfo/", "", $name));
+  $parts = explode("_", str_replace("$dir/", "", $name));
   return array(
     "order" => $parts[0],
     "period" => $parts[1],
