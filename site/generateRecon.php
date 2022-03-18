@@ -5,6 +5,30 @@ if ($_REQUEST["generateImage"] == "1") {
             $timedout = false;
 
 
+  function removeOldHashDirs($pathpfx) {
+    // Clear out any old reconstructions first
+    $topdirs = scandir($pathpfx);
+    $hashlength = 32; // 32 chars in a hash filename
+    foreach ($topdirs as $topdir) {
+      $path = "$pathpfx/$topdir";
+      if (!is_dir($path)) continue;
+      if ($topdir[0] == '.') continue;
+      if (strlen($topdir) == $hashlength) {
+        // check how old it is, delete if older than 15 days
+        // you need the /. on the end since the hash is a dir
+        if (time()-filemtime("$path/.") > 15 * 24 * 3600) {
+          echo "Removing old path $path<br/>";
+          system("rm -rf $path");
+        }
+      } else {
+        // another dir like scotese, go check inside that
+        removeOldHashDirs($path);
+      }
+    }
+  }
+  removeOldHashDirs(dirname(__FILE__) . "/pygplates/livedata");
+
+
 
 
 if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
