@@ -2,6 +2,7 @@
 include_once("navBar.php");
 include_once("SearchBar.php");
 include_once("SqlConnection.php");
+//include_once("formationInfo.php");
 //$recongeoJSON = fopen("reconstruct.txt", "w"); // output file to write all geojson information to
 $formation = $_REQUEST;
 $auth = $_SESSION["loggedIn"];
@@ -14,6 +15,10 @@ if($formation[formation] == "") {?>
     exit(0);
 }
 
+/* Prep for reconstructions, mirrors code from general.php */
+
+
+/* end of reconstruction prep */
 
 $imagedisplaycount = 0;
 function displayImages($images, $imtype) {
@@ -70,6 +75,7 @@ function findAndMakeFormationLinks($str, $nameregexes) {
 
 
 //$sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'"; old query that won't work with Kali vs. Warkali formations or characters needing to be escaped
+/*
 $sql = sprintf("SELECT * FROM formation WHERE name= '%s'", mysqli_real_escape_string($conn, $formation["formation"]));
 $result = mysqli_query($conn, $sql);
 $fmdata = array(
@@ -98,6 +104,8 @@ $fmdata = array(
    'additional_info'                       => array("needlinks" => true),
    'compiler'                              => array("needlinks" => false),
 );
+*/
+include_once("formationInfo.php");
 /*
 if($fmdata['geojson']){
 	$index = 0; // used to get the name, from age and to age once geojson strings identified
@@ -228,7 +236,8 @@ else{
 
 $reconForm .= $output;
 $reconForm .= ']}';
-  
+
+
 
 // geojson processing for under field called geoJSON on display page 
 if($fmdata["geojson"]["display"] != "null"){
@@ -293,19 +302,27 @@ else {
 // create output directory for json file to be processed by pygplates (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
 if ($_REQUEST["generateImage"]) {
     if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Marcilly"){
-    $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
+       $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
     }
     else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Default"){    
-    $toBeHashed = $reconForm.$fmdata["beg_date"]["display"];
+        $toBeHashed = $reconForm.$fmdata["beg_date"]["display"];
     }
-    $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name 
+    else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Scotese"){
+      $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
+    }
+    $outdirhash = md5($toBeHashed)."newest"; // md5 hashing for the output directory name 
+    
     // outdirname is what pygplates should see
     if($_REQUEST["selectModel"] == "Default"){
-      $outdirname = "livedata/$outdirhash";
+      $outdirname = "livedata/default/$outdirhash";
     }
-    else {
-      $outdirname .= $_REQUEST["selectModel"].'/';
-      $outdirname .= $outdirhash;
+    else if($_REQUEST["selectModel"] == "Marcilly") {
+      //$outdirname .= $_REQUEST["selectModel"].'/';
+      //$outdirname .= $outdirhash;
+      $outdirname = "livedata/marcilly/$outdirhash";
+    }
+    else if($_REQUEST["selectModel"] == "Scotese"){
+      $outdirname = "livedata/scotese/$outdirhash";
     }
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
@@ -321,8 +338,20 @@ if ($_REQUEST["generateImage"]) {
       file_put_contents($reconfilename, $reconForm);
     }
  }
+ ?> 
+ <div> 
+ <?php
+ // only want to make the buttons if there is valid geojson for the formation
+ if(json_decode($fmdata['geojson']['display'])){
+    //include('./generateRecon.php');
+    include('./makeButtons.php');
+ }
+ ?> 
+ </div>
+ <?php 
 //}
 
+/*
 // dispalying the button as well as what happens after the press to reconstruct button is clicked 
 if($fmdata["beg_date"]["display"] && $fmdata["geojson"]["display"]){
 ?>
@@ -359,7 +388,7 @@ if($fmdata["beg_date"]["display"] && $fmdata["geojson"]["display"]){
         // User selection of reconstruction model
 
 ?>
-      
+    
      Please select reconstruction model to view the base reconstruction of <?= $fmdata["name"]["display"] ?> 
      <form action = "" method="POST">	
         <select name="selectModel" multiple>
@@ -381,13 +410,13 @@ if($fmdata["beg_date"]["display"] && $fmdata["geojson"]["display"]){
 ?>      <script>
            document.getElementById("reconstruction").style.display = "block";
         </script>
-<?php  }
+<?php  } 
 
 
 ?>
       </div>
 <?php   
-   }
+   } */
 //}
 
 // display information below
@@ -478,7 +507,7 @@ if ($auth) {
         padding: 5px;
       }
     </style>
-
+    <div>
     <?php if ($auth) {?>
       <input id="Edit" type ="button" value = "Edit">
       <input id="Save" type="button" value="Save" disabled>
@@ -678,7 +707,7 @@ if ($auth) {
         <b>Compiler: &nbsp;</b>
         <div id="compiler_value" class="minwidth"><?=eliminateParagraphs($fmdata["compiler"]["display"])?></div><br>
     </div>
-
+   </div>
 <?php if ($auth) {?> 
 <script type ="text/javascript">
 function deleteform(){

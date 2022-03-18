@@ -6,8 +6,10 @@ sys.path.insert(1, '/usr/lib/pygplates/revision28')
 import pygplates
 import pandas as pd
 
+
 age = float(sys.argv[1])
 outdirname = sys.argv[2]
+print(outdirname)
 
 print("Done")
 try:
