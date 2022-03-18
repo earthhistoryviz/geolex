@@ -27,7 +27,7 @@ function displayImages($images, $imtype) {
   foreach($images[$imtype] as $i) {
     $id = "image_".$imtype."_".$imagedisplaycount;
     ?><div id="<?php echo $fmdata["name"]["display"];?>">
-      <a href="<?php echo $i["full"];?>">
+      <a target="_blank" href="<?php echo $i["full"];?>">
         <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
       </a>
   <?php 
