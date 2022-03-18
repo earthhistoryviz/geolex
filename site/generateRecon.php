@@ -17,7 +17,6 @@ if ($_REQUEST["generateImage"] == "1") {
         // check how old it is, delete if older than 15 days
         // you need the /. on the end since the hash is a dir
         if (time()-filemtime("$path/.") > 15 * 24 * 3600) {
-          echo "Removing old path $path<br/>";
           system("rm -rf $path");
         }
       } else {
