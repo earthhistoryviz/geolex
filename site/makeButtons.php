@@ -1,4 +1,7 @@
 <?php  // purpose of file is to produce the reconstruction buttons when search by period (not all) and/or stage 
+
+// I DON'T THINK THIS FILE IS USED ANYWHERE
+
 // but also with search by date and search by date range 
 include_once("./generateRecon.php");
 include_once("./formationInfo.php");
@@ -18,6 +21,11 @@ include_once("./formationInfo.php");
     margin-left: 10px;
     box-shadow: 3px 3px 5px grey;
   } 
+.clickedbutton {
+  box-shadow: -5px -5px 5px grey;
+  background-color: #EEEEEE;
+  border-color: #3366FF;
+}
 </style>
 <?php
 if(!isset($_REQUEST["generateImage"]) && ($_REQUEST["filterperiod"] != "All" || $_REQUEST["searchtype"] != "period")){
@@ -36,13 +44,21 @@ if(!isset($_REQUEST["generateImage"]) && ($_REQUEST["filterperiod"] != "All" || 
 
 function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
     <div class="reconbutton"  id="<?=$id?>"
-      onclick="submitForm('<?=$recondate?>', '<?=$recondate_desc?>')"> <!-- Rather than both buttons submitting form, each button will go to submitForm function and approratie instructions happen then --> 
+      onmousedown="
+        document.getElementById('<?=$id?>').className='reconbutton clickedbutton';
+      "
+      onmouseup="
+        document.getElementById('<?=$id?>').className='reconbutton';
+        document.getElementById('<?=$id?>-text').innerHTML = 'Loading reconstruction...  This could take up to a minute.  It was a long time ago.';
+      "
+      onclick="submitForm('<?=$recondate?>', '<?=$recondate_desc?>')"
+    > <!-- Rather than both buttons submitting form, each button will go to submitForm function and approratie instructions happen then --> 
       <div style="flex-grow: 0">
         <div>
              <img src="noun_Earth_2199992.svg" width="50px" height="50px"/>
         </div>
       </div>
-      <div style="margin-left: 5px; flex-grow: 0; color: #E67603; font-family: arial">
+      <div id="<?=$id?>-text" style="margin-left: 5px; flex-grow: 0; color: #E67603; font-family: arial">
         <?=$text?>
       </div>
     </div>
