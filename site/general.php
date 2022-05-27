@@ -3,7 +3,6 @@ include("constants.php");
 include_once("TimescaleLib.php");
 
 /* If we have a filterperiod and filterregion, send off the API requests */
-
 if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   $didsearch = true;
 
@@ -34,7 +33,7 @@ $header = '{
   $firstRun = 1; 
 
 foreach($regionstosearch as $r) {
-    $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"]."&agefilterstart=".$_REQUEST["agefilterstart"]."&agefilterend=".$_REQUEST["agefilterend"];
+    $url = $r["searchurl"] . "?searchquery=".$_REQUEST["search"]."&periodfilter=".$_REQUEST["filterperiod"]."&agefilterstart=".$_REQUEST["agefilterstart"]."&agefilterend=".$_REQUEST["agefilterend"]."&lithoSearch=".urlencode($_REQUEST["lithoSearch"]);
 
 if ($_REQUEST["generateImage"]) {
       $url .= "&generateImage=1";
@@ -43,6 +42,7 @@ if ($_REQUEST["generateImage"]) {
 }
     $raw = file_get_contents($url);
     $response = json_decode($raw);
+    
 
     $results[$r["name"]] = array(
       "linkurl" => $r["linkurl"],

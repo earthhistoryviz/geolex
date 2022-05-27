@@ -1,6 +1,6 @@
 <?php  // purpose of file is to produce the reconstruction buttons when search by period (not all) and/or stage 
 
-// I DON'T THINK THIS FILE IS USED ANYWHERE
+// I DON'T THINK THIS FILE IS USED ANYWHERE (used in general.php and displayInfo.php)
 
 // but also with search by date and search by date range 
 include_once("./generateRecon.php");

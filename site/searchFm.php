@@ -18,16 +18,53 @@ if (isset($_REQUEST['search'])) {
     $provincefilter = preg_replace('/ /', '%', $provincefilter);
     $periodfilter = ($_REQUEST['periodfilter']);
 
-    $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
+    $lithofilter = ($_REQUEST['lithoSearch']); 
+
+    if(strcmp($lithofilter, "") === 0) {
+      $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter%'";
+
+    } else {
+      //used if user wants to use boolean logic
+      $lithofilter1 = "";
+      $lithofilter2 = ""; 
+
+      //echo $lithofilter;
+      $lithofilter_lower = strtolower($lithofilter);
+
+      //if the user wants to search with 'and'
+      if(strpos($lithofilter_lower, ' and ') !== false ) {
+        $lithofilter_array = (explode(" and ", $lithofilter_lower));
+      
+        $lithofilter1 = $lithofilter_array[0];
+        $lithofilter2 = $lithofilter_array[1];
+
+        $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter1%' AND lithology LIKE '%$lithofilter2%'";
+        
+      } elseif (strpos($lithofilter_lower, ' or ') !== false ) { //if the user wants to search with 'or'
+        # code...
+        $lithofilter_array = (explode(" or ", $lithofilter_lower));
+      
+        $lithofilter1 = $lithofilter_array[0];
+        $lithofilter2 = $lithofilter_array[1];
+        $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter1%' OR lithology LIKE '%$lithofilter2%'";
+      
+      } else {
+        $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter%'";
+      }
+  }
+    //print_r($lithofilter_array);
+
+      
     $result = mysqli_query($conn, $sql);
     //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
     //echo '<pre>'.$sql.'</pre>';
     $count = mysqli_num_rows($result);
+    $noFormation = false;
 
-
-    //if($count == 0){
-      //  $output = '<h4>'.'Formation not found'.'</h4>';
-    //}
+    if($count == 0){
+        //$output = '<h4>'. 'There are no formation found with \''.$lithofilter. '\''.'</h4>';
+        $noFormation = true;
+    }
     //else{
     $formationLookup = array();
     $count = 0;
@@ -48,8 +85,8 @@ if (isset($_REQUEST['search'])) {
 	$formationLookup[$name] = $stage;
 	$output = '<h4>'.$name.'</h4>';
         $count++;
-    }
     //}
+    }
     /* 
     if ($count == 1) {
       header("Location: displayInfo.php?formation=".$arr[0]);
@@ -67,10 +104,21 @@ function sortByAge($a, $b){
 }
 
 uasort($arr, "sortByAge");
+$displayAlphabetButton = true;
+if (isset($_REQUEST['alphabetButton'])) {
+  sort($arr);
+  $displayAlphabetButton = false;
+}
+
 
 $newArr = array();
 foreach($arr as $arrayNum => $finfo){
    array_push($newArr, $finfo["name"]);
+}
+
+if (isset($_REQUEST['timeButton'])) {
+  //uasort($arr, "sortByAge");
+  $displayAlphabetButton = true;
 }
 
  
@@ -115,12 +163,30 @@ echo "</pre>";
 <?php include("navBar.php"); include("SearchBar.php"); ?>
 
 <div class="formation-container">
+
+<?php if($displayAlphabetButton) { ?>
+    <form method="post">
+        <input type="submit" name="alphabetButton"
+                value="Sort by Name"/>
+    </form>
+  <?php	} else { ?>
+    <form method="post">
+        <input type="submit" name="timeButton"
+                value="Sort by Time"/>
+    </form>
+
+  <?php	}?>
+  
 <?php
+  
     if($count < 1) {
       $output = '<h4>'.'Formation not found'.'</h4>';
       print($output);
-    } else {
-	foreach ($newArr as $formation) { ?>
+    } else if ($noFormation) {
+      $output = '<h4>'. 'There are no formation found with \''.$lithofilter. '\''.'</h4>';
+      print($output);
+    } else {      
+      foreach ($newArr as $formation) { ?>
         <div style="background-color:rgb(<?=$stageArray[$formationLookup[$formation]]?>, 0.8);" class="formationitem">
         <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
 	</div><?php	

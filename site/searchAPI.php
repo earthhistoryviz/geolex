@@ -23,6 +23,7 @@ $periodfilter = addslashes($_REQUEST['periodfilter']);
 $provincefilter = addslashes($_REQUEST['provincefilter']);
 $agefilterstart = addslashes($_REQUEST['agefilterstart']);
 $agefilterend =  addslashes($_REQUEST['agefilterend']);
+$lithofilter = ($_REQUEST['lithoSearch']); 
 
 if (!$searchquery) $searchquery = "";
 if (!$periodfilter || $periodfilter == "All") $periodfilter = "";
@@ -32,6 +33,64 @@ if (!isset($_REQUEST['agefilterend']) || $agefilterend == "" || $agefilterstart 
 }
 
 header("Content-Type: application/json");
+
+
+if(strcmp($lithofilter, "") === 0) {
+  $sql = "SELECT * "
+  ."  FROM formation "
+  ." WHERE name LIKE '%$searchquery%' "
+  ."       AND period LIKE '%$periodfilter%' "
+  ."       AND province LIKE '%$provincefilter%' "
+  ."       AND lithology LIKE '%$lithofilter%' ";
+
+} else {
+        
+      $lithofilter_lower = strtolower($lithofilter);
+
+      //if the user wants to search with 'and'
+      
+      if(strpos($lithofilter_lower, ' and ') !== false ) {
+        $lithofilter_array = (explode(" and ", $lithofilter_lower));
+      
+        $lithofilter1 = $lithofilter_array[0];
+        
+        $lithofilter2 = $lithofilter_array[1];
+
+
+        $sql = "SELECT * "
+        ."  FROM formation "
+        ." WHERE name LIKE '%$searchquery%' "
+        ."       AND period LIKE '%$periodfilter%' "
+        ."       AND province LIKE '%$provincefilter%' "
+        ."       AND lithology LIKE '%$lithofilter1%' "
+        ."       AND lithology LIKE '%$lithofilter2%' ";
+        
+        
+        
+        
+      } elseif (strpos($lithofilter_lower, ' or ') !== false ) { //if the user wants to search with 'or'
+        # code...
+        $lithofilter_array = (explode(" or ", $lithofilter_lower));
+      
+        $lithofilter1 = $lithofilter_array[0];
+        $lithofilter2 = $lithofilter_array[1];
+        $sql ="SELECT * "
+        ."  FROM formation "
+        ." WHERE name LIKE '%$searchquery%' "
+        ."       AND period LIKE '%$periodfilter%' "
+        ."       AND province LIKE '%$provincefilter%' "
+        ."       AND lithology LIKE '%$lithofilter1%' "
+        ."       OR lithology LIKE '%$lithofilter2%' ";
+      
+      } else { //user does not want to search and/or
+        $sql = "SELECT * "
+        ."  FROM formation "
+        ." WHERE name LIKE '%$searchquery%' "
+        ."       AND period LIKE '%$periodfilter%' "
+        ."       AND province LIKE '%$provincefilter%' "
+        ."       AND lithology LIKE '%$lithofilter%' ";
+      }
+}
 
 function removeHTML($str) {
   $str = trim(preg_replace("/<\/?[^>]+>/","", $str));
@@ -52,11 +111,7 @@ function sortByProvince($a, $b){
 }
 
 preg_replace("+", "%", $searchquery);
-$sql = "SELECT * "
-      ."  FROM formation "
-      ." WHERE name LIKE '%$searchquery%' "
-      ."       AND period LIKE '%$periodfilter%' "
-      ."       AND province LIKE '%$provincefilter%'";
+
 
 if ($agefilterstart != "") {
   $sql .= "       AND NOT (beg_date < $agefilterend" // the cast make sure a float is compared with a float
@@ -70,6 +125,9 @@ $result = mysqli_query($conn, $sql);
 //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
 //echo '<pre>'.$sql.'</pre>';
 $count = mysqli_num_rows($result);
+if($count == 0) {
+  $noFormation = true;
+}
 $whileIter = 0; // checks if on the first run of the while loop for output file purposes
 $arr = array();
 $firstRun = 1; 

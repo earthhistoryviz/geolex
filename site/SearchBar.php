@@ -99,8 +99,11 @@
         <input id="begDate" type="number" style="width: 75px" name="agefilterstart" min="0" value="<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>">
          Ending Date
         <input id="endDate" type="number" style="width: 75px" name="agefilterend" min="0" value="<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>">
-        
+        <br>
+         Lithology includes:
+        <input id="lithoSearch" type="text" style="width: 75px" name="lithoSearch" value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>">        
         <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
+        <br>
 
         </form>
     	

@@ -25,7 +25,7 @@ include_once("TimescaleLib.php");
 
 <?php
   // Get all the unique periods and provinces
-  $sql = "SELECT name, period, province FROM formation";
+  $sql = "SELECT name, period, province, lithology FROM formation";
   $result = mysqli_query($conn, $sql);
   $filters = array();
   // We need to clean up the html tags from the periods and provinces to get a canonical name
@@ -58,7 +58,7 @@ include_once("TimescaleLib.php");
   <div class="search-container">
     <form id='form' action="<?=$formaction?>" method="request">
       <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
-      <!--<input id="submitbtn1" type="submit" value="Submit" disabled> --!>
+      
       <br><br>
 
       Search Region 
@@ -80,8 +80,11 @@ include_once("TimescaleLib.php");
             <option value="Date Range" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Date Range') ? 'selected' : ''; ?>>Date Range</option>
           </select>
         </div>
+        
         <div id="searchform" style="padding: 5px; white-space: nowrap;"></div>
         <div style="padding: 5px;">
+         Lithology includes:
+         <input id="lithoSearch" type="text" style="width: 75px" name="lithoSearch" value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>">
           <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
         </div>
       </div>
@@ -110,7 +113,8 @@ include_once("TimescaleLib.php");
         return;
       }
       var chosen = box.options[box.selectedIndex].value;
-      var searchForm = document.getElementById("searchform");
+      var searchForm = document.getElementById("searchform");      
+      
 
       if (chosen == "Period") {
         var periodHTML = 
@@ -134,7 +138,7 @@ include_once("TimescaleLib.php");
         searchForm.innerHTML = periodHTML;
 
   // To avoid a UI bug where switching back from Date/Date Range search to period search will cause the stage selection box to be grayed out 
-  changePeriod();
+        changePeriod();
       } else if (chosen == "Date") {
         var dateHTML = 
           "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>\
@@ -228,12 +232,13 @@ include_once("TimescaleLib.php");
       /* Epoch Date lookup table */
       var epochDate = <?php echo json_encode($epochDate); ?>;
 
+
       /* If user selected option All for stage, we use the begDate and endDate of the period selected */
-      if (input === "All") {
-  var begDate = document.getElementById("begDate");
-  begDate.value = periodsDate[periodChosen]["begDate"];
-  var endDate = document.getElementById("endDate");
-  endDate.value = periodsDate[periodChosen]["endDate"];
+      if (input === "All" && lithoChosen === "") {
+        var begDate = document.getElementById("begDate");
+        begDate.value = periodsDate[periodChosen]["begDate"];
+        var endDate = document.getElementById("endDate");
+        endDate.value = periodsDate[periodChosen]["endDate"];
 
   return;
       }
@@ -244,7 +249,7 @@ include_once("TimescaleLib.php");
       var rowIdx;
       for (rowIdx = 0; rowIdx < timescale.length; rowIdx++) {
         if (timescale[rowIdx]["stage"].toLowerCase() === input.toLowerCase()) {  // Compare each Stage with input, ignoring case
-    var begDate = document.getElementById("begDate");
+          var begDate = document.getElementById("begDate");
           begDate.value = timescale[rowIdx]["base"];
           var endDate = document.getElementById("endDate");
           endDate.value = timescale[rowIdx]["top"];

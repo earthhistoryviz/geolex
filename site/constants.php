@@ -64,6 +64,7 @@ $regions = array (
     array( "name" => "China", "searchurl" => "http://chinalex.geolex.org/searchAPI.php", "linkurl" => "http://chinalex.geolex.org/displayInfo.php"),
     array( "name" => "Indian Plate", "searchurl" => "http://indplex.geolex.org/searchAPI.php", "linkurl" => "http://indplex.geolex.org/displayInfo.php"),
     array( "name" => "Thailand", "searchurl" => "http://thailex.geolex.org/searchAPI.php", "linkurl" => "http://thailex.geolex.org/displayInfo.php"),
+    array( "name" => "Vietnam", "searchurl" => "http://vietlex.geolex.org/searchAPI.php", "linkurl" => "http://vietlex.geolex.org/displayInfo.php")
   );
 if ($_SERVER["SERVER_NAME"] == "dev") {
   array_push($regions, array(
