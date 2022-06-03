@@ -25,29 +25,28 @@ if (isset($_REQUEST['search'])) {
 
     } else {
       //used if user wants to use boolean logic
-      $lithofilter1 = "";
-      $lithofilter2 = ""; 
 
-      //echo $lithofilter;
-      $lithofilter_lower = strtolower($lithofilter);
+      $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'"; //base string 
+
+      
+      $lithofilter_lower = strtolower($lithofilter); //lowercase the lithofilter
 
       //if the user wants to search with 'and'
       if(strpos($lithofilter_lower, ' and ') !== false ) {
         $lithofilter_array = (explode(" and ", $lithofilter_lower));
-      
-        $lithofilter1 = $lithofilter_array[0];
-        $lithofilter2 = $lithofilter_array[1];
 
-        $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter1%' AND lithology LIKE '%$lithofilter2%'";
+        foreach($lithofilter_array as $value) {
+          $sql .= " AND lithology LIKE '%$value%'";
+        }
         
       } elseif (strpos($lithofilter_lower, ' or ') !== false ) { //if the user wants to search with 'or'
         # code...
         $lithofilter_array = (explode(" or ", $lithofilter_lower));
       
-        $lithofilter1 = $lithofilter_array[0];
-        $lithofilter2 = $lithofilter_array[1];
-        $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter1%' OR lithology LIKE '%$lithofilter2%'";
-      
+        foreach($lithofilter_array as $value) {
+          $sql .= " OR lithology LIKE '%$value%'";
+        }
+            
       } else {
         $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter%'";
       }
@@ -161,22 +160,21 @@ echo "</pre>";
 
 <title>Search for Formation</title>
 <?php include("navBar.php"); include("SearchBar.php"); ?>
-
-<div class="formation-container">
-
 <?php if($displayAlphabetButton) { ?>
     <form method="post">
-        <input type="submit" name="alphabetButton"
-                value="Sort by Name"/>
+        <input type="submit" style="color:#b75f02; border: 1px solid #b75f02;border-radius: 3px; font-size: 1em; box-shadow: 5px 5px 8px #888888; background-color: #FFFFFF;" name="alphabetButton"
+                value="Change to Alphabetical Listing"/>
     </form>
   <?php	} else { ?>
     <form method="post">
-        <input type="submit" name="timeButton"
-                value="Sort by Time"/>
+        <input type="submit" style="color:#b75f02; border: 1px solid #b75f02;border-radius: 3px; font-size: 1em; box-shadow: 5px 5px 8px #888888; background-color: #FFFFFF" name="timeButton"
+                value="Change to By-Age Listing"/>
     </form>
 
   <?php	}?>
-  
+  <br>
+
+<div class="formation-container">  
 <?php
   
     if($count < 1) {

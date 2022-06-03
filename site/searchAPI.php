@@ -46,41 +46,37 @@ if(strcmp($lithofilter, "") === 0) {
 } else {
         
       $lithofilter_lower = strtolower($lithofilter);
+      //base string
+      $sql = "SELECT * "
+      ."  FROM formation "
+      ." WHERE name LIKE '%$searchquery%' "
+      ."       AND period LIKE '%$periodfilter%' "
+      ."       AND province LIKE '%$provincefilter%' ";
 
       //if the user wants to search with 'and'
       
       if(strpos($lithofilter_lower, ' and ') !== false ) {
         $lithofilter_array = (explode(" and ", $lithofilter_lower));
       
-        $lithofilter1 = $lithofilter_array[0];
-        
-        $lithofilter2 = $lithofilter_array[1];
-
-
-        $sql = "SELECT * "
-        ."  FROM formation "
-        ." WHERE name LIKE '%$searchquery%' "
-        ."       AND period LIKE '%$periodfilter%' "
-        ."       AND province LIKE '%$provincefilter%' "
-        ."       AND lithology LIKE '%$lithofilter1%' "
-        ."       AND lithology LIKE '%$lithofilter2%' ";
-        
-        
-        
+        foreach($lithofilter_array as $value) {
+          $sql .= "       AND lithology LIKE '%$value%' ";
+        }
+      
         
       } elseif (strpos($lithofilter_lower, ' or ') !== false ) { //if the user wants to search with 'or'
         # code...
         $lithofilter_array = (explode(" or ", $lithofilter_lower));
       
-        $lithofilter1 = $lithofilter_array[0];
-        $lithofilter2 = $lithofilter_array[1];
-        $sql ="SELECT * "
-        ."  FROM formation "
-        ." WHERE name LIKE '%$searchquery%' "
-        ."       AND period LIKE '%$periodfilter%' "
-        ."       AND province LIKE '%$provincefilter%' "
-        ."       AND lithology LIKE '%$lithofilter1%' "
-        ."       OR lithology LIKE '%$lithofilter2%' ";
+        $index = 0;
+        foreach($lithofilter_array as $value) {
+          if ($index === 0) {
+            $sql .= "       AND lithology LIKE '%$value%' ";
+          } else {
+            $sql .= "       OR lithology LIKE '%$value%' ";
+          }
+          $index++;
+          
+        }
       
       } else { //user does not want to search and/or
         $sql = "SELECT * "

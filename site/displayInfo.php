@@ -39,8 +39,8 @@ function displayImages($images, $imtype) {
 }
 
 function eliminateParagraphs($str) {
-while(preg_match("/<p>.*</p>/g", $str)) {
-    $str = preg_replace("/<p>.*</p>/g", "", $str);
+while(preg_match("/<p>.*<\/p>/", $str)) {
+    $str = preg_replace("/<p>.*<\/p>/", "", $str);
   }
   return $str;
 }
@@ -59,16 +59,38 @@ while($row = mysqli_fetch_array($result)) {
   preg_replace("/ /g", " \*", $rname);
   array_push($nameregexes, array(
     "name" => $rname,
-    "regex" => "/\b($rname)/i"
+    "regex" => "/\b($rname)/i",
+    "superceeded_by" => array(),  // nameregex that should supercede this name if it also matches (Bao Loc Fm -> Deo Bao Loc Fm: if Deo matches, then use it instead)
   ));
 }
-//echo "nameregexes = <pre>"; print_r($nameregexes); echo "</pre>";
+
+// Check if any given name would also be matched in another name
+for ($i=0; $i<count($nameregexes); $i++) {
+  $n1 = $nameregexes[$i];
+  foreach($nameregexes as $n2) {
+    if ($n1["name"] == $n2["name"]) continue; // comparing to ourselves
+    if (preg_match($n1["regex"], " ".$n2["name"]." ")) { // Bao Loc regex also matches Deo Bao Loc name (regexp requires word break on front of name)
+      $nameregexes[$i]["superceeded_by"][] = $n2;
+    }
+  }
+}
 
 function findAndMakeFormationLinks($str, $nameregexes) {
    $orig = $str;
   for($i=0; $i<count($nameregexes); $i++) {
     $n = $nameregexes[$i];
-    $str = preg_replace($n["regex"], "<a href=\"displayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>", $str);
+    if (preg_match($n["regex"], $str)) { // check if we are superceded
+      $superceeded = false;
+      foreach ($n["superceeded_by"] as $s) {
+        if (preg_match($s["regex"], $str)) {
+          $superceeded = true; 
+          break;
+        }
+      }
+      if (!$superceeded) {
+        $str = preg_replace($n["regex"], "<a href=\"displayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>", $str);
+      }
+    }
   }
   return trim($str);
 }
