@@ -40,7 +40,7 @@ function displayImages($images, $imtype) {
 
 function eliminateParagraphs($str) {
 while(preg_match("/<p>.*<\/p>/", $str)) {
-    $str = preg_replace("/<p>.*<\/p>/", "", $str);
+    $str = preg_replace("/<p>(.*)<\/p>/", "\\1", $str);
   }
   return $str;
 }
