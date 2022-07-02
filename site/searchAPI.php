@@ -1,22 +1,5 @@
 <?php
 include_once("SqlConnection.php");
-//file_put_contents("recon.json", '{"type": "FeatureCollection",');
-/*
-date_default_timezone_set("America/New_York");      
-$store = date("Y_m_d_h:i:sa");
-$filename =   $_REQUEST[agefilterstart]. "_". $_REQUEST[provincefilter]. "_". $store. ".geojson";
-$encFilename = md5($filename). ".geojson";
- 
-
-$filename = "data/recon.geojson";
-// *** PLACE 1 TO CHANGE THE FILE NAME *** 
-file_put_contents($filename, '{
-"type": "FeatureCollection",
-"name": "Triassic strata_10Feb2021",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-	');
- */
 
 $searchquery = addslashes($_REQUEST['searchquery']);
 $periodfilter = addslashes($_REQUEST['periodfilter']);
@@ -45,47 +28,47 @@ if(strcmp($lithofilter, "") === 0) {
 
 } else {
         
-      $lithofilter_lower = strtolower($lithofilter);
-      //base string
-      $sql = "SELECT * "
-      ."  FROM formation "
-      ." WHERE name LIKE '%$searchquery%' "
-      ."       AND period LIKE '%$periodfilter%' "
-      ."       AND province LIKE '%$provincefilter%' ";
+  $lithofilter_lower = strtolower($lithofilter);
+  //base string
+  $sql = "SELECT * "
+  ."  FROM formation "
+  ." WHERE name LIKE '%$searchquery%' "
+  ."       AND period LIKE '%$periodfilter%' "
+  ."       AND province LIKE '%$provincefilter%' ";
 
-      //if the user wants to search with 'and'
-      
-      if(strpos($lithofilter_lower, ' and ') !== false ) {
-        $lithofilter_array = (explode(" and ", $lithofilter_lower));
-      
-        foreach($lithofilter_array as $value) {
-          $sql .= "       AND lithology LIKE '%$value%' ";
-        }
-      
-        
-      } elseif (strpos($lithofilter_lower, ' or ') !== false ) { //if the user wants to search with 'or'
-        # code...
-        $lithofilter_array = (explode(" or ", $lithofilter_lower));
-      
-        $index = 0;
-        foreach($lithofilter_array as $value) {
-          if ($index === 0) {
-            $sql .= "       AND lithology LIKE '%$value%' ";
-          } else {
-            $sql .= "       OR lithology LIKE '%$value%' ";
-          }
-          $index++;
-          
-        }
-      
-      } else { //user does not want to search and/or
-        $sql = "SELECT * "
-        ."  FROM formation "
-        ." WHERE name LIKE '%$searchquery%' "
-        ."       AND period LIKE '%$periodfilter%' "
-        ."       AND province LIKE '%$provincefilter%' "
-        ."       AND lithology LIKE '%$lithofilter%' ";
+  //if the user wants to search with 'and'
+  
+  if(strpos($lithofilter_lower, ' and ') !== false ) {
+    $lithofilter_array = (explode(" and ", $lithofilter_lower));
+  
+    foreach($lithofilter_array as $value) {
+      $sql .= "       AND lithology LIKE '%$value%' ";
+    }
+  
+    
+  } elseif (strpos($lithofilter_lower, ' or ') !== false ) { //if the user wants to search with 'or'
+    # code...
+    $lithofilter_array = (explode(" or ", $lithofilter_lower));
+  
+    $index = 0;
+    foreach($lithofilter_array as $value) {
+      if ($index === 0) {
+        $sql .= "       AND lithology LIKE '%$value%' ";
+      } else {
+        $sql .= "       OR lithology LIKE '%$value%' ";
       }
+      $index++;
+      
+    }
+  
+  } else { //user does not want to search and/or
+    $sql = "SELECT * "
+    ."  FROM formation "
+    ." WHERE name LIKE '%$searchquery%' "
+    ."       AND period LIKE '%$periodfilter%' "
+    ."       AND province LIKE '%$provincefilter%' "
+    ."       AND lithology LIKE '%$lithofilter%' ";
+  }
 }
 
 function removeHTML($str) {
@@ -128,96 +111,78 @@ $whileIter = 0; // checks if on the first run of the while loop for output file 
 $arr = array();
 $firstRun = 1; 
 while ($row = mysqli_fetch_array($result)) {
-  /*	
-  if($whileIter != 0 && $row["geojson"] != ""){
-         file_put_contents($filename, ", 
-", FILE_APPEND);
-  } */
   $name = $row["name"];
   $province = removeHTML($row['province']);
   $period = removeHTML($row['period']);
   $stage = removeHTML($row['beginning_stage']);
   $begAge = removeHTML($row['beg_date']);
   $endAge = removeHTML($row['end_date']);
+  $lithoPattern = removeHTML($row['lithology_pattern']);
   // geojson processing before writing to output file
   // format without properties tag 
   $output = json_decode(strip_tags($row["geojson"]), true);
 
   // condition 1 of geojson processing 
   if(array_key_exists("features", $output) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output) {
-  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); // creating properties array
-  $appendProp["properties"] = $properties;
-  array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson
-  $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
-  unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
-  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
-  $output = json_encode($output["features"]["0"], JSON_PRETTY_PRINT); // altering displayed geojson
+    $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); // creating properties array
+    $appendProp["properties"] = $properties;
+    array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson
+    $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
+    unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
+    krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
+    $output = json_encode($output["features"]["0"], JSON_PRETTY_PRINT); // altering displayed geojson
   }
   
   
   else if(!(array_key_exists("features", $output)) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output){
-  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); 	  
-  $appendProp["properties"] = $properties;
-  array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
-  $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
-  unset($output[0]); // renaming the key 0 to be properties instead
-  krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
-  //echo "<pre>";
-  //print_r($output);
-  //echo "</pre>";
-  $output = json_encode($output, JSON_PRETTY_PRINT);
+    $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); 	  
+    $appendProp["properties"] = $properties;
+    array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
+    $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
+    unset($output[0]); // renaming the key 0 to be properties instead
+    krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
+    //echo "<pre>";
+    //print_r($output);
+    //echo "</pre>";
+    $output = json_encode($output, JSON_PRETTY_PRINT);
   }
   
   
   // condition 3 of geojson processing 
   // format with properties tag but each formation is feature collection 
-else if($output["type"] == "FeatureCollection"){
+  else if($output["type"] == "FeatureCollection"){
     $output["features"][0]["properties"]["NAME"] = $name;  
     $output["features"][0]["properties"]["FROMAGE"] = null;
     $output["features"][0]["properties"]["TOAGE"] = null;
     $output =  json_encode($output["features"][0], JSON_PRETTY_PRINT);
     
-}
- // condition four of geojson format 
+  }
+  // condition four of geojson format 
   else{
     $output = json_encode($output, JSON_PRETTY_PRINT);
   }
-  /*
-  if($row["geojson"] && $firstRun == 1){
-	  file_put_contents($filename, 
-		  $output, FILE_APPEND);
-  $whileIter = 1; 
-  $firstRun = 0;
-  }
-  else if($row["geojson"]){
-  file_put_contents($filename, $output, FILE_APPEND);
-  $whileIter = 1; 
-  }
-   */
   if (strlen($name) < 1) continue;
-  $arr[$name] = array( "name" => $name, "endAge" => $endAge, "begAge" => $begAge, "province" => $province, "geojson" => $output, "period" => $period, "stage" => $stage, "ageFilterStart" => gettype($agefilterstart));
-}
-/*
-file_put_contents($filename, "
-]
-}", FILE_APPEND);
-//fclose($recongeoJSON);
+  $arr[$name] = array( 
+    "name" => $name, 
+    "endAge" => $endAge, 
+    "begAge" => $begAge, 
+    "province" => $province, 
+    "geojson" => $output, 
+    "period" => $period, 
+    "stage" => $stage, 
+    "ageFilterStart" => gettype($agefilterstart), 
+    "lithologyPattern" => $lithoPattern
+  );
 
-if ($_REQUEST["generateImage"] == "1") {
-  exec("./data/pygplates-pygmt_WenDu\'s\ playground.py ".$_REQUEST['agefilterstart'], $ending);
+  // If long form requested, add all the other returned fields from the database:
+  if ($_REQUEST["response"] === "long") {
+    foreach($row as $key => $val) {
+      if ($arr[$name][$key]) continue; // already have this in processed form
+      if (preg_match("/^[0-9]+$/", $key)) continue; // the row response contains both string keys and numeric keys which duplicate the string key values.  
+      $arr[$name][$key] = removeHTML($val);
+    }
+  }
 }
-$last = "testing Fm";
-$arr[$last] = $ending;
- */
 uasort($arr, 'sortByProvince');
-/*
-while($count < count($arr)){
-	$currentElement = $arr[$count];
-	$name = $currentElement["name"];
-	$arr[$name] = $arr[$count];
-	unset($arr[$count]);
-	$count = $count + 1;
-}
- */
 echo json_encode($arr);
 ?>
