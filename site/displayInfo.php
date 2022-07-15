@@ -2,44 +2,44 @@
 include_once("navBar.php");
 include_once("SearchBar.php");
 include_once("SqlConnection.php");
+include_once("./makeReconstruction.php"); // has createGeoJSONForFormations
 //include_once("formationInfo.php");
 //$recongeoJSON = fopen("reconstruct.txt", "w"); // output file to write all geojson information to
 $formation = $_REQUEST;
 $auth = $_SESSION["loggedIn"];
-//echo $auth;
+
 if($formation[formation] == "") {?>
-    <title>Empty Search</title>
-    <h3><center>Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</center></h3>
-    <?php
-    include("footer.php");
-    exit(0);
+  <title>Empty Search</title>
+  <h3><center>Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</center></h3><?php
+  include("footer.php");
+  exit(0);
 }
 
-/* Prep for reconstructions, mirrors code from general.php */
-
-
-/* end of reconstruction prep */
 
 $imagedisplaycount = 0;
 function displayImages($images, $imtype) {
   global $fmdata;
   
   foreach($images[$imtype] as $i) {
-    $id = "image_".$imtype."_".$imagedisplaycount;
-    ?><div id="<?php echo $fmdata["name"]["display"];?>">
+    $id = "image_".$imtype."_".$imagedisplaycount;?>
+    <div id="<?php echo $fmdata["name"]["display"];?>">
       <a target="_blank" href="<?php echo $i["full"];?>">
         <img src="<?php echo $i["thumbnail"];?>" style="max-width: 200px; max-height: 200px;" />
       </a>
-  <?php 
-  if($_SESSION["loggedIn"]){ ?>
-      <input id="<?php echo $i["full"];?>" type="button" value="Delete" onclick='delImageClicked("<?php echo $i['full'];?>", "<?php echo $imtype;?>", "<?php echo $fmdata["name"]["display"];?>");' />
-  <?php } ?>
+      <?php if($_SESSION["loggedIn"]){ ?>
+        <input 
+          id="<?php echo $i["full"];?>" 
+          type="button" 
+          value="Delete" 
+          onclick='delImageClicked("<?php echo $i['full'];?>", "<?php echo $imtype;?>", "<?php echo $fmdata["name"]["display"];?>");'
+        />
+      <?php } ?>
     </div><?php
   }
 }
 
 function eliminateParagraphs($str) {
-while(preg_match("/<p>.*<\/p>/", $str)) {
+  while(preg_match("/<p>.*<\/p>/", $str)) {
     $str = preg_replace("/<p>(.*)<\/p>/", "\\1", $str);
   }
   return $str;
@@ -96,58 +96,7 @@ function findAndMakeFormationLinks($str, $nameregexes) {
 }
 
 
-//$sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'"; old query that won't work with Kali vs. Warkali formations or characters needing to be escaped
-/*
-$sql = sprintf("SELECT * FROM formation WHERE name= '%s'", mysqli_real_escape_string($conn, $formation["formation"]));
-$result = mysqli_query($conn, $sql);
-$fmdata = array(
-   'name'                                  => array("needlinks" => false),
-   'period'                                => array("needlinks" => false),
-   'age_interval'                          => array("needlinks" => false), 
-   'province'                              => array("needlinks" => false),
-   'type_locality'                         => array("needlinks" => false),
-   'lithology'                             => array("needlinks" => true),
-   'lithology_pattern'                     => array("needlinks" => true),
-   'lower_contact'                         => array("needlinks" => true),
-   'upper_contact'                         => array("needlinks" => true),
-   'regional_extent'                       => array("needlinks" => true),
-   'geojson'                               => array("needlinks" => true),
-   'fossils'                               => array("needlinks" => true),
-   'age'                                   => array("needlinks" => false),
-   'age_span'                              => array("needlinks" => false),
-   'beginning_stage'                       => array("needlinks" => false),
-   'frac_upB'                              => array("needlinks" => false),
-   'beg_date'                              => array("needlinks" => false),
-   'end_stage'                             => array("needlinks" => false),
-   'frac_upE'                              => array("needlinks" => false),
-   'end_date'                              => array("needlinks" => false),
-   'depositional'                          => array("needlinks" => true),
-   'depositional_pattern'                  => array("needlinks" => true),
-   'additional_info'                       => array("needlinks" => true),
-   'compiler'                              => array("needlinks" => false),
-);
-*/
 include_once("formationInfo.php");
-/*
-if($fmdata['geojson']){
-	$index = 0; // used to get the name, from age and to age once geojson strings identified
-	foreach($fmdata['geojson'] as $specific){
-        $properties = '/"properties":{(.*)}/'; // gets the properties part of the long geoJSON text
-	if($properties){
-	$properties = preg_quote($properties, '/'); // adds the escape characters to those that need it
-	$oldprop = preg_match($properties, $specific); // gets the properties part of the geoJSON string
-	$newprop = substr_replace($oldprop, "", -1); // removes the closing bracket so more information can be added
-        $newprop = $newprop.'"Name":'. $fmdata['name'][$index].','.'"FROMAGE":'.$fmdata['beg_date'][$index].','.'"TOAGE":'.$fmdata['end_date'][$index]."}"; // adds new parts
-	str_replace($oldprop, $newprop, $specific); // replaces characters in properties with characters in oldproperties in string specific
-	array_replace($fmdata['geojson'][$index], $specific);
-        
-	}
-	$index = $index + 1;
-
-
-
-  }
-} */
 $found = false;
 while($row = mysqli_fetch_array($result)) {
   $found = true;
@@ -161,22 +110,17 @@ while($row = mysqli_fetch_array($result)) {
     }
   }
 }
-//var_dump($fmdata);
-//var_dump($fmdata["beg_date"]["display"]);
-//if ((float) $fmdata["beg_date"]["display"] > 0){
-//	echo "True";
-//}
+
 //-----------------------------------------------------------
 // Start outputting the page
 //-----------------------------------------------------------
 
-if(!$found) {
-    ?>
-    <title>No Match</title>
-    <h3>Nothing found for "<?=$formation[formation]?>". Please search again.</h3>
-    <?php
-    include("footer.php");
-    exit(0);
+if(!$found) {?>
+  <title>No Match</title>
+  <h3>Nothing found for "<?=$formation[formation]?>". Please search again.</h3>
+  <?php
+  include("footer.php");
+  exit(0);
 }
 
 $name = $fmdata["name"]["display"];
@@ -201,127 +145,16 @@ if ($dirs) {
   }
 }
 
-
-$header = '{
-    "type": "FeatureCollection",
-    "name": "Triassic strata_10Feb2021",
-    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-    "features": [
-';
-
-$reconForm = $header;
-
-// geojson processing to output file 
-//** BEGINNING OF PROCESSING THREE GEOJSONS FORMAT:
-//Format 1: Thailand strata completely done by hand (i.e. Chaiburi Fm)
-//Format 2: Digitized geojson where each formation is its own feature collection (i.e. Zanskar region)
-//Format 3: Geojsons without a properties aspect once you get to the "type": "Feature" (See database for Milliolite for this)
-//(It becomes easier to see these three formats when looking at the database too) 
-
-   $output = json_decode(strip_tags($fmdata["geojson"]["display"]), true); // what will be sent to recon.geojson for reconstruction purposes (basically geoJSON wo FROMAGE and TOAGE)
-   // will have another variable for the display under geoJSON section (that will have the from age and to age)
-  // condition 1 of geojson processing 
-  if(array_key_exists("features", $output) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output) {
-  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); // creating properties array
-  $appendProp["properties"] = $properties;
-  array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson
-  $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
-  unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
-  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
-  $output = json_encode($output["features"]["0"], JSON_PRETTY_PRINT); // altering displayed geojson
-  }
-
-
-  else if(!(array_key_exists("features", $output)) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output){
-  $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null);
-  $appendProp["properties"] = $properties;
-  array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
-  $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
-  unset($output[0]); // renaming the key 0 to be properties instead
-  krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
-  $output = json_encode($output, JSON_PRETTY_PRINT);
-  }
-
-
-  // condition 3 of geojson processing 
-  // format with properties tag but each formation is feature collection 
-else if($output["type"] == "FeatureCollection"){
-    $output["features"][0]["properties"]["NAME"] = $name;
-    $output["features"][0]["properties"]["FROMAGE"] = null;
-    $output["features"][0]["properties"]["TOAGE"] = null;
-    $output = json_encode($output["features"][0], JSON_PRETTY_PRINT);
-}
- // condition four of geojson format 
-else{
-     $output = json_encode($output);
-  }
-
-$reconForm .= $output;
-$reconForm .= ']}';
-
-
-
-// geojson processing for under field called geoJSON on display page 
-if($fmdata["geojson"]["display"] != "null"){
-$output = json_decode(strip_tags($fmdata["geojson"]["display"]), true); // decoding one of the three formats from the database (database stores some HTML tags)
-
-// if no where in the three formats there is a "properties" attribute (format 3)
-//   CONDITION 1 DIRECTLY BELOW(for format 2)                 CONDITION 2 DIRECTLY BELOW (for format 1)      CONDITION 3 DIRECTLY BELOW (don't want to append if there's nothing)
-if(array_key_exists("features", $output) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $fmdata["geojson"]["display"]) {
-$properties = array("NAME" => $fmdata["name"]["display"], "FROMAGE" => $fmdata["beg_date"]["display"], "TOAGE" => $fmdata["end_date"]["display"]); // creating properties array
-  $appendProp["properties"] = $properties;
-  array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson 
-  $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
-  unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
-  krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
- // echo "<pre>";
- // print_r($output);
- // echo "</pre>"; 
-  $fmdata["geojson"]["display"] = json_encode($output["features"]["0"]); // altering displayed geojson 
-}
-else if(!(array_key_exists("features", $output)) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $fmdata["geojson"]["display"]){
-  $properties = array("NAME" => $fmdata["name"]["display"], "FROMAGE" => $fmdata["beg_date"]["display"], "TOAGE" => $fmdata["end_date"]["display"]); // creating properties array	
-  $appendProp["properties"] = $properties;
-  array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
-  $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
-  unset($output[0]); // renaming the key 0 to be properties instead
-  krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
-  //echo "<pre>";
-  //print_r($output);
-  //echo "</pre>";
-  $fmdata["geojson"]["display"] = json_encode($output);
-}
-
- 
-// if there is a properties attribute (deals w format one and two)
-else if($fmdata["geojson"]["display"]){
-// format 2 (with feature collection)
-if($fmdata["beg_date"]["display"] && $fmdata["end_date"]["display"] && $output["type"] == "FeatureCollection"){
-$output["features"][0]["properties"]["NAME"] = $fmdata["name"]["display"];	
-$output["features"][0]["properties"]["FROMAGE"] = $fmdata["beg_date"]["display"];
-$output["features"][0]["properties"]["TOAGE"] = $fmdata["end_date"]["display"];
-} 
-
-// format 1 geojsons by hand 
-else if($fmdata["beg_date"]["display"] && $fmdata["end_date"]["display"]){
-$output["properties"]["FROMAGE"] = $fmdata["beg_date"]["display"];
-$output["properties"]["TOAGE"] = $fmdata["end_date"]["display"];
-} 
-
-// don't want changes if geojson from database was null 
-if($output["type"] == "FeatureCollection"){
-$fmdata["geojson"]["display"] =  json_encode($output["features"][0]);
-}
-else{
-$fmdata["geojson"]["display"] = json_encode($output);
-}
-}
-}
-else {
- $fmdata["geojson"]["display"] = "";
-}
+$geojson = createGeoJSONForFormations(array(
+  array(
+    "geojson" => strip_tags($fmdata["geojson"]["display"]),
+    "name" => strip_tags($fmdata["name"]["display"]),
+    "lithology_pattern" => strip_tags($fmdata["lithology_pattern"]["display"])
+  )
+));
 
 // create output directory for json file to be processed by pygplates (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
+
 if ($_REQUEST["generateImage"]) {
     if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Marcilly"){
        $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
@@ -334,18 +167,15 @@ if ($_REQUEST["generateImage"]) {
     }
     $outdirhash = md5($toBeHashed)."newest"; // md5 hashing for the output directory name 
     
-    // outdirname is what pygplates should see
-    if($_REQUEST["selectModel"] == "Default"){
-      $outdirname = "livedata/default/$outdirhash";
+     // outdirname is what pygplates should see
+       
+    switch($_REQUEST["selectModel"]) {
+      case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
+      case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
+      case  "Scotese": $outdirname = "livedata/scotese/$outdirhash"; break;
+      default:         $outdirname = "livedata/unknown/$outdirhash"; 
     }
-    else if($_REQUEST["selectModel"] == "Marcilly") {
-      //$outdirname .= $_REQUEST["selectModel"].'/';
-      //$outdirname .= $outdirhash;
-      $outdirname = "livedata/marcilly/$outdirhash";
-    }
-    else if($_REQUEST["selectModel"] == "Scotese"){
-      $outdirname = "livedata/scotese/$outdirhash";
-    }
+
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
     //echo $outdirname_php;
@@ -355,9 +185,10 @@ if ($_REQUEST["generateImage"]) {
       //echo "Creating a new folder!!!";
       mkdir($outdirname_php, 0777, true);
     }
+    
     $reconfilename = "$outdirname_php/recon.geojson";
     if (!file_exists($reconfilename)) {
-      file_put_contents($reconfilename, $reconForm);
+      file_put_contents($reconfilename, $geojson);
     }
  }
  ?> 
@@ -371,75 +202,7 @@ if ($_REQUEST["generateImage"]) {
  ?> 
  </div>
  <?php 
-//}
 
-/*
-// dispalying the button as well as what happens after the press to reconstruct button is clicked 
-if($fmdata["beg_date"]["display"] && $fmdata["geojson"]["display"]){
-?>
-      <div class="reconstruction">
-        <?php if ($_REQUEST["generateImage"] == "1") {?>
-         <?php
-      $timedout = false;
-      if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
-        $count=0;
-        while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
-          usleep(500);
-          $count++;
-          if ($count > 30) { // we've tried for 20 seconds, just fail it
-            $timedout = true;
-            break;
-          }
-        }
-        // If we get here, image should exist, or we gave up waiting
-      }
-      if ($_REQUEST["selectModel"] == "Default" && ($initial_creation_outdir || $timedout)) { // if this is the first time, or we timed out waiting for image, create it:
-        // Otherwise, hash doesn't exist, so we need to spawn a pygplates to make it:
-          exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$fmdata["beg_date"]["display"]." $outdirname", $ending);
-      }
-      else if($_REQUEST["selectModel"] == "Marcilly" && ($initial_creation_outdir || $timedout)) {
-         exec("cd pygplates && ./MarcillyModel.py ".$fmdata["beg_date"]["display"]." $outdirname", $ending);
-      }
-    //     $image_encode = shell_exec("base64 my-figure_2.png"); // TODO: This is for testing purpose. Actual base64 encoding should be done by pyGMT 
-      ?> <img src="<?=$outdirname_php?>/final_image.png" width ="80%" > 
-         <br/>A very special thanks to the excellent <a href="https://gplates.org">GPlates</a> and their
-          <a href="https://www.gplates.org/docs/pygplates/pygplates_getting_started.html">pygplates</a> software as well as
-          <a href="https://www.pygmt.org/latest/">PyGMT</a> which work together to create these images.
-          <br/><br/> <?php
-      } else {
-        // User selection of reconstruction model
-
-?>
-    
-     Please select reconstruction model to view the base reconstruction of <?= $fmdata["name"]["display"] ?> 
-     <form action = "" method="POST">	
-        <select name="selectModel" multiple>
-          <option value="Default"> GPlates Default (Meredith, Williams, et al. 2021)</option>
-          <option value="Marcilly">Continental flooding model (Marcilly, Torsvik et al., 2021)</option>
-	</select> 
-     <input type="submit">
-     </form>
-
-          <form method="GET" action="<?=$_SERVER["REQUEST_URI"]?>&generateImage=1">
-            <input id="reconstruction" style="display:none;" type="submit" value="Press to Display on a Plate Reconstruction (<?=$fmdata["name"]["display"]?>)" style="padding: 5px;" />
-            <?php foreach($_REQUEST as $k => $v) {?>
-              <input type="hidden" name="<?=$k?>" value="<?=$v?>" />
-            <?php } ?>
-            <input type="hidden" name="generateImage" value="1" />
-          </form>
-	<?php } 
-       if(isset($_REQUEST["selectModel"])){
-?>      <script>
-           document.getElementById("reconstruction").style.display = "block";
-        </script>
-<?php  } 
-
-
-?>
-      </div>
-<?php   
-   } */
-//}
 
 // display information below
 ?>

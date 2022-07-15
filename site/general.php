@@ -1,6 +1,8 @@
 <?php
 include("constants.php");
 include_once("TimescaleLib.php");
+// Sets up the reconstruction variables: $recongeojson, etc.:
+include_once("./makeReconstruction.php");
 
 /* If we have a filterperiod and filterregion, send off the API requests */
 if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
@@ -14,9 +16,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       array_push($regionstosearch, $r);
     }
   }
-
-  // Sets up the reconstruction variables: $recongeojson, etc.:
-  include_once("./makeReconstruction.php");
 
   $retgeoJSON = array();
   $results = array();
@@ -45,11 +44,10 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       "groupbyprovince" => array(),
     );
 
-    // Keep all the formations in a flat array so we can create the geojson from them
-    array_merge($allformations, $response);
-
     // Look through all the formations to find any overlapping provice names so the grouping will work
     foreach($response as $fname => $finfo) {
+      // Keep all the formations in a flat array so we can create the geojson from them
+      $allformations = array_merge($allformations, array($finfo));
       $p = $finfo->province;
       if(!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
       $multiprovinces = explode(", ", $p);
@@ -97,7 +95,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     
     $outdirhash = md5($toBeHashed);
     // outdirname is what pygplates should see
-       
     switch($_REQUEST["selectModel"]) {
       case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
       case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
@@ -108,6 +105,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
     $initial_creation_outdir = false; // did we have to make the output hash directory name?
+    if ($_REQUEST["debug"]) $initial_creation_outdir = true;
 
     if (!file_exists($outdirname_php)) {
       $initial_creation_outdir = true;
@@ -115,7 +113,14 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     }
     $reconfilename = "$outdirname_php/recon.geojson";
 
-    if (!file_exists($reconfilename)) {
+    if ($_REQUEST["debug"]) {
+      echo "The directory path for this reconstruction is: $outdirname";
+    }
+
+    if (!file_exists($reconfilename) || $_REQUEST["debug"]) {
+      if ($_REQUEST["debug"]) {
+        echo "Debugging mode, writing geojson file to $reconfilename";
+      }
       file_put_contents($reconfilename, $recongeojson);
     }
   } 

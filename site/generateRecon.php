@@ -32,8 +32,8 @@ if ($_REQUEST["generateImage"] == "1") {
 
 if (!$initial_creation_outdir) { // we already had the folder up above, so just wait for image...
               $count=0;
-
-
+              
+              
 
 /*
 while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
@@ -67,23 +67,49 @@ if ($initial_creation_outdir) {
 
     switch($_REQUEST["selectModel"]) {
                 case "Default":
-                  $hello = exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname", $ending);
-                  echo "<pre>";
-                  print_r($hello);
-                  echo "</pre>";
+                  $cmd = "cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname 2>&1";
+                  $hello = exec($cmd, $output, $ending);
+
+                  //sabrina's debugging
+                  //  echo "Python returned ($ending): <pre>";
+                  //  print_r($output);
+              
+                  if($ending > 0) {
+                    echo "Python returned ($ending): <pre>";
+                    print_r($output);
+                    echo " And here is the command that generated it: $cmd</pre>";
+                  }
+
                 break;
                 case "Marcilly": 
-                  $hello = exec("cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
-                  echo "<pre>";
-                  print_r($hello);
-                  echo "</pre>";
+                
+                  $cmd = "cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
+                  $hello = exec($cmd, $output, $ending);
+
+                  if($ending > 0) {
+                    echo "Python returned ($ending): <pre>";
+                    print_r($output);
+                    echo " And here is the command that generated it: $cmd</pre>";
+                  }
                 break;
                 case "Scotese":
-                  $hello = exec("cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
+                  // $hello = exec("cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname", $output, $ending);
                   //echo "<pre> Result: "; print_r($ending); echo "</pre>";
-                  echo "<pre>";
-                  print_r($hello);
-                  echo "</pre>";
+                  // echo "Python returned ($ending): <pre>";
+                  // print_r($output);
+                  // echo "</pre>";
+
+                  $cmd = "cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
+                  $hello = exec($cmd, $output, $ending);
+
+                  if($ending > 0) {
+                    echo "Python returned ($ending): <pre>";
+                    print_r($output);
+                    echo " And here is the command that generated it: $cmd</pre>";
+                  }
+                break;
+
+
                 break;
 
 

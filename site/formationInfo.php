@@ -9,7 +9,7 @@ $fmdata = array(
    'period'                                => array("needlinks" => false),
    'age_interval'                          => array("needlinks" => false), 
    'province'                              => array("needlinks" => false),
-   'type_locality'                         => array("needlinks" => false),
+   'type_locality'                         => array("needlinks" => true),
    'lithology'                             => array("needlinks" => true),
    'lithology_pattern'                     => array("needlinks" => true),
    'lower_contact'                         => array("needlinks" => true),

@@ -171,7 +171,7 @@ while ($row = mysqli_fetch_array($result)) {
     "period" => $period, 
     "stage" => $stage, 
     "ageFilterStart" => gettype($agefilterstart), 
-    "lithologyPattern" => $lithoPattern
+    "lithology_pattern" => $lithoPattern
   );
 
   // If long form requested, add all the other returned fields from the database:

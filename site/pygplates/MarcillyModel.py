@@ -4,14 +4,32 @@
 import sys
 sys.path.insert(1, '/usr/lib/pygplates/revision28')
 import pygplates
-import pandas as pd
-
+import os
+import itertools as it
+import csv
+import re
+import numpy as np
 
 age = float(sys.argv[1])
 outdirname = sys.argv[2]
-print(outdirname)
 
-print("Done")
+
+#dictionary with key as the lithology pattern names, values as the pattern color code for pygmt/GMT
+#Wen Du created this csv file that translated Prof Ogg's TSC pattern code to pattern color code for GMT
+
+#Note: ALL KEYS WILL BE LOWERCASE!!!!! 
+patternDict = {}
+with open('./TSCreator_litho-pattern_to_GMT-fixed_pattern_code.csv') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    line_count = 0
+    
+    for row in csv_reader:
+        key = row[0]
+        if line_count >= 2:
+            patternDict[key.lower()] = row[2]
+        line_count += 1
+
+
 try:
 # The geometries are the 'features to partition'
     input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
@@ -30,10 +48,7 @@ try:
     rotation_model = pygplates.RotationModel('./config/CEED_ROTATION_ENGINE_CHLOE.rot')
 
 # partition features
-    partitioned_geometries = pygplates.partition_into_plates(static_polygons,
-                                                       rotation_model,
-                                                       input_geometries,
-                                                       partition_method = pygplates.PartitionMethod.most_overlapping_plate)
+    partitioned_geometries = pygplates.partition_into_plates(static_polygons, rotation_model, input_geometries, partition_method = pygplates.PartitionMethod.most_overlapping_plate)
 
 # Write the partitioned data set to a file
 #output_feature_collection = pygplates.FeatureCollection(partitioned_geometries)
@@ -46,33 +61,21 @@ except Exception as e:
 
 # Reconstruct the geometries
 
-pygplates.reconstruct(partitioned_geometries,
-                      rotation_model,
-                      outdirname+ '/reconstructed_geom.gmt',
-                      age, anchor_plate_id=1)  
+pygplates.reconstruct(partitioned_geometries, rotation_model, outdirname+ '/reconstructed_geom.gmt', age, anchor_plate_id=1)  
 
-pygplates.reconstruct(static_polygons,
-                      rotation_model,
-                      outdirname+ '/reconstructed_CEED_land_simple.gmt',
-                     age, anchor_plate_id=1) 
+pygplates.reconstruct(static_polygons, rotation_model, outdirname+ '/reconstructed_CEED_land_simple.gmt', age, anchor_plate_id=1) 
 try:
-    pygplates.reconstruct(exposed_Land,
-                      rotation_model,
-                      outdirname+ '/reconstructed_CEED_Exposed_Land.gmt',
-                     age, anchor_plate_id=1) 
+    pygplates.reconstruct(exposed_Land, rotation_model, outdirname+ '/reconstructed_CEED_Exposed_Land.gmt', age, anchor_plate_id=1) 
 except Exception as e:
    print(e)
 
 
-
-
 # Plot using pyGMT
-import os
+
 try:
    import pygmt
 except Exception as e:
    print(e)
-import itertools as it
 
 
 def extract(outdirname):

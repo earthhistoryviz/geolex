@@ -180,7 +180,7 @@ echo "</pre>";
     if($count < 1) {
       $output = '<h4>'.'Formation not found'.'</h4>';
       print($output);
-    } else if ($noFormation) {
+    } else if ($noFormation && $lithofilter !== "") {
       $output = '<h4>'. 'There are no formation found with \''.$lithofilter. '\''.'</h4>';
       print($output);
     } else {      
