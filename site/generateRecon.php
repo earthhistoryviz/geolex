@@ -35,24 +35,6 @@ if (!$initial_creation_outdir) { // we already had the folder up above, so just 
               
               
 
-/*
-while (!file_exists("$outdirname_php/final_image.png")) { // assume another thing is making this image
-                usleep(500);
-                $count++;
-
-
-
-
-
-if ($count > 30) { // we've tried for 20 seconds, just fail it
-                  $timedout = true;
-                  break;
-                }
-
-
-}
-*/
-              // If we get here, image should exist, or we gave up waiting
 
 }
 
@@ -70,9 +52,6 @@ if ($initial_creation_outdir) {
                   $cmd = "cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname 2>&1";
                   $hello = exec($cmd, $output, $ending);
 
-                  //sabrina's debugging
-                  //  echo "Python returned ($ending): <pre>";
-                  //  print_r($output);
               
                   if($ending > 0) {
                     echo "Python returned ($ending): <pre>";
@@ -86,6 +65,10 @@ if ($initial_creation_outdir) {
                   $cmd = "cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
                   $hello = exec($cmd, $output, $ending);
 
+                  //sabrina's debugging
+                  // echo "Python returned ($ending): <pre>";
+                  // print_r($output);
+
                   if($ending > 0) {
                     echo "Python returned ($ending): <pre>";
                     print_r($output);
@@ -93,14 +76,13 @@ if ($initial_creation_outdir) {
                   }
                 break;
                 case "Scotese":
-                  // $hello = exec("cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname", $output, $ending);
-                  //echo "<pre> Result: "; print_r($ending); echo "</pre>";
-                  // echo "Python returned ($ending): <pre>";
-                  // print_r($output);
-                  // echo "</pre>";
-
                   $cmd = "cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
                   $hello = exec($cmd, $output, $ending);
+
+                  //sabrina's debugging
+                  echo "Python returned ($ending): <pre>";
+                  print_r($output);
+
 
                   if($ending > 0) {
                     echo "Python returned ($ending): <pre>";

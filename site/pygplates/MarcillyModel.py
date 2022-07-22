@@ -105,16 +105,36 @@ projection_Panel_2 = "W" + str(central_lon) + "/?"
 age_label = str(age) + ' Ma'
 
 
+#adding all of the lithology pattern
+filename = outdirname+"/reconstructed_geom.gmt"
+patternList = []
+
+try:
+    sections = []
+    with open(filename, 'r') as f:
+        for key, group in it.groupby(f, lambda line: line.startswith('>')):
+            if not key:
+                sections.append(list(group))
+    output = {}
+    for i in range(1, len(sections)):
+        info = sections[i][0].replace('\"', '').split('|')
+        patternList.append((info[4].replace('\n', '')).lower())
+       
+except Exception as e:
+    print(e)
+
+print(patternList)
+
 fig = pygmt.Figure()
 with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabel=True,margins=["0.0c", "0.0c"],title = str(age_label),FONT_HEADING=12 ):
     with fig.set_panel(panel=[0,0]):
-        # plotting panel b
-        
+        # plotting panel a
+        '''
         fig.coast (region="d",projection=projection_Panel_1,land="skyblue",water="skyblue", panel=[0, 0]) 
         fig.plot(data = outdirname+'/reconstructed_CEED_land_simple.gmt',G="skyblue2",pen="0.1p,black", panel=[0, 0],)
         fig.plot(data = outdirname+'/reconstructed_CEED_Exposed_Land.gmt',G="bisque1@20",pen="0.1p,black", panel=[0, 0],)
     
-        fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="255/240/161", panel=[0, 0]) 
+        fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="253/78/33", panel=[0, 0]) 
         fig.basemap(frame="g30")
         
         # plotting panel b
@@ -122,12 +142,82 @@ with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabe
         fig.plot(data = outdirname+'/reconstructed_CEED_land_simple.gmt',G="skyblue2",pen="0.1p,black", panel=[0, 1],)
         fig.plot(data = outdirname+'/reconstructed_CEED_Exposed_Land.gmt',G="bisque1@20",pen="0.1p,black", panel=[0, 1],)
      
-        fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="255/240/161", panel=[0, 1])    
+        fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="253/78/33", panel=[0, 1])    
         fig.basemap(frame="a30g30")
+        '''
+
+        #there are two panels (columns?) in this image, loops through each column and plots
+        for index in range(0,2):
+            if(index == 1):
+                fig.coast (region="d",projection=projection_Panel_1,land="skyblue",water="skyblue", panel=[0, index])
+                frametext = "g30"
+            else:
+                fig.coast (region="d",projection=projection_Panel_2, land="skyblue",water="skyblue", panel=[0, index])
+                frametext ="a30g30"
+
+            fig.plot(data = outdirname+'/reconstructed_CEED_land_simple.gmt',G="skyblue2",pen="0.1p,black", panel=[0, index],)
+            fig.plot(data = outdirname+'/reconstructed_CEED_Exposed_Land.gmt',G="bisque1@20",pen="0.1p,black", panel=[0, index],)
+    
+            #fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="253/78/33", panel=[0, index]) 
+
+            x_coordinates = []
+            y_coordinates = []
+            patternListIndex = 0
+            with open(outdirname+'/reconstructed_geom.gmt', 'r') as f:
+                for data in f:
+                    data = data.rstrip()
+                    if(bool(re.match(r'(^-?\d+.\d+ -?\d+.\d+)', data))): #only decimal numbers starting at the beginning of the line will be matched from the regex
+                        tempList = data.split(" ") 
+                        #adds the x,y coordinates to the list
+                        x_coordinates.append(float(tempList[0])) 
+                        y_coordinates.append(float(tempList[1]))
+                    if(data == ">"):     
+                        if(len(x_coordinates) != 0 and len(y_coordinates) != 0):
+                            #converts the coordinate list to an Array so pygPlate can use a pattern
+                            xArray = np.array(x_coordinates) 
+                            yArray = np.array(y_coordinates)
+
+                            #get the pattern Key
+                            try:
+                                if(len(patternList) == 0):
+                                    raise KeyError
+                                
+                                patternColor = (patternList[patternListIndex])
+                                patternColor = patternDict[patternColor] 
+
+                            except KeyError:
+                                patternColor = patternDict['unknown']
+
+                        
+                            
+                            fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor)
+                            x_coordinates.clear()
+                            y_coordinates.clear()
+                            patternListIndex += 1
+
+            #plot the last formation (or the only formation)
+            if(len(x_coordinates) != 0 and len(y_coordinates) != 0):
+                xArray = np.array(x_coordinates)
+                yArray = np.array(y_coordinates)
+
+                try:
+                    if(len(patternList) == 0):
+                        raise KeyError
+                    
+                    patternColor = (patternList[patternListIndex])
+                    patternColor = patternDict[patternColor] 
+
+                except KeyError:
+                    patternColor = patternDict['unknown']
+                
+                fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor)
+                x_coordinates.clear()
+                y_coordinates.clear()
+                patternListIndex += 1    
+
+            fig.basemap(frame=frametext)
+
         # LABELING
-
-        filename = outdirname+"/reconstructed_geom.gmt"
-
         sections = []
         with open(filename, 'r') as f:
             for key, group in it.groupby(f, lambda line: line.startswith('>')):

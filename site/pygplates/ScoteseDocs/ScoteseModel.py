@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-
 # Assigning plate ids to features
 import sys
 sys.path.insert(1, '/usr/lib/pygplates/revision28')
@@ -113,7 +111,7 @@ fig = pygmt.Figure()
 
 
 fig = pygmt.Figure()
-with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabel=True,margins=["0.0c", "0.0c"],title = str(age_label),FONT_HEADING=12 ):
+with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabel=True, margins=["0.0c", "0.0c"],title = str(age_label),FONT_HEADING=12 ):
     with fig.set_panel(panel=[0,0]):
         # plotting panel b
         print("1: Using grid = "+grid+", projection = "+projection_Panel_1)        

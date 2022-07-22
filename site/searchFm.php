@@ -51,8 +51,6 @@ if (isset($_REQUEST['search'])) {
         $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter%'";
       }
   }
-    //print_r($lithofilter_array);
-
       
     $result = mysqli_query($conn, $sql);
     //echo '<pre>'."HERES THE SQL QUERY".'</pre>';
@@ -64,33 +62,27 @@ if (isset($_REQUEST['search'])) {
         //$output = '<h4>'. 'There are no formation found with \''.$lithofilter. '\''.'</h4>';
         $noFormation = true;
     }
-    //else{
+    
     $formationLookup = array();
     $count = 0;
     while ($row = mysqli_fetch_array($result)){
-	$name = $row['name'];
-	$stage = $row['beginning_stage'];
-	$begAge = $row['beg_date'];
-	//echo $begAge;
-	//echo $stage;
-	if (strlen($name) < 1) continue;
-	//array_push($arr, $name);
-	
-	$nameObj =  [
-	  'name' => $name,
-	  'beginning age' => $begAge
-  ];    
-	array_push($arr, $nameObj);
-	$formationLookup[$name] = $stage;
-	$output = '<h4>'.$name.'</h4>';
-        $count++;
-    //}
-    }
-    /* 
-    if ($count == 1) {
-      header("Location: displayInfo.php?formation=".$arr[0]);
-    }*/
+      $name = $row['name'];
+      $stage = $row['beginning_stage'];
+      $begAge = $row['beg_date'];
 
+      if (strlen($name) < 1) continue;
+      //array_push($arr, $name);
+      
+      $nameObj =  [
+        'name' => $name,
+        'beginning age' => $begAge
+      ];    
+      array_push($arr, $nameObj);
+      $formationLookup[$name] = $stage;
+      $output = '<h4>'.$name.'</h4>';
+            $count++;
+
+    }
 }
 
 function sortByAge($a, $b){
@@ -144,11 +136,7 @@ foreach($info as $element) {
   }
 }
 $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
-/*
-echo "<pre>";
-print_r($stageArray);
-echo "</pre>";
-*/ 
+ 
 ?>
 
 
