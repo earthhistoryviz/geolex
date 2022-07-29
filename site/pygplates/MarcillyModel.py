@@ -9,6 +9,7 @@ import itertools as it
 import csv
 import re
 import numpy as np
+import pygmt
 
 age = float(sys.argv[1])
 outdirname = sys.argv[2]
@@ -72,11 +73,6 @@ except Exception as e:
 
 # Plot using pyGMT
 
-try:
-   import pygmt
-except Exception as e:
-   print(e)
-
 
 def extract(outdirname):
     filename = outdirname+ '/reconstructed_geom.gmt'
@@ -115,7 +111,6 @@ try:
         for key, group in it.groupby(f, lambda line: line.startswith('>')):
             if not key:
                 sections.append(list(group))
-    output = {}
     for i in range(1, len(sections)):
         info = sections[i][0].replace('\"', '').split('|')
         patternList.append((info[4].replace('\n', '')).lower())
@@ -123,7 +118,6 @@ try:
 except Exception as e:
     print(e)
 
-print(patternList)
 
 fig = pygmt.Figure()
 with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabel=True,margins=["0.0c", "0.0c"],title = str(age_label),FONT_HEADING=12 ):
@@ -190,7 +184,7 @@ with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabe
 
                         
                             
-                            fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor)
+                            fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor, panel=[0, index])
                             x_coordinates.clear()
                             y_coordinates.clear()
                             patternListIndex += 1

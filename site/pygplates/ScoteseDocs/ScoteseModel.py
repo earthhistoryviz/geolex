@@ -4,13 +4,40 @@
 import sys
 sys.path.insert(1, '/usr/lib/pygplates/revision28')
 import pygplates
-# import pandas as pd
 import csv
+import pygmt
+import itertools as it
+import re
+import numpy as np
+import os
 
 age = float(sys.argv[1])
 grid = ""
-#grid = "Map7a__Early_Miocene_020.eps"
 outdirname = "../"+sys.argv[2]
+
+
+#path of the current directory
+pathCurrent = os.getcwd()
+#path of parent directory
+pathParent = os.path.dirname(pathCurrent)
+
+
+#dictionary with key as the lithology pattern names, values as the pattern color code for pygmt/GMT
+#Wen Du created this csv file that translated Prof Ogg's TSC pattern code to pattern color code for GMT
+
+#Note: ALL KEYS WILL BE LOWERCASE!!!!! 
+patternDict = {}
+with open(pathParent+'/TSCreator_litho-pattern_to_GMT-fixed_pattern_code.csv') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    line_count = 0
+    
+    for row in csv_reader:
+        key = row[0]
+        if line_count >= 2:
+            patternDict[key.lower()] = row[2]
+        line_count += 1
+
+
 try: 
   if age == 0:
       grid = "Map1a_PALEOMAP_PaleoAtlas_000.jpg"
@@ -28,10 +55,11 @@ try:
       print("No reconstrution available for {}".format(age))
       exit(1)
   grid = './backgrounds/' + grid
-  print(grid)
+  #print(grid)
   
   # The geometries are the 'features to partition'
-  print("input_geometries = "+outdirname+'/recon.geojson')
+  #print("input_geometries = "+outdirname+'/recon.geojson')
+
   input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
   
   # static polygons are the 'partitioning features'
@@ -43,19 +71,8 @@ try:
   rotation_model = pygplates.RotationModel('../config/Scotese/PALEOMAP_PlateModel.rot')
   
   # partition features
-  partitioned_geometries = pygplates.partition_into_plates(static_polygons,
-                                                         rotation_model,
-                                                         input_geometries,
-                                                         partition_method = pygplates.PartitionMethod.most_overlapping_plate)
-  
-  # Write the partitioned data set to a file
-  #output_feature_collection = pygplates.FeatureCollection(partitioned_geometries)
-  #output_feature_collection.write('Data/thai_partitioned.gpml')
-  
-  
-  
-  # Reconstruct features to age
-  #age = 300.0
+  partitioned_geometries = pygplates.partition_into_plates(static_polygons, rotation_model, input_geometries, partition_method = pygplates.PartitionMethod.most_overlapping_plate)
+   
   
   # Reconstruct the geometries
   
@@ -74,9 +91,6 @@ except Exception as e:
   print(e)
 
 # Plot using pyGMT
-
-import pygmt
-import itertools as it
 
 
 def extract(outdirname):
@@ -105,33 +119,112 @@ projection_Panel_2 = "W" + str(central_lon) + "/?"
 
 age_label = str(age) + ' Ma'
 
-fig = pygmt.Figure()
+
+#adding all of the lithology pattern
+filename = outdirname+"/reconstructed_geom.gmt"
+patternList = []
+
+try:
+    sections = []
+    with open(filename, 'r') as f:
+        for key, group in it.groupby(f, lambda line: line.startswith('>')):
+            if not key:
+                sections.append(list(group))
+    for i in range(1, len(sections)):
+        info = sections[i][0].replace('\"', '').split('|')
+        patternList.append((info[4].replace('\n', '')).lower())
+       
+except Exception as e:
+    print(e)
 
 #Input prof. Christopher Scotese grid model, the 300Ma one or other jpeg
-
 
 fig = pygmt.Figure()
 with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabel=True, margins=["0.0c", "0.0c"],title = str(age_label),FONT_HEADING=12 ):
     with fig.set_panel(panel=[0,0]):
         # plotting panel b
-        print("1: Using grid = "+grid+", projection = "+projection_Panel_1)        
-        #fig.grdimage (grid=grid, img_in = "Map1a_PALEOMAP_PaleoAtlas_000.jpg", region="d",projection=projection_Panel_1, panel=[0, 0])  
-        fig.grdimage (grid=grid, region="d",projection=projection_Panel_1, panel=[0, 0])  
-        fig.plot( data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="255/240/161", panel=[0, 0]) 
-        #fig.image(grid)
-        fig.basemap(frame="g30")
+
+        # fig.grdimage (grid=grid, region="d",projection=projection_Panel_1, panel=[0, 0])  
+        # fig.plot( data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="255/240/161", panel=[0, 0]) 
+        # fig.basemap(frame="g30")
         
-        # plotting panel b
-        print("2: Using grid = "+grid+", projection = "+projection_Panel_2)        
-        #fig.grdimage (grid=grid,  img_in = "Map1a_PALEOMAP_PaleoAtlas_000.jpg",region="d",projection=projection_Panel_2, panel=[0, 1])
-        fig.grdimage (grid=grid,  region="d",projection=projection_Panel_2, panel=[0, 1])
-        fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="255/240/161", panel=[0, 1])    
-        #fig.image(grid)
-        fig.basemap(frame="a30g30")
+        # # plotting panel b
+      
+        # fig.grdimage (grid=grid,  region="d",projection=projection_Panel_2, panel=[0, 1])
+        # fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="0.25p,black",color="255/240/161", panel=[0, 1])    
+        # fig.basemap(frame="a30g30")
+
+    
+
+        for index in range(0,2):
+            if(index == 1):
+                fig.grdimage (grid=grid, region="d",projection=projection_Panel_1, panel=[0, index])   
+                frametext = "g30"
+            else:
+                fig.grdimage (grid=grid,  region="d",projection=projection_Panel_2, panel=[0, index])
+                frametext = "a30g30"
+
+            x_coordinates = []
+            y_coordinates = []
+            patternListIndex = 0
+            with open(outdirname+'/reconstructed_geom.gmt', 'r') as f:
+                for data in f:
+                    data = data.rstrip()
+                    if(bool(re.match(r'(^-?\d+.\d+ -?\d+.\d+)', data))): #only decimal numbers starting at the beginning of the line will be matched from the regex
+                        tempList = data.split(" ") 
+                        #adds the x,y coordinates to the list
+                        x_coordinates.append(float(tempList[0])) 
+                        y_coordinates.append(float(tempList[1]))
+                    if(data == ">"):     
+                        if(len(x_coordinates) != 0 and len(y_coordinates) != 0):
+                            #converts the coordinate list to an Array so pygPlate can use a pattern
+                            xArray = np.array(x_coordinates) 
+                            yArray = np.array(y_coordinates)
+
+                            #get the pattern Key
+                            try:
+                                if(len(patternList) == 0):
+                                    raise KeyError
+                                
+                                patternColor = (patternList[patternListIndex])
+                                patternColor = patternDict[patternColor] 
+
+                            except KeyError:
+                                patternColor = patternDict['unknown']
+
+                        
+                            
+                            fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor, panel=[0, index])
+                            x_coordinates.clear()
+                            y_coordinates.clear()
+                            patternListIndex += 1
+
+            #plot the last formation (or the only formation)
+            if(len(x_coordinates) != 0 and len(y_coordinates) != 0):
+                xArray = np.array(x_coordinates)
+                yArray = np.array(y_coordinates)
+
+                try:
+                    if(len(patternList) == 0):
+                        raise KeyError
+                    
+                    patternColor = (patternList[patternListIndex])
+                    patternColor = patternDict[patternColor] 
+
+                except KeyError:
+                    patternColor = patternDict['unknown']
+                
+                fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor, panel=[0, index])
+                x_coordinates.clear()
+                y_coordinates.clear()
+                patternListIndex += 1  
+
+
+
+            fig.basemap(frame=frametext)
+
+
         # LABELING
-
-        filename = outdirname+"/reconstructed_geom.gmt"
-
         sections = []
         with open(filename, 'r') as f:
             for key, group in it.groupby(f, lambda line: line.startswith('>')):
@@ -146,8 +239,6 @@ with fig.subplot(nrows=1, ncols=2, figsize=("19c", "7c"), frame="lrtb", autolabe
                 fig.text(text=info[3], x=float(co_or[0]), y=float(co_or[1]), N=True, D="0/0.2c", font="4.5p,Helvetica-Bold,black", panel=[0, 0])
                 # labeling panel b
                 fig.text(text=info[3], x=float(co_or[0]), y=float(co_or[1]), N=True, D="0/0.2c", font="4.5p,Helvetica-Bold,black", panel=[0, 1])
-    
-
 
 fig.savefig(outdirname+"/final_image.png",dpi="150") # Do you need some kind of unique filename to prevent conflicts if multiple users are online?
 
