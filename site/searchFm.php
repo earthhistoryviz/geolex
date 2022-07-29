@@ -17,17 +17,23 @@ if (isset($_REQUEST['search'])) {
     // This is a quick fix to help where whitespace gets surrounded by parsed HTML tags.
     $provincefilter = preg_replace('/ /', '%', $provincefilter);
     $periodfilter = ($_REQUEST['periodfilter']);
+    $agefilterstart = ($_REQUEST['agefilterstart']);
+    $agefilterend =  ($_REQUEST['agefilterend']);
+    $lithofilter = ($_REQUEST['lithoSearch']);
 
-    $lithofilter = ($_REQUEST['lithoSearch']); 
+    if (!isset($_REQUEST['agefilterend']) || $agefilterend == "" || $agefilterstart < $agefilterend) {
+      $agefilterend = $agefilterstart;
+    }
+ 
+
+    //base string 
+    $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
 
     if(strcmp($lithofilter, "") === 0) {
-      $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter%'";
+      $sql .= " AND lithology LIKE '%$lithofilter%'";
 
     } else {
       //used if user wants to use boolean logic
-
-      $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'"; //base string 
-
       
       $lithofilter_lower = strtolower($lithofilter); //lowercase the lithofilter
 
@@ -48,8 +54,15 @@ if (isset($_REQUEST['search'])) {
         }
             
       } else {
-        $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%' AND lithology LIKE '%$lithofilter%'";
+        $sql .= " AND lithology LIKE '%$lithofilter%'";
       }
+  }
+
+  if ($agefilterstart != "") {
+    $sql .= "       AND NOT (beg_date < $agefilterend" // the cast make sure a float is compared with a float
+      ."                OR end_date > $agefilterstart)"
+      ."      AND beg_date != ''" // with 0 ma formatins without a beginning date and end date get returned (this avoids that)
+            ."      AND end_date != ''"; // same comment as line above
   }
       
     $result = mysqli_query($conn, $sql);

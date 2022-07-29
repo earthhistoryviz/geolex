@@ -17,24 +17,19 @@ if (!isset($_REQUEST['agefilterend']) || $agefilterend == "" || $agefilterstart 
 
 header("Content-Type: application/json");
 
-
-if(strcmp($lithofilter, "") === 0) {
-  $sql = "SELECT * "
-  ."  FROM formation "
-  ." WHERE name LIKE '%$searchquery%' "
-  ."       AND period LIKE '%$periodfilter%' "
-  ."       AND province LIKE '%$provincefilter%' "
-  ."       AND lithology LIKE '%$lithofilter%' ";
-
-} else {
-        
-  $lithofilter_lower = strtolower($lithofilter);
-  //base string
-  $sql = "SELECT * "
+//base string
+$sql = "SELECT * "
   ."  FROM formation "
   ." WHERE name LIKE '%$searchquery%' "
   ."       AND period LIKE '%$periodfilter%' "
   ."       AND province LIKE '%$provincefilter%' ";
+
+if(strcmp($lithofilter, "") === 0) {
+  $sql .= "       AND lithology LIKE '%$lithofilter%' ";
+
+} else {
+        
+  $lithofilter_lower = strtolower($lithofilter);
 
   //if the user wants to search with 'and'
   
@@ -62,12 +57,7 @@ if(strcmp($lithofilter, "") === 0) {
     }
   
   } else { //user does not want to search and/or
-    $sql = "SELECT * "
-    ."  FROM formation "
-    ." WHERE name LIKE '%$searchquery%' "
-    ."       AND period LIKE '%$periodfilter%' "
-    ."       AND province LIKE '%$provincefilter%' "
-    ."       AND lithology LIKE '%$lithofilter%' ";
+    $sql .= "       AND lithology LIKE '%$lithofilter%' ";
   }
 }
 
