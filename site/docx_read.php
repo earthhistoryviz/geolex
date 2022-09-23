@@ -58,7 +58,7 @@ function docx_read($filename)
 
   $numvars=0;
   $vars = array(
-    array("name" => "name",             "clean" => true,  "matchoffset" => 0, "pattern" => "/([\s\w’'\-]+\s)(Gr|Fm|Group|Formation)/",                      "index" => $numvars++),
+    array("name" => "name",             "clean" => true,  "matchoffset" => 0, "pattern" => "/([\s\w’'\-\p{L}]+\s)(Gr|Fm|Group|Formation)/u",                      "index" => $numvars++),
     array("name" => "period",           "clean" => true, "matchoffset" => 1, "pattern" => "/Period:\s*(.+)Age Interval(.+):/",                              "index" => $numvars++ ),
     array("name" => "age_interval",                      "matchoffset" => 1, "pattern" => "/Age Interval\s*\(Map column\):\s*(.+)Province:/",               "index" => $numvars++ ),
     array("name" => "province",         "clean" => true, "matchoffset" => 1, "pattern" => "/Province:\s*(.+)Type Locality and Naming:/",                    "index" => $numvars++ ),
