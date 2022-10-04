@@ -51,6 +51,9 @@ if ($initial_creation_outdir) {
                 case "Default":
                   $cmd = "cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname 2>&1";
                   $hello = exec($cmd, $output, $ending);
+                  //sabrina's debugging
+                  // echo "Python returned ($ending): <pre>";
+                  // print_r($output);
 
               
                   if($ending > 0) {
@@ -80,8 +83,8 @@ if ($initial_creation_outdir) {
                   $hello = exec($cmd, $output, $ending);
 
                   //sabrina's debugging
-                  echo "Python returned ($ending): <pre>";
-                  print_r($output);
+                  // echo "Python returned ($ending): <pre>";
+                  // print_r($output);
 
 
                   if($ending > 0) {

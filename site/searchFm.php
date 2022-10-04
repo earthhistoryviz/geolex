@@ -27,6 +27,7 @@ if (isset($_REQUEST['search'])) {
  
 
     //base string 
+    //original string
     $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
 
     if(strcmp($lithofilter, "") === 0) {
@@ -72,8 +73,22 @@ if (isset($_REQUEST['search'])) {
     $noFormation = false;
 
     if($count == 0){
-        //$output = '<h4>'. 'There are no formation found with \''.$lithofilter. '\''.'</h4>';
+
+      $synonOutput = '';
+        
+      #if formation name is not found, search Synonymns 
+      $sql = "SELECT * FROM formation WHERE type_locality LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
+      $result = mysqli_query($conn, $sql);
+      $count = mysqli_num_rows($result);
+
+      if($count != 0) {
+        $synonOutput .= '<pre><h5>'.'No formations found in the main Fm/Gr field...' . '</h5></pre>';
+        $synonOutput .= '<pre><h5>'. 'However \''.$searchquery. '\' was found in Synonymns field and other occurences of Type Locality and Naming Field'.'</h5></pre>';
+        $synonOutput .= '<hr>';
+      } else {
         $noFormation = true;
+      }
+    
     }
     
     $formationLookup = array();
@@ -82,13 +97,15 @@ if (isset($_REQUEST['search'])) {
       $name = $row['name'];
       $stage = $row['beginning_stage'];
       $begAge = $row['beg_date'];
+      $geojson = $row['geojson'];
 
       if (strlen($name) < 1) continue;
       //array_push($arr, $name);
       
       $nameObj =  [
         'name' => $name,
-        'beginning age' => $begAge
+        'beginning age' => $begAge,
+        'geojson' => $geojson
       ];    
       array_push($arr, $nameObj);
       $formationLookup[$name] = $stage;
@@ -99,16 +116,21 @@ if (isset($_REQUEST['search'])) {
 }
 
 function sortByAge($a, $b){
-        $a1 = $a['beginning age'];
-        $b1 = $b['beginning age'];
+  $a1 = $a['beginning age'];
+  $a1 = str_replace(",", "", $a1);
+  $b1 = $b['beginning age'];
+  $b1 = str_replace(",", "", $b1); 
 
-        if($a1 == $b1) return 0;
-        return ($a1 < $b1) ? -1: 1;
+  if($a1 == $b1) return 0;
+  return ($a1 < $b1) ? -1: 1;
 
 }
 
 uasort($arr, "sortByAge");
 $displayAlphabetButton = true;
+
+
+
 if (isset($_REQUEST['alphabetButton'])) {
   sort($arr);
   $displayAlphabetButton = false;
@@ -120,8 +142,14 @@ foreach($arr as $arrayNum => $finfo){
    array_push($newArr, $finfo["name"]);
 }
 
+$newGeoArr = array();
+foreach($arr as $arrayNum => $finfo){
+  array_push($newGeoArr, $finfo["geojson"]);
+}
+
+
+
 if (isset($_REQUEST['timeButton'])) {
-  //uasort($arr, "sortByAge");
   $displayAlphabetButton = true;
 }
 
@@ -176,7 +204,7 @@ $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in
   <br>
 
 <div class="formation-container">  
-<?php
+<?php  
   
     if($count < 1) {
       $output = '<h4>'.'Formation not found'.'</h4>';
@@ -184,12 +212,29 @@ $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in
     } else if ($noFormation && $lithofilter !== "") {
       $output = '<h4>'. 'There are no formation found with \''.$lithofilter. '\''.'</h4>';
       print($output);
-    } else {      
-      foreach ($newArr as $formation) { ?>
+    }else {     
+      if ($synonOutput != '') {
+        $synonOutput .= '</br> ';
+        $synonOutput .= '</br> ';
+        print($synonOutput);
+      }  
+      
+      $geojsonIndex = 0;
+      foreach ($newArr as $formation) {           
+
+        ?> 
+        
         <div style="background-color:rgb(<?=$stageArray[$formationLookup[$formation]]?>, 0.8);" class="formationitem">
-        <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
-	</div><?php	
-      }
+        <?php
+
+        if($newGeoArr[$geojsonIndex] !== "null") {?>
+    
+          <div style="padding-right: 10px; font-size:13px;">&#127758</div>    
+          <?php } ?>    
+          <a href="displayInfo.php?formation=<?=$formation?>"><?=$formation?></a>
+	        </div><?php	
+        
+        $geojsonIndex = $geojsonIndex + 1; }
     } ?>
 </div>
 

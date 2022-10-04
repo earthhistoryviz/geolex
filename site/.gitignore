@@ -1,6 +1,4 @@
 php_errors.log
-timescales/*
-uploads/*
 pygplates/livedata/*
 pygplates/Marcilly/*
 Mapinfo/*

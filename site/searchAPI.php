@@ -95,7 +95,22 @@ $result = mysqli_query($conn, $sql);
 //echo '<pre>'.$sql.'</pre>';
 $count = mysqli_num_rows($result);
 if($count == 0) {
-  $noFormation = true;
+
+  $synonOutput = '';
+        
+  #if formation name is not found, search Synonymns 
+  $sql = "SELECT * FROM formation WHERE type_locality LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
+  $result = mysqli_query($conn, $sql);
+  $count = mysqli_num_rows($result);
+
+  if($count != 0) {
+    $synonOutput .= '<pre><h5>'.'No formations found in the main Fm/Gr field...' . '</h5></pre>';
+    $synonOutput .= '<pre><h5>'. 'However \''.$searchquery. '\' was found in Synonymns field and other occurences of Type Locality and Naming Field'.'</h5></pre>';
+    $synonOutput .= '<hr>';
+  } else {
+    $noFormation = true;
+  }
+
 }
 $whileIter = 0; // checks if on the first run of the while loop for output file purposes
 $arr = array();
