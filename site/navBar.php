@@ -1,4 +1,10 @@
 <?php
+  if (file_exists("customization/navBar.php")) {
+    include("customization/navBar.php");
+    exit();
+  }
+
+  // Default navBar:
   session_start();
   // Gives us $maps and $mapperiods
   include(dirname(__FILE__) . "/getmaps.php");
