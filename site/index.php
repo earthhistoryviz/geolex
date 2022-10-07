@@ -1,8 +1,6 @@
 <?php 
-  if (file_exists("customization/index.php")) {
-    include("customization/index.php");
-    exit();
-  }
+include_once("customize.php");
+$include_prefix = allowCustomOverride(__FILE__);
 
   // Default welcome page:
 

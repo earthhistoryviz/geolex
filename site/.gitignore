@@ -8,3 +8,5 @@ wells/*
 !wells/wells_pic
 wells/wells_pic/*
 customization/*
+!customization/.keep
+!customization/customize.php

@@ -1,20 +1,17 @@
 <?php
-  if (file_exists("customization/navBar.php")) {
-    include("customization/navBar.php");
-    exit();
-  }
-
+  include_once("customize.php");
+  $include_prefix = allowCustomOverride(__FILE__);
   // Default navBar:
   session_start();
   // Gives us $maps and $mapperiods
-  include(dirname(__FILE__) . "/getmaps.php");
+  include("getmaps.php");
 ?>
 <!DOCTYPE html>
 <html>
   <head>
 <?php
 if ($_SESSION["loggedIn"]) {
-  include("./adminDash.php");
+  include("adminDash.php");
 } else {
 ?>
     <style>
