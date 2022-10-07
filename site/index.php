@@ -1,6 +1,7 @@
 <?php 
 include_once("customize.php");
 $include_prefix = allowCustomOverride(__FILE__);
+if (!$include_prefix) return; // had override, do not continue
 
   // Default welcome page:
 

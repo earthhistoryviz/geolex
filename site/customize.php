@@ -12,7 +12,7 @@ function allowCustomOverride($pagepath_file) {
   $custom_path = preg_replace("/^\/app/", "/app/customization", $pagepath_file);
   if (file_exists($custom_path)) {
     include($custom_path);
-    exit();
+    return false;
   }
   // Otherwise, no override, return as normal
   return ".";

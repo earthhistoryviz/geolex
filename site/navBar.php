@@ -1,6 +1,7 @@
 <?php
   include_once("customize.php");
   $include_prefix = allowCustomOverride(__FILE__);
+  if (!$include_prefix) return;
   // Default navBar:
   session_start();
   // Gives us $maps and $mapperiods
