@@ -7,6 +7,4 @@ wells/*
 !wells/TEMPLATE.php
 !wells/wells_pic
 wells/wells_pic/*
-customization/*
-!customization/.keep
-!customization/customize.php
+OVERRIDE_*

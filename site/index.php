@@ -1,7 +1,6 @@
 <?php 
-include_once("customize.php");
-$include_prefix = allowCustomOverride(__FILE__);
-if (!$include_prefix) return; // had override, do not continue
+include_once("allowCustomOverride.php");
+if (allowCustomOverride(__FILE__)) return; // "true" means we had an override, do not continue execution of this script (i.e. top-level return)
 
   // Default welcome page:
 
@@ -15,6 +14,7 @@ if (!$include_prefix) return; // had override, do not continue
   </h2><?php
   include("SearchBar.php");
 
+  global $period;
   if($period) {?>
     <p>Map is clickable </p>
     <p>Click on any provinces to view detailed information</p><?php

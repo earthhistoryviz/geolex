@@ -5,16 +5,17 @@
 // the default if it exists.
 function allowCustomOverride($pagepath_file) {
   // If this is the custom version, just return path prefix of ".."
-  if (preg_match("/\/app\/customization/", $pagepath_file)) {
-    return "..";
-  }
-  // If not, check if there is a custom version of this file:
-  $custom_path = preg_replace("/^\/app/", "/app/customization", $pagepath_file);
-  if (file_exists($custom_path)) {
-    include($custom_path);
+  $filename = basename($pagepath_file);
+  $path = dirname($pagepath_file);
+  if (preg_match("/^OVERRIDE_/", $filename)) {
     return false;
   }
+  $override_fullpath = "$path/OVERRIDE_$filename";
+  if (file_exists($override_fullpath)) {
+    include($override_fullpath);
+    return true;
+  }
   // Otherwise, no override, return as normal
-  return ".";
+  return false;
 }
 ?>

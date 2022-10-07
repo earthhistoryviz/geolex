@@ -1,4 +1,7 @@
-<?php include_once("SqlConnection.php") ?>
+<?php include("SqlConnection.php");
+global $conn;
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -25,6 +28,7 @@
   // Get all the unique periods and provinces
   $sql = "SELECT name, period, province FROM formation";
   $result = mysqli_query($conn, $sql);
+  global $filters;
   $filters = array();
   // We need to clean up the html tags from the periods and provices to get a canonical name
   while ($row = mysqli_fetch_array($result)) {

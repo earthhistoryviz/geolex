@@ -1,10 +1,11 @@
 <?php
-  include_once("customize.php");
-  $include_prefix = allowCustomOverride(__FILE__);
-  if (!$include_prefix) return;
+  include_once("allowCustomOverride.php");
+  if(allowCustomOverride(__FILE__)) return; // had overrid3
+
   // Default navBar:
   session_start();
   // Gives us $maps and $mapperiods
+  global $maps, $mapperiods;
   include("getmaps.php");
 ?>
 <!DOCTYPE html>
@@ -71,6 +72,7 @@ if ($_SESSION["loggedIn"]) {
   <div style="display: flex; flex-direction: row;">
     <div style="width: 120px; padding: 5px; display: flex; flex-direction: column;">
       <?php
+       global $period;
        if (isset($_GET["period"])) {
          $period = $_GET["period"];
        } else {
