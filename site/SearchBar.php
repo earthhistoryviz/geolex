@@ -1,5 +1,6 @@
-<?php include("SqlConnection.php");
+<?php
 global $conn;
+include_once("SqlConnection.php");
 ?>
 
 <!DOCTYPE html>
