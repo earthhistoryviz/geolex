@@ -10,22 +10,25 @@ import itertools as it
 import re
 import numpy as np
 import os
-import timeit
-start =  timeit.default_timer()
+
 
 age = float(sys.argv[1])
 age_label = str(age) + ' Ma'
 grid = ""
-outdirname = "../"+sys.argv[2]
+outdirname = sys.argv[2]
 filename = outdirname + "/reconstructed_geom.gmt"
 #path of the current directory
 pathCurrent = os.getcwd()
 #path of parent directory
 pathParent = os.path.dirname(pathCurrent)
 
+scoteseDocsPath = pathParent + "/ScoteseDocs"
+
 fig = pygmt.Figure()
 
-pygmt.makecpt(cmap="Scotese.cpt")
+#pygplates/site/dev/resources
+pygmt.makecpt(cmap= scoteseDocsPath + "/Scotese.cpt")
+
 
 
 #Function lithoDictCreate: creates a dictionary with key as the Lithology Pattern Name and values as the PYGMT/GMT color/pattern code
@@ -34,7 +37,7 @@ def lithoDictCreate():
 
     #Note: ALL KEYS WILL BE LOWERCASE!!!!! 
     patternDict = {}
-    with open(pathParent+'/TSCreator_litho-pattern_to_GMT-fixed_pattern_code.csv') as csv_file:
+    with open('./TSCreator_litho-pattern_to_GMT-fixed_pattern_code.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         
@@ -67,7 +70,8 @@ def getGrid():
     if age == 0:
         grid = "Map01_PALEOMAP_6min_Holocene_0Ma.nc"
     else:
-        with open('./Scotese_DEM_high_resolution/Age_duration_of_Scotese_DEM_high_resolution_GST2020_V3.csv', 'r') as file:
+        with open( scoteseDocsPath + "/Scotese_DEM_high_resolution/Age_duration_of_Scotese_DEM_high_resolution_GST2020_V3.csv", 'r') as file:
+            
             lookup = csv.reader(file)
             next(lookup, None)
             for row in lookup:
@@ -81,19 +85,19 @@ def getGrid():
         print("No reconstrution available for {}".format(age))
         exit(1)
     
-    return './Scotese_DEM_high_resolution/' + grid
+    return pathParent + '/ScoteseDocs/Scotese_DEM_high_resolution/' + grid
 
 def pygplateReconstructions():
     # The geometries are the 'features to partition'
     input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
 
     # static polygons are the 'partitioning features'
-    static_polygons = pygplates.FeatureCollection('../config/Scotese/PALEOMAP_PlatePolygons.gpml')
+    static_polygons = pygplates.FeatureCollection('./config/Scotese/PALEOMAP_PlatePolygons.gpml')
 
 
     # The partition_into_plates function requires a rotation model, since sometimes this would be
     # necessary even at present day (for example to resolve topological polygons)
-    rotation_model = pygplates.RotationModel('../config/Scotese/PALEOMAP_PlateModel.rot')
+    rotation_model = pygplates.RotationModel('./config/Scotese/PALEOMAP_PlateModel.rot')
 
     # partition features
     partitioned_geometries = pygplates.partition_into_plates(static_polygons, rotation_model, input_geometries, partition_method = pygplates.PartitionMethod.most_overlapping_plate)
@@ -256,5 +260,3 @@ def main():
         print(e)
 
 main()
-stop = timeit.default_timer()
-print("time it took done: " + str(stop - start))

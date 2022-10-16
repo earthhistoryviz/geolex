@@ -79,7 +79,7 @@ if ($initial_creation_outdir) {
                   }
                 break;
                 case "Scotese":
-                  $cmd = "cd pygplates/ScoteseDocs && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
+                  $cmd = "cd pygplates && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
                   $hello = exec($cmd, $output, $ending);
 
                   //sabrina's debugging

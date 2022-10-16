@@ -1,4 +1,5 @@
 <?php
+global $conn;
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 $arr = array();
