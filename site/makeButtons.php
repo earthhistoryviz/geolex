@@ -114,7 +114,7 @@ function createOptions(){
             Reconstruction Model: Continental flooding model (Marcilly, Torsvik et al., 2021)
         </option> 
         <option value="Scotese" <?php if ($_REQUEST["selectModel"] == "Scotese") echo "SELECTED"; ?>>
-            Reconstruction Model: Paleo-topography (Chris Scotese, 2021)
+            Reconstruction Model: Paleo-topography (Chris Scotese, 2018)
         </option> 
     </select> 
 </div> 
