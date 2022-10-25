@@ -171,7 +171,7 @@ def labeling_shapes_with_names():
         output[info[3]] = co_or
 
         # labeling 
-        fig.text(text=info[3], x=float(co_or[0]), y=float(co_or[1]), N=True, D="0/0.2c", font="4.5p,Helvetica-Bold,black")
+        fig.text(text=info[3], x=float(co_or[0]), y=float(co_or[1]), N=True, D="0/0.2c", font="7p,Helvetica-Bold,black")
                 
              
 

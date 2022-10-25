@@ -1,5 +1,5 @@
 <?php
-include("constants.php");
+include_once("constants.php");
 include_once("TimescaleLib.php");
 // Sets up the reconstruction variables: $recongeojson, etc.:
 include_once("./makeReconstruction.php");
