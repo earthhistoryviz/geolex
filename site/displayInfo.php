@@ -165,8 +165,9 @@ if ($_REQUEST["generateImage"]) {
     else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Scotese"){
       $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
     }
-    $outdirhash = md5($toBeHashed)."newest"; // md5 hashing for the output directory name 
     $toBeHashed .= $_REQUEST["formation"]; //adds the formation name to the hash
+    $outdirhash = md5($toBeHashed)."newest"; // md5 hashing for the output directory name 
+    
     
      // outdirname is what pygplates should see
        
