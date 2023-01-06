@@ -8,7 +8,7 @@ include_once("./makeReconstruction.php"); // has createGeoJSONForFormations
 $formation = $_REQUEST;
 $auth = $_SESSION["loggedIn"];
 
-if($formation[formation] == "") {?>
+if($formation["formation"] == "") {?>
   <title>Empty Search</title>
   <h3><center>Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</center></h3><?php
   include("footer.php");

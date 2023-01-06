@@ -2,7 +2,12 @@
 include_once("SqlConnection.php");
 $sql = "SELECT * FROM formation WHERE name LIKE '%$formation[formation]%'"; //old query that won't work with Kali vs. Warkali formations or characters needing to be escaped
 
-$sql = sprintf("SELECT * FROM formation WHERE name= '%s'", mysqli_real_escape_string($conn, $formation["formation"]));
+$searchname = mysqli_real_escape_string($conn, $formation["formation"]);
+$sql = "SELECT * FROM formation WHERE name= '$searchname'";
+if (preg_match("/’/", $searchname)) {
+  $sql .= " OR name = \"".preg_replace("/’/", "'", $searchname)."\"";
+}
+
 $result = mysqli_query($conn, $sql);
 $fmdata = array(
    'name'                                  => array("needlinks" => false),
