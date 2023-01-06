@@ -29,7 +29,13 @@ if (isset($_REQUEST['search'])) {
 
     //base string 
     //original string
-    $sql = "SELECT * FROM formation WHERE name LIKE '%$searchquery%' AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
+    $sql = "SELECT * FROM formation WHERE (name LIKE '%$searchquery%'";
+    if (preg_match("/’/", $searchquery)) {
+      $sql .= " OR name LIKE \"%".preg_replace("/’/", "'", $searchquery)."%\")";
+    } else {
+      $sql .= ")";
+    }
+    $sql .= " AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
 
     if(strcmp($lithofilter, "") === 0) {
       $sql .= " AND lithology LIKE '%$lithofilter%'";
