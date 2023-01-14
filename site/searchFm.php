@@ -30,8 +30,11 @@ if (isset($_REQUEST['search'])) {
     //base string 
     //original string
     $sql = "SELECT * FROM formation WHERE (name LIKE '%$searchquery%'";
-    if (preg_match("/’/", $searchquery)) {
-      $sql .= " OR name LIKE \"%".preg_replace("/’/", "'", $searchquery)."%\")";
+    if (preg_match("/[’’']/", $searchquery)) {
+      $sql .= " OR name LIKE \"%".preg_replace("/’/", "'", $searchquery)."%\" "
+            . " OR name LIKE \"%".preg_replace("/’/", "'", $searchquery)."%\" "
+            . " OR name LIKE \"%".preg_replace("/'/", "'", $searchquery)."%\" "
+            . ")";
     } else {
       $sql .= ")";
     }
