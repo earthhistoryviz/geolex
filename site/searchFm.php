@@ -26,18 +26,19 @@ if (isset($_REQUEST['search'])) {
       $agefilterend = $agefilterstart;
     }
  
-
     //base string 
     //original string
     $sql = "SELECT * FROM formation WHERE (name LIKE '%$searchquery%'";
-    if (preg_match("/[’’']/", $searchquery)) {
-      $sql .= " OR name LIKE \"%".preg_replace("/’/", "'", $searchquery)."%\" "
-            . " OR name LIKE \"%".preg_replace("/’/", "'", $searchquery)."%\" "
-            . " OR name LIKE \"%".preg_replace("/'/", "'", $searchquery)."%\" "
-            . ")";
-    } else {
-      $sql .= ")";
+    $apostrophes = array(
+      "’",  // fancy apostrophe
+      "'"   // regular apostrophe
+    );
+    if (preg_match("/[$apostrophes]/", $searchquery)) {
+      for ($i=0; $i < 2; $i++) { // I don't think strlen($apostrophes) will work with UTF-8 multi-char
+        $sql .= " OR name LIKE \"%".preg_replace("/[$apostrophes]/", $apostrophes[$i], $searchquery)."%\" ";
+      }
     }
+    $sql .= ")";
     $sql .= " AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
 
     if(strcmp($lithofilter, "") === 0) {
