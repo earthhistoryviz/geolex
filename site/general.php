@@ -215,9 +215,19 @@ $formaction = "general.php"; ?>
                     if( $pname !== $p["period"]) continue; ?> 
                     <h5><?=$pname?></h5>
                     <div class="period-container"> <?php
+                      $geojsonIndex = 0;
+                               
                       foreach($formations as $fname => $finfo) {
-                        $finfoArr = json_decode(json_encode($finfo), true); ?>
+                        $finfoArr = json_decode(json_encode($finfo), true); 
+                        //print_r($finfoArr['geojson']);
+                        
+                        ?>
                         <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button">
+                        <?php 
+                          //if geoJSON exists 
+                          if($finfoArr['geojson'] ) { ?>
+                             <div style="padding-right: 10px; font-size:13px;">&#127758</div>
+                             <?php } ?>     
                           <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
                         </div> <?php 
                       } ?>
