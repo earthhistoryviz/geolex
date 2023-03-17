@@ -4,7 +4,6 @@ include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 $arr = array();
 $count = -1;
-
 $sql2 = "SELECT province FROM formation";
 $result = mysqli_query($conn, $sql2);
 $province_list = array_unique($result);
@@ -28,18 +27,23 @@ if (isset($_REQUEST['search'])) {
  
     //base string 
     //original string
-    $sql = "SELECT * FROM formation WHERE (name LIKE '%$searchquery%'";
+    $sql = "SELECT * FROM formation WHERE (name LIKE \"%$searchquery%\"";
     $apostrophes = array(
       "’",  // fancy apostrophe
-      "'"   // regular apostrophe
+      "'",  // regular apostrophe
+      "’",
+      "’",
     );
-    if (preg_match("/[$apostrophes]/", $searchquery)) {
-      for ($i=0; $i < 2; $i++) { // I don't think strlen($apostrophes) will work with UTF-8 multi-char
-        $sql .= " OR name LIKE \"%".preg_replace("/[$apostrophes]/", $apostrophes[$i], $searchquery)."%\" ";
+    $allapostrophes = join($apostrophes, '');
+    $regex = "/[$allapostrophes]/";
+    if (preg_match($regex, $searchquery)) {
+      for ($i=0; $i < 4; $i++) { // I don't think strlen($apostrophes) will work with UTF-8 multi-char
+        $sql .= " OR name LIKE \"%".preg_replace($regex, $apostrophes[$i], $searchquery)."%\" ";
       }
+//      $sql .= " OR name LIKE \"%".preg_replace($regex, 'â€™', $searchquery)."%\" "; // this weird one cropped up with Ma'ao
     }
     $sql .= ")";
-    $sql .= " AND period LIKE '%$periodfilter%' AND province LIKE '%$provincefilter%'";
+    $sql .= " AND period LIKE \"%$periodfilter%\" AND province LIKE '%$provincefilter%'";
 
     if(strcmp($lithofilter, "") === 0) {
       $sql .= " AND lithology LIKE '%$lithofilter%'";

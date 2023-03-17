@@ -76,7 +76,8 @@ for ($i=0; $i<count($nameregexes); $i++) {
 }
 
 function findAndMakeFormationLinks($str, $nameregexes) {
-   $orig = $str;
+  $orig = $str;
+  $str = preg_replace('/[’’]/g', '\'', $str); // replace the fancy apostrophes to make sure they all match a regular apostrophe
   for($i=0; $i<count($nameregexes); $i++) {
     $n = $nameregexes[$i];
     if (preg_match($n["regex"], $str)) { // check if we are superceded

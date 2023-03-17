@@ -139,7 +139,6 @@ function docx_read($filename)
       } 
        
     }
-    $count = 0;
     // Check if the name is blank, if so, do not insert anything to the database
     if (strlen(trim($vars[$nameindex]["value"])) < 1) {
       echo "\n Found an empty name, ignoring...<br/>";
@@ -164,6 +163,7 @@ function docx_read($filename)
     $sql20 = "ON DUPLICATE KEY UPDATE ";
     $exists = array();
     //$sql0 = "SHOW COLUMNS FROM formation LIKE";
+    $namecounter = 0;
     for($i=0; $i<count($vars); $i++){
       $v = $vars[$i];
       $sql2 = $sql0.$v["name"];
@@ -171,7 +171,7 @@ function docx_read($filename)
         $result = $conn->query($sql2);
         $exist = (mysqli_num_rows($result))?TRUE:FALSE;
         array_push($exists,$exist);
-        $count = $count+1;
+        $namecounter++;
       }
     }
     $sql = "INSERT INTO formation(";
