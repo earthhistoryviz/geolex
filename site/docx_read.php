@@ -115,18 +115,18 @@ function docx_read($filename)
 
       $vars[$i]["matches"] = $matches;
       // Uncomment to help you debug a particular word doc:
-      //if ($i == $regionalindex && preg_match("/Bailong Fm/", $ministr)) {
+      // if ($i == $regionalindex && preg_match("/Bailong Fm/", $ministr)) {
       //  echo "ministr = <div style=\"width: 1024px\">";print_r(htmlspecialchars($ministr));echo "</div><br><br>";
       //  echo "pattern = ".$v[pattern].", matches = <pre>";print_r(htmlspecialchars($matches));echo"</pre><br><br>";
-      //}
+      // }
       $vars[$i]["value"] = trim($matches[$v["matchoffset"]]); // get rid of newlines on the end
       if (preg_match("/\r\n/", $vars[$i]["value"])) { // only add paragraph tags if there are newlines in it (single-line doesn't have them)
         $vars[$i]["value"] = "<p>" . str_replace("\r\n", "</p>\r\n<p>", $vars[$i]["value"]) . "</p>";
       }
       if ($vars[$i]["name"] == "compiler") {
         // Not sure why these were there, commenting for now
-        //$vars[$i]["value"] = str_replace("(", "", $vars[$i]["value"]);
-        //$vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
+        // $vars[$i]["value"] = str_replace("(", "", $vars[$i]["value"]);
+        // $vars[$i]["value"] = str_replace(")", "", $vars[$i]["value"]);
       }
       // echo "Parsed variable before cleaning: <pre>"; print_r($vars[$i]); echo "</pre>, and parsed from string:<br/><pre>"; print_r($ministr); echo "</pre>";
       if (isset($vars[$i]["clean"])) {
