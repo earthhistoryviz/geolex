@@ -11,6 +11,7 @@ import numpy as np
 import pygmt
 import itertools as it
 
+
 # The geometries are the 'features to partition'
 
 
@@ -41,6 +42,8 @@ def lithoDictCreate():
 
 def pygplateReconstructions():
     input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
+    
+    
     # static polygons are the 'partitioning features'
     static_polygons = pygplates.FeatureCollection('./config/shapes_static_polygons_Merdith_et_al.gpml')
 
@@ -52,12 +55,13 @@ def pygplateReconstructions():
     # partition features
     partitioned_geometries = pygplates.partition_into_plates(static_polygons, rotation_model, input_geometries, partition_method = pygplates.PartitionMethod.most_overlapping_plate)
 
+    pygplates.reconstruct(partitioned_geometries, rotation_model,outdirname+'/reconstructed_geom.gmt', age)  
 
     # Reconstruct the geometries
     pygplates.reconstruct(static_polygons, rotation_model, outdirname+'/reconstructed_static_polygons.gmt', age) 
     pygplates.reconstruct(coastlines, rotation_model, outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt', age) 
 
-    pygplates.reconstruct(partitioned_geometries, rotation_model,outdirname+'/reconstructed_geom.gmt', age)  
+    
 
 
 def extract(outdirname):
@@ -76,24 +80,13 @@ def extract(outdirname):
     return [min(lon), max(lon), min(lat), max(lat)]
 
 
-# Make a regional Mercator map with grid interval=30 degree; land and water= skyblue create a blue basemap. 
-# Otherwise, if use the basemap format, the base-color cannot be filled with blue.
-def mercatrMapPlot(edge_info):
-    region_edge = str(edge_info[0]-60) + "/" + str(edge_info[1]+60) + "/" + str(edge_info[2]-20) + "/" + str(edge_info[3]+20)
 
-    if edge_info[2] < -40 or edge_info[3] > 40:
-
-        central= (edge_info[0]+edge_info[1])/2
-        projection = "W" + str(central) + "/15c"
-        fig.coast (region="d",projection=projection, frame="a30g30",land="skyblue",water="skyblue") #
-        
-    else:
-        fig.coast (region=region_edge, projection="M15c", frame="afg30",land="skyblue",water="skyblue") #
-
-
-    fig.plot(data = outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt',G="seashell",pen="0.1p,black")
-
-def labeling_shapes_with_names(sections, patternList):
+def labeling_shapes_with_names( patternList):
+    sections = []
+    with open(filename, 'r') as f:
+        for key, group in it.groupby(f, lambda line: line.startswith('>')):
+            if not key:
+                sections.append(list(group))
     output = {}
     for i in range(1, len(sections)):
         info = sections[i][0].replace('\"', '').split('|')
@@ -117,9 +110,9 @@ def getPatternListFromGMTFile():
         output[info[3]] = co_or
         patternList.append((info[4].replace('\n', '')).lower())
 
-    return patternList, sections
+    return patternList
 
-def plotting_shapes_and_lithology(patternList, patternDict, sections):
+def plotting_shapes_and_lithology(patternList, patternDict):
     #The code to plot formations in different patterns according to their Lithology Pattern
     x_coordinates = [] #holds all of the x coordinates of the formation to be plotted
     y_coordinates = [] #holds all of the y coordinates of the formation to be plotted
@@ -153,7 +146,7 @@ def plotting_shapes_and_lithology(patternList, patternDict, sections):
 
                 
                     
-                    fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor)
+                    fig.plot(x=xArray, y=yArray, pen="0.25p,black",frame="afg30",color=patternColor)
                     x_coordinates.clear()
                     y_coordinates.clear()
                     patternListIndex += 1
@@ -173,36 +166,29 @@ def plotting_shapes_and_lithology(patternList, patternDict, sections):
         except KeyError:
             patternColor = patternDict['unknown']
         
-        fig.plot(x=xArray, y=yArray, pen="0.25p,black",color=patternColor)
+        fig.plot(x=xArray, y=yArray, pen="0.25p,black",frame="afg30",color=patternColor)
+
         x_coordinates.clear()
         y_coordinates.clear()
         patternListIndex += 1   
-        labeling_shapes_with_names(sections, patternList)
-
-              
+        labeling_shapes_with_names(patternList)
 
 
-# WITH FRONTS - fig.plot(data = 'reconstructed_geom.gmt',pen="1p,red",style="f1c/0.25c")
-def plotting_inset(edge_info):
-    if edge_info[2] >= -40 and edge_info[3] <= 40:
-        with fig.inset(position="jTR+w4c", box="+pblack+gwhite"):
-        # Use a plotting function to create a figure inside the inset
-        # Make a global Robinson map (or any other projection that you like) filled with blue color and grid every 30 degree.
-            fig.coast (region="g", projection="R?", frame="g30",land="skyblue",water="skyblue")
-            #plot reconstructed polygons and coastlines onto the inset map
-            
-            fig.plot(data = outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt',G="seashell",pen="0.1p,black")
-            fig.plot(data = outdirname+'/reconstructed_geom.gmt',pen="1p,red")
-            # place reconstruction age in the inset map : fig.text(text="TEST", x=lon, y=lat, font="22p,Helvetica-Bold,black")
-            #somehow, X=180, Y=45 is an ideal position to place the text.
-            fig.text(text=age_label, x=180, y=45, N=True, D="0/1c", font="12p,Helvetica-Bold,black")  
 
-    # WITH FRONTS - fig.plot(data = 'reconstructed_geom.gmt',pen="1p,red",style="f1c/0.25c")
-    else:   
-        fig.text(text=age_label, x=180, y=-90, N=True, D="5/0c", font="12p,Helvetica-Bold,black")   
-
-
-    fig.savefig(outdirname+"/final_image.png", dpi="300") # Do you need some kind of unique filename to prevent conflicts if multiple users are online?
+def plotting_inset(central_lon):
+   
+    with fig.inset(position="jTR+w4c", box="+pblack+gwhite"):
+    # Use a plotting function to create a figure inside the inset
+    # Make a global Robinson map (or any other projection that you like) filled with blue color and grid every 30 degree.
+        fig.coast (region="g", projection="R"+ str(central_lon) +"/?", frame="g30",land="skyblue",water="skyblue")
+        #plot reconstructed polygons and coastlines onto the inset map
+        
+        fig.plot(data = outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt',G="seashell",pen="0.1p,black")
+        fig.plot(data = outdirname+'/reconstructed_geom.gmt',frame="g30",pen="1p,red")
+        # place reconstruction age in the inset map : fig.text(text="TEST", position="TC", font="22p,Helvetica-Bold,black")
+        #somehow, position="TC" means that it is in the Top central of the plotted earth (inset), we must drift 0/0.5c outside of the globe as this is an ideal position to place the text.
+        fig.text(text=age_label, position="TC", D="0/0.5c",N=True, font="12p,Helvetica-Bold,black")
+    
 
 
 def main():
@@ -210,11 +196,50 @@ def main():
         patternDict = lithoDictCreate()
         pygplateReconstructions()        
         edge_info = extract(outdirname)
-        mercatrMapPlot(edge_info)
-        patternList,sections = getPatternListFromGMTFile()
-        plotting_shapes_and_lithology(patternList, patternDict, sections)
-        plotting_inset(edge_info)
+        patternList = getPatternListFromGMTFile()        
         
+        #Finding the central view for creating the projection
+        central_lon= (edge_info[0]+edge_info[1])/2
+        central_lat= (edge_info[2]+edge_info[3])/2
+        region_edge = str(edge_info[0]-60) + "/" + str(edge_info[1]+60) + "/" + str(edge_info[2]-20) + "/" + str(edge_info[3]+20)
+
+
+        if edge_info[2] < -55 or edge_info[3] > 55: # if the boundary of map reaches beyongd 55 degress north or south in latitude.
+            
+            if (edge_info[2] - edge_info[3] < 80): # And, if all polygons are in the same  hemisphere, plot polar projection. 
+                projection = "G"+ str(central_lon)+"/"+str(central_lat)+ "/60/7.5c"
+                fig.coast (region="d",projection=projection, frame="a30g30",land="skyblue",water="skyblue")
+
+                fig.plot(data = outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt',G="seashell",pen="0.1p,black")
+
+                plotting_shapes_and_lithology(patternList, patternDict)
+
+
+
+            else: #if the boundary of map is beyongd 55 degress north or south in latitude (near poles), but all polygons are NOT in the same  hemisphere, plot global projection. 
+                projection = "W" + str(central_lon) + "/15c"
+                fig.coast (region="d",projection=projection, frame="a30g30",land="skyblue",water="skyblue") 
+
+                fig.plot(data = outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt',G="seashell",pen="0.1p,black")
+
+                plotting_shapes_and_lithology(patternList, patternDict)
+
+            fig.text(text=age_label, x=180, y=-90, N=True, D="5/0c", font="12p,Helvetica-Bold,black")# A reconstruction age stamp to the  projection
+
+        else:# when the boundary of map is within 55 degress north and south in latitude, or say close to the equator, plot regional map projection.
+            
+            fig.coast(region=region_edge, projection="M15c", frame="afg30",land="skyblue",water="skyblue") 
+            
+
+            fig.plot(data = outdirname+'/reconstructed_Global_EarthByte_GPlates_PresentDay_ContinentalPolygons_2019_v1.gmt',G="seashell",pen="0.1p,black")
+
+            plotting_shapes_and_lithology(patternList, patternDict)
+            
+            plotting_inset(central_lon)
+
+         
+        fig.savefig(outdirname+"/final_image.png", dpi="300") # Do you need some kind of unique filename to prevent conflicts if multiple users are online?
+    
 
     except Exception as e:
         print(e)
