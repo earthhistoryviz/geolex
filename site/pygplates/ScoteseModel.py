@@ -12,12 +12,17 @@ import numpy as np
 import os
 
 
-age = float(sys.argv[1])
-age_label = str(age) + ' Ma'
+user_age = float(sys.argv[1]) #this is the user's inputted age
+age_label = str(user_age) + ' Ma'
 grid = ""
 outdirname = sys.argv[2]
 filename = outdirname + "/reconstructed_geom.gmt"
+
+# print(os.path.exists(filename))
+# if os.path.exists(filename):
+#     print("TRUE IT's HAPPENING")
 #path of the current directory
+
 pathCurrent = os.getcwd()
 #path of parent directory
 pathParent = os.path.dirname(pathCurrent)
@@ -67,29 +72,34 @@ def getPatternListFromGMTFile():
     return patternList
 
 def getGrid():
-    if age == 0:
-        grid = "Map01_PALEOMAP_6min_Holocene_0Ma.nc"
+    corrected_age = 0
+    
+    if user_age == 0:
+        grid = "Map01_PALEOMAP_6min_Holocene_0Ma.nc" 
+        corrected_age = 0
     else:
         with open( scoteseDocsPath + "/Scotese_DEM_high_resolution/Age_duration_of_Scotese_DEM_high_resolution_GST2020_V3.csv", 'r') as file:
-            
             lookup = csv.reader(file)
-            next(lookup, None)
+            next(lookup, None) 
             for row in lookup:
                 if row[0] == "":
                     break
-                if age <= float(row[1]) and age > float(row[2]):
+                if (user_age <= float(row[1])) and (user_age >= float(row[2])):
                     grid = row[0]
+                    corrected_age = float(row[1])
+                    print(corrected_age)
                     break
     
     if grid == "":
-        print("No reconstrution available for {}".format(age))
+        print("No reconstrution available for {}".format(user_age))
         exit(1)
     
-    return pathParent + '/ScoteseDocs/Scotese_DEM_high_resolution/' + grid
+    return pathParent + '/ScoteseDocs/Scotese_DEM_high_resolution/' + grid, corrected_age
 
-def pygplateReconstructions():
+def pygplateReconstructions(corrected_age):
     # The geometries are the 'features to partition'
     input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
+    print(input_geometries)
 
     # static polygons are the 'partitioning features'
     static_polygons = pygplates.FeatureCollection('./config/Scotese/PALEOMAP_PlatePolygons.gpml')
@@ -109,13 +119,13 @@ def pygplateReconstructions():
     pygplates.reconstruct(static_polygons,
                         rotation_model,
                         outdirname+'/reconstructed_static_polygons.gmt',
-                        age)  
+                        corrected_age)  
 
 
     pygplates.reconstruct(partitioned_geometries,
                         rotation_model,
                         outdirname+'/reconstructed_geom.gmt',
-                        age)
+                        corrected_age)
 
 def extract():
     with open(filename, 'r') as f:
@@ -212,10 +222,9 @@ def labeling_shapes_with_names(patternList):
 def main():
     try:
         patternDict = lithoDictCreate()
-        grid = getGrid()
-        pygplateReconstructions()
+        grid, corrected_age = getGrid()
+        pygplateReconstructions(corrected_age)
         patternList = getPatternListFromGMTFile()
-
         
         #Finding the central view for creating the projection
         edge_info = extract()
@@ -225,9 +234,11 @@ def main():
         
         if edge_info[2] < -55 or edge_info[3] > 55: # if the boundary of map reaches beyongd 55 degress north or south in latitude.
             if edge_info[2] - edge_info[3] < 80: # And, if all polygons are in the same  hemisphere, plot polar projection. 
-                fig.grdimage (grid=grid, region="d",projection="G"+ str(central_lon)+"/"+str(central_lat)+ "/60/15c",shading="+d")  # plot base grid map (Scotese' DEM).the eye view is centered based on the center of all polygons. "60" is a horizon parameter.
+                fig.grdimage (grid=grid, region="d",projection="G"+ str(central_lon)+"/"+str(central_lat)+ "/60/7.5c",shading="+d")  # plot base grid map (Scotese' DEM).the eye view is centered based on the center of all polygons. "60" is a horizon parameter.
 
                 plotting_shapes_and_lithology(patternList, patternDict, "g30")
+                fig.colorbar(frame=["xa4000f1000+lElevation", "y+lm"]) # set the bottom Color-Elevation bar to either plot.
+
 
             else: #if the boundary of map is beyongd 55 degress north or south in latitude (near poles), but all polygons are NOT in the same  hemisphere, plot global projection.
                 central= (edge_info[0]+edge_info[1])/2
@@ -235,8 +246,9 @@ def main():
                 fig.grdimage (grid=grid,region="d",projection=projection,shading="+d") 
 
                 plotting_shapes_and_lithology(patternList, patternDict, "a30g30")
+                fig.colorbar(frame=["xa2000f500+lElevation", "y+lm"]) # set the bottom Color-Elevation bar to either plot.
 
-                fig.text(text=age_label, x=180, y=-90, N=True, D="5/0c", font="12p,Helvetica-Bold,black")# A reconstruction age stamp to the global projection
+            fig.text(text=age_label, x=180, y=-90, N=True, D="5/0c", font="12p,Helvetica-Bold,black")# A reconstruction age stamp to the projection
         
         else: # when the boundary of map is within 55 degress north and south in latitude, or say close to the equator, plot regional map projection.
             
@@ -247,13 +259,14 @@ def main():
                 #plot reconstructed polygons and coastlines onto the inset map
                 fig.plot(data = filename ,color="red", frame="g30")
 
-                # place reconstruction age in the inset map : fig.text(text="TEST", x=lon, y=lat, font="22p,Helvetica-Bold,black")
-                #somehow, X=180, Y=45 is an ideal position to place the text.
-                fig.text(text=age_label, x=180, y=90, N=True, D="-0.25/0.25c", font="10p,Helvetica-Bold,black")  
+                # place reconstruction age in the inset map : fig.text(text="TEST", position="TC", font="22p,Helvetica-Bold,black")
+                #somehow, position="TC" means that it is in the Top central of the plotted earth (inset), we must drift 0/0.5c outside of the globe as this is an ideal position to place the text.
+                fig.text(text=age_label, position="TC", D="0/0.5c", N=True, font="12p,Helvetica-Bold,black")  
+                fig.colorbar(frame=["xa2000f500+lElevation", "y+lm"]) # set the bottom Color-Elevation bar to either plot.
 
 
         labeling_shapes_with_names(patternList)
-        #fig.colorbar(frame=["xa2000f500+lElevation", "y+lm"]) # set the bottom Color-Elevation bar to either plot.
+        
         fig.savefig(outdirname+"/final_image.png",dpi="300") 
 
     except Exception as e:
