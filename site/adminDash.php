@@ -18,15 +18,21 @@
         <div class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="fileBrowser.php">Parse Word Document</a>
         </div>
+        <div class="item <?php if (preg_match("/mapPackBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+          <a class="menu-link" href="mapPackBrowser.php">Parse TSC MapPack Docs </a>
+        </div>
+        <div class="item <?php if (preg_match("/lithologyPatternCheckBrowser.php/", $_SERVER["PHP_SELF"])){ echo "active"; } ?>" >
+          <a class="menu-link" href="lithologyPatternCheckBrowser.php">Check Lithology Pattern </a>
+        </div>
         <div class="item <?php if (preg_match("/uploadTimescale.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="uploadTimescale.php">Timescale</a>
         </div>
 	      <div class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="manageUser.php">Manage User information</a>
-	</div>
-		<div class ="itme <?php if (preg_match("/create_db.php/",$_SERVER["PHP_SELF"])){echo "active";}?>">
-		<a class ="menu-link" href = "create_db.php">Clear Database </a>
-	</div>	
+	      </div>
+		    <div class ="itme <?php if (preg_match("/create_db.php/",$_SERVER["PHP_SELF"])){echo "active";}?>">
+		      <a class ="menu-link" href = "create_db.php">Clear Database </a>
+	      </div>	
   	    <div>
   	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
   	    </div>
