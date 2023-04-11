@@ -116,6 +116,8 @@ if (!$_SESSION["loggedIn"]) {
         // and print it out
         print $grid;
 
+        echo "<br> <br> <br>";
+
     }
 
     
