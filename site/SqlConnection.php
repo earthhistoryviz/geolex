@@ -143,10 +143,6 @@
         echo "Every Formation was parsed";
      }
 
-
-
-  
-
     return ;
 
 }

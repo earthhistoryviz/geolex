@@ -43,10 +43,6 @@ if (!$initial_creation_outdir) { // we already had the folder up above, so just 
 
 
 if ($initial_creation_outdir) {
-
-
-
-
     switch($_REQUEST["selectModel"]) {
                 case "Default":
                   $cmd = "cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname 2>&1";
