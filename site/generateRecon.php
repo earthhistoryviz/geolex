@@ -84,7 +84,7 @@ if ($_REQUEST["generateImage"] == "1") {
     }
   } ?>
 
-  <div id="reconImg" align="center"> <?php
+  <div id="reconImg" style="text-align: center;"> <?php
   if($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All") { ?>
     <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterstage"] ?> </figcaption><?php
   } else if($_REQUEST["searchtype"] == "Period") { ?>
