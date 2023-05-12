@@ -10,9 +10,15 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   $regionstosearch = array();
 
+  // foreach($regions as $r) {
+  //   if ($r["name"] == $_REQUEST["filterregion"] || $_REQUEST["filterregion"] == "All") {
+  //     array_push($regionstosearch, $r);
+  //   }
+  // }
 
-  foreach($regions as $r) {
-    if ($r["name"] == $_REQUEST["filterregion"] || $_REQUEST["filterregion"] == "All") {
+  foreach ($regions as $r) {
+    //if ($r["name"] == $_REQUEST["filterregion"][0]) {
+    if (in_array($r["name"], $_REQUEST["filterregion"])) {
       array_push($regionstosearch, $r);
     }
   }
@@ -21,7 +27,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   $results = array();
   $allformations = array();
 
-  foreach($regionstosearch as $r) {
+  foreach ($regionstosearch as $r) {
     // Get the info about the matched formations from the external API:
     $url = $r["searchurl"] . "?searchquery="
       .$_REQUEST["search"]."&periodfilter="
@@ -35,7 +41,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     }
     $raw = file_get_contents($url);
     $response = json_decode($raw);
-      
 
     // Loop over all the returned formations to figure out the geojson
     $results[$r["name"]] = array(
@@ -45,20 +50,22 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     );
 
     // Look through all the formations to find any overlapping provice names so the grouping will work
-    foreach($response as $fname => $finfo) {
+    foreach ($response as $fname => $finfo) {
       // Keep all the formations in a flat array so we can create the geojson from them
       $allformations = array_merge($allformations, array($finfo));
       $p = $finfo->province;
-      if(!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
+      if (!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
       $multiprovinces = explode(", ", $p);
       $overlapCount = 0; // counts number of overlaps
-      foreach($multiprovinces as $oneprovince) {
+      foreach ($multiprovinces as $oneprovince) {
         $results[$r["name"]]["groupbyprovince"][$oneprovince]["formations"][$fname] = $finfo; 
 
         // Figure out which periods overlap this formation
         // periodsDate comes from constants.php
-        foreach($periodsDate as $searchperiod) {
-          if(stripos($finfo->period, $searchperiod["period"]) === false) continue;
+        foreach ($periodsDate as $searchperiod) {
+          if (stripos($finfo->period, $searchperiod["period"]) === false) {
+            continue;
+          }
           $results[$r["name"]]["groupbyprovince"][$oneprovince]["groupbyperiod"][$searchperiod["period"]][$fname] = $finfo;
         }
       }
@@ -69,10 +76,10 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   //--------------------------------
   // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
   $midAge = ($_REQUEST["agefilterstart"] +  $_REQUEST["agefilterend"]) / 2;
-  if(isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])){
+  if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
     $filteredformations = array();
-    foreach($allformations as $f) {
-      if ($midAge <= $f->begAge ||  $midAge >= $f->endAge) {
+    foreach ($allformations as $f) {
+      if ($midAge <= $f->begAge || $midAge >= $f->endAge) {
         array_push($filteredformations, $f);
       }
     }
@@ -82,7 +89,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   //----------------------------------------------
   // Generate the merged geojson:
   $recongeojson = createGeoJSONForFormations($allformations);
-
+  
   //----------------------------------------------
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
@@ -91,15 +98,15 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$midAge.$_REQUEST["selectModel"];
     } else {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
-    }      
+    }
     
     $outdirhash = md5($toBeHashed);
     // outdirname is what pygplates should see
-    switch($_REQUEST["selectModel"]) {
+    switch ($_REQUEST["selectModel"]) {
       case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
       case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
       case  "Scotese": $outdirname = "livedata/scotese/$outdirhash"; break;
-      default:         $outdirname = "livedata/unknown/$outdirhash"; 
+      default:         $outdirname = "livedata/unknown/$outdirhash"; break;
     }
 
     // and php is running one level up:
@@ -131,12 +138,12 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 $formaction = "general.php"; ?>
 <link rel="stylesheet" href="generalStyling.css">
 
-<?php include("navBar.php"); /* navBar will set $period for us */?>
+<?php include("navBar.php"); /* navBar will set $period for us */ ?>
 
-<h2 align="center" style="color: blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
-<?php include("generalSearchBar.php");?>
+<h2 style="text-align: center; color: blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
+<?php include("generalSearchBar.php"); ?>
 
-<div style="display: flex; flex-direction: column;"><?php
+<div style="display: flex; flex-direction: column;"> <?php
   $sorted = array();
   
   // get all of the associated stage data 
@@ -145,7 +152,7 @@ $formaction = "general.php"; ?>
   $storedStage = "none";
   $count = 0; // used for indexing through the stageConversion array
 
-  foreach($info as $element) {
+  foreach ($info as $element) {
     foreach($element as $key => $val) {
       if($key == "stage") {
         array_push($stageConversion, array($val => "none"));
@@ -200,7 +207,7 @@ $formaction = "general.php"; ?>
           .
        */
     
-      foreach($results as $regionname => $regioninfo) {?>
+      foreach($results as $regionname => $regioninfo) { ?>
         <div class="formation-container">
           <h3 class="region-title"><?=$regionname?></h3>
           <hr>
@@ -220,10 +227,8 @@ $formaction = "general.php"; ?>
                       foreach($formations as $fname => $finfo) {
                         $finfoArr = json_decode(json_encode($finfo), true); 
                         //print_r($finfoArr['geojson']);
-                        
                         ?>
-                        <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button">
-                        <?php 
+                        <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button"> <?php 
                           //if geoJSON exists 
                           if($finfoArr['geojson'] ) { ?>
                              <div style="padding-right: 10px; font-size:13px;">&#127758</div>
@@ -241,10 +246,8 @@ $formaction = "general.php"; ?>
       }
     } /* end else */
 
-    if ($timedout) {
-      ?>NOTE: Timed out awaiting external image creation, had to re-start<?php
+    if ($timedout) { ?>
+      NOTE: Timed out awaiting external image creation, had to re-start <?php
     }
-  } /* end did search if */
-
-?></div>
-
+  } /* end did search if */ ?>
+</div>

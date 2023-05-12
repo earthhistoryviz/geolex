@@ -8,3 +8,4 @@ wells/*
 !wells/wells_pic
 wells/wells_pic/*
 OVERRIDE_*
+livedata/

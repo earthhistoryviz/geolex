@@ -6,21 +6,19 @@ include_once("TimescaleLib.php");
 <html>
 
 <style>
-    #searchbar {
-        border: 3px solid #CC99FF;
-        height: 40px;
-        width: 700px;
-        
-    }
-    #submitbtn1, #submitbtn2, #submitbtn3{
-        height: 40px;
-        border: 3px solid #000000;
-    }
-
-    .search-container{
-  text-align: center;
-        margin-top: 10px;
-    }
+  #searchbar {
+    border: 3px solid #CC99FF;
+    height: 40px;
+    width: 700px;
+  }
+  #submitbtn1, #submitbtn2, #submitbtn3 {
+    height: 40px;
+    border: 3px solid #000000;
+  }
+  .search-container {
+    text-align: center;
+    margin-top: 10px;
+  }
 </style>
 
 <?php
@@ -31,7 +29,7 @@ include_once("TimescaleLib.php");
   // We need to clean up the html tags from the periods and provinces to get a canonical name
   while ($row = mysqli_fetch_array($result)) {
     foreach (array("province", "period") as $v) {
-      //$canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
+      // $canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
       $canonical = trim($canonical);
       $canonical = strtoupper($canonical);
       $canonical = explode(",", $canonical);
@@ -60,13 +58,17 @@ include_once("TimescaleLib.php");
       <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
       
       <br><br>
+      
+      <?php
+        $selected_values = $_REQUEST['filterregion'] ?? [];
+      ?>
 
       Search Region 
-      <select name="filterregion">
-        <option value="All" <?php echo (isset($_REQUEST['filterregion']) && $_REQUEST['filterregion'] == 'All') ? 'selected' : ''; ?>>All</option>
-        <?php foreach($regions as $r) {?>
-          <option value="<?=$r["name"]?>" <?php echo (isset($_REQUEST['filterregion']) && $_REQUEST['filterregion'] == $r["name"]) ? 'selected' : ''; ?>><?=$r["name"]?></option>
-        <?php }?>
+      <select name="filterregion[]" multiple> <?php
+        foreach($regions as $r) {
+          $selected = in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
+          <option value="<?=$r["name"]?>" <?=$selected?>><?=$r["name"]?></option> <?php
+        } ?>
       </select>
 
       <div id="searchcontainer" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
@@ -88,16 +90,15 @@ include_once("TimescaleLib.php");
           <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
         </div>
       </div>
-
     </form>
   </div>
 
   <script type="text/javascript">
     function verify() {
-      if (document.getElementById("searchbar").value === ""){
+      if (document.getElementById("searchbar").value === "") {
         document.getElementById("submitbtn1").disabled = true;
       }
-      else{
+      else {
         document.getElementById("submitbtn1").disabled = false;
       }
     }
@@ -118,36 +119,37 @@ include_once("TimescaleLib.php");
 
       if (chosen == "Period") {
         var periodHTML = 
-          "<select id='selectPeriod' name='filterperiod' onchange='changePeriod()'>\
-            <option value='All' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option>\
-      <?php foreach($periodsDate as $p => $d) {
-               if($p) {?>\
-           <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?> (<?=number_format($d["begDate"], 2)?> - <?=number_format($d["endDate"], 2)?>)</option>\
-               <?php 
-         } 
-            }?>\
-          </select>\
-          and Stage\
-          <div id='selectStage' style='padding: 5px; display: inline-block;'>\
-            <select id='filterstage' name='filterstage' disabled>\
-              <option value='All'>--Select Period First--</option>\
-            </select>\
-          </div>\
-          <input id='begDate' name='agefilterstart' type='hidden' value=''>\
+          "<select id='selectPeriod' name='filterperiod' onchange='changePeriod()'> \
+            <option value='All' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option> \
+          <?php
+          foreach ($periodsDate as $p => $d) {
+            if ($p) { ?> \
+              <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?> (<?=number_format($d["begDate"], 2)?> - <?=number_format($d["endDate"], 2)?>)</option> \
+            <?php 
+            } 
+          } ?> \
+          </select> \
+          and Stage \
+          <div id='selectStage' style='padding: 5px; display: inline-block;'> \
+            <select id='filterstage' name='filterstage' disabled> \
+              <option value='All'>--Select Period First--</option> \
+            </select> \
+          </div> \
+          <input id='begDate' name='agefilterstart' type='hidden' value=''> \
           <input id='endDate' name='agefilterend' type='hidden' value=''>";
         searchForm.innerHTML = periodHTML;
 
-  // To avoid a UI bug where switching back from Date/Date Range search to period search will cause the stage selection box to be grayed out 
+        // To avoid a UI bug where switching back from Date/Date Range search to period search will cause the stage selection box to be grayed out 
         changePeriod();
       } else if (chosen == "Date") {
         var dateHTML = 
-          "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>\
+          "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'> \
           <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = dateHTML;
       } else if (chosen == "Date Range") {
         var rangeHTML = 
-          "Beginning Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'>\
-          Ending Date: <input id='endDate' type='number' style='width: 90px' name='agefilterend' min='0' value='<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>'>\
+          "Beginning Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'> \
+          Ending Date: <input id='endDate' type='number' style='width: 90px' name='agefilterend' min='0' value='<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>'> \
           <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = rangeHTML;
       }
@@ -171,9 +173,9 @@ include_once("TimescaleLib.php");
       /* When Period = All, Stage has nothing */
       if (chosen == "All") {
         var AllHTML = 
-        "<select id='filterstage' name='filterstage' disabled>\
-    <option value='All'>--Select Period First--</option>\
-        </select>";
+          "<select id='filterstage' name='filterstage' disabled> \
+            <option value='All'>--Select Period First--</option> \
+          </select>";
         stageBox.innerHTML = AllHTML;
         /* Since Stage filter is not used, both Dates are set to empty. */
         var begDate = document.getElementById("begDate");
@@ -182,8 +184,8 @@ include_once("TimescaleLib.php");
         endDate.value = '';
       } else { // When a Period is selected
         var stageHTML = "<select id='filterstage' name='filterstage' onchange='stageToDate()'>";
-  var rowIdx;
-  stageHTML = stageHTML + "<option value='All'>All</option>";
+        var rowIdx;
+        stageHTML = stageHTML + "<option value='All'>All</option>";
         var prev_series = false;            
         for (rowIdx = 0; rowIdx < timescale.length; rowIdx++) {
           if (timescale[rowIdx]["period"].toLowerCase() === chosen.toLowerCase()) { // Ignoring case to prevent errors from database
@@ -193,10 +195,10 @@ include_once("TimescaleLib.php");
               stageHTML += "<option value='" + cur_series + "'"
                 + (seriesselected ? ' selected' : '') 
                 + ">" 
-                  + cur_series 
-                  + " (" + epochDate[cur_series]["begDate"].toFixed(2) 
-                  + " - " 
-                  + epochDate[cur_series]["endDate"].toFixed(2) 
+                + cur_series 
+                + " (" + epochDate[cur_series]["begDate"].toFixed(2) 
+                + " - " 
+                + epochDate[cur_series]["endDate"].toFixed(2) 
                 + ")</option>";
             }
             prev_series = cur_series;
@@ -217,8 +219,8 @@ include_once("TimescaleLib.php");
         stageHTML += "</select>";
         stageBox.innerHTML = stageHTML;
 
-  // To make sure that the initial selection of "All" takes effect in URL as well
-  stageToDate();
+        // To make sure that the initial selection of "All" takes effect in URL as well
+        stageToDate();
       }
     }
 
@@ -232,7 +234,6 @@ include_once("TimescaleLib.php");
       /* Epoch Date lookup table */
       var epochDate = <?php echo json_encode($epochDate); ?>;
 
-
       /* If user selected option All for stage, we use the begDate and endDate of the period selected */
       if (input === "All" && lithoChosen === "") {
         var begDate = document.getElementById("begDate");
@@ -240,7 +241,7 @@ include_once("TimescaleLib.php");
         var endDate = document.getElementById("endDate");
         endDate.value = periodsDate[periodChosen]["endDate"];
 
-  return;
+        return;
       }
 
       /* Convert entered Stage to corresponding Start and End Date */
@@ -254,13 +255,13 @@ include_once("TimescaleLib.php");
           var endDate = document.getElementById("endDate");
           endDate.value = timescale[rowIdx]["top"];
           break;
-  } else if (timescale[rowIdx]["series"].toLowerCase() === input.toLowerCase()) { // If epoch matches
-    var begDate = document.getElementById("begDate");
-    begDate.value = epochDate[timescale[rowIdx]["series"]]["begDate"];
-    var endDate = document.getElementById("endDate");
-    endDate.value = epochDate[timescale[rowIdx]["series"]]["endDate"];
-    break;
-  }
+        } else if (timescale[rowIdx]["series"].toLowerCase() === input.toLowerCase()) { // If epoch matches
+          var begDate = document.getElementById("begDate");
+          begDate.value = epochDate[timescale[rowIdx]["series"]]["begDate"];
+          var endDate = document.getElementById("endDate");
+          endDate.value = epochDate[timescale[rowIdx]["series"]]["endDate"];
+          break;
+        }
       }
     }
 
@@ -273,6 +274,5 @@ include_once("TimescaleLib.php");
     window.onload = onLoad();
 
   </script>
-
 </body>
 </html>
