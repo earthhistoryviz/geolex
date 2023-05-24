@@ -10,12 +10,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   $regionstosearch = array();
 
-  // foreach($regions as $r) {
-  //   if ($r["name"] == $_REQUEST["filterregion"] || $_REQUEST["filterregion"] == "All") {
-  //     array_push($regionstosearch, $r);
-  //   }
-  // }
-
   foreach ($regions as $r) {
     //if ($r["name"] == $_REQUEST["filterregion"][0]) {
     if (in_array($r["name"], $_REQUEST["filterregion"])) {
@@ -29,7 +23,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   foreach ($regionstosearch as $r) {
     // Get the info about the matched formations from the external API:
-    $url = $r["searchurl"] . "?searchquery="
+    $url = $r["searchurl"]."?searchquery="
       .$_REQUEST["search"]."&periodfilter="
       .$_REQUEST["filterperiod"]."&agefilterstart="
       .$_REQUEST["agefilterstart"]."&agefilterend="
@@ -54,11 +48,13 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       // Keep all the formations in a flat array so we can create the geojson from them
       $allformations = array_merge($allformations, array($finfo));
       $p = $finfo->province;
-      if (!$p || strlen(trim($p)) < 1) $p = "Unknown Province";
+      if (!$p || strlen(trim($p)) < 1) {
+        $p = "Unknown Province";
+      }
       $multiprovinces = explode(", ", $p);
       $overlapCount = 0; // counts number of overlaps
       foreach ($multiprovinces as $oneprovince) {
-        $results[$r["name"]]["groupbyprovince"][$oneprovince]["formations"][$fname] = $finfo; 
+        $results[$r["name"]]["groupbyprovince"][$oneprovince]["formations"][$fname] = $finfo;
 
         // Figure out which periods overlap this formation
         // periodsDate comes from constants.php
@@ -75,7 +71,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   //--------------------------------
   // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
-  $midAge = ($_REQUEST["agefilterstart"] +  $_REQUEST["agefilterend"]) / 2;
+  $midAge = ($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"]) / 2;
   if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
     $filteredformations = array();
     foreach ($allformations as $f) {
@@ -89,7 +85,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   //----------------------------------------------
   // Generate the merged geojson:
   $recongeojson = createGeoJSONForFormations($allformations);
-  
+
   //----------------------------------------------
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
@@ -99,20 +95,22 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     } else {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
     }
-    
+
     $outdirhash = md5($toBeHashed);
     // outdirname is what pygplates should see
     switch ($_REQUEST["selectModel"]) {
-      case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
+      case  "Default": $outdirname = "livedata/default/$outdirhash";  break;
       case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
-      case  "Scotese": $outdirname = "livedata/scotese/$outdirhash"; break;
-      default:         $outdirname = "livedata/unknown/$outdirhash"; break;
+      case  "Scotese": $outdirname = "livedata/scotese/$outdirhash";  break;
+      default:         $outdirname = "livedata/unknown/$outdirhash";  break;
     }
 
     // and php is running one level up:
     $outdirname_php = "pygplates/$outdirname";
     $initial_creation_outdir = false; // did we have to make the output hash directory name?
-    if ($_REQUEST["debug"]) $initial_creation_outdir = true;
+    if ($_REQUEST["debug"]) {
+      $initial_creation_outdir = true;
+    }
 
     if (!file_exists($outdirname_php)) {
       $initial_creation_outdir = true;
@@ -130,8 +128,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       }
       file_put_contents($reconfilename, $recongeojson);
     }
-  } 
-
+  }
 }
 
 /* This is necessary to get generalSearchBar to send things back to us */
@@ -145,8 +142,8 @@ $formaction = "general.php"; ?>
 
 <div style="display: flex; flex-direction: column;"> <?php
   $sorted = array();
-  
-  // get all of the associated stage data 
+
+  // get all of the associated stage data
   $info = parseDefaultTimescale();
   $stageConversion = array();
   $storedStage = "none";
@@ -165,7 +162,7 @@ $formaction = "general.php"; ?>
     }
   }
 
-  $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB 
+  $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
   if ($didsearch) {
     if (count($results) < 0) {
       echo "No results found.";
@@ -177,11 +174,12 @@ $formaction = "general.php"; ?>
             a. no End Date
             b. Start Date == End Date
        */
-      if ($_REQUEST[agefilterstart] != "" || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") {
-        ?><div class="reconstruction"><?php 
-        include_once("./makeButtons.php");
-        // makeButtons.php I think outputs an extra div, hence why no closing div here
+      if ($_REQUEST[agefilterstart] != "" || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") { ?>
+        <div class="reconstruction"> <?php
+          include_once("./makeButtons.php"); ?>
+        </div> <?php
       }
+
       /*
         Show all returned formations in following format:
           Region
@@ -199,44 +197,39 @@ $formaction = "general.php"; ?>
           .
           .
           .
-        
+
           Region
           ----------
           .
           .
           .
-       */
-    
-      foreach($results as $regionname => $regioninfo) { ?>
+      */
+      foreach ($results as $regionname => $regioninfo) { ?>
         <div class="formation-container">
           <h3 class="region-title"><?=$regionname?></h3>
           <hr>
           <div> <?php
             $sortByPeriod = array();
-            foreach($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
-              <hr> 
+            foreach ($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
+              <hr>
               <h3><?=$province?></h3>
               <div class="province-container"> <?php
                 foreach($periodsDate as $p) {
                   foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
-                    if( $pname !== $p["period"]) continue; ?> 
+                    if( $pname !== $p["period"]) continue; ?>
                     <h5><?=$pname?></h5>
                     <div class="period-container"> <?php
                       $geojsonIndex = 0;
-                               
                       foreach($formations as $fname => $finfo) {
-                        $finfoArr = json_decode(json_encode($finfo), true); 
-                        //print_r($finfoArr['geojson']);
-                        ?>
-                        <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button"> <?php 
-                          //if geoJSON exists 
-                          if($finfoArr['geojson'] ) { ?>
-                             <div style="padding-right: 10px; font-size:13px;">&#127758</div>
-                             <?php } ?>     
+                        $finfoArr = json_decode(json_encode($finfo), true); ?>
+                        <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button"> <?php
+                          if ($finfoArr['geojson']) { // if geoJSON exists ?>
+                            <div style="padding-right: 10px; font-size:13px;">&#127758</div> <?php
+                          } ?>
                           <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
-                        </div> <?php 
+                        </div> <?php
                       } ?>
-                    </div> <?php 
+                    </div> <?php
                   }
                 } ?>
               </div> <?php

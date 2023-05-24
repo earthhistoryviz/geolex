@@ -35,7 +35,7 @@ if ($_REQUEST["generateImage"] == "1") {
   // a) we had to make the hash folder because it didn't exist, or
   // b) we timed out (try again)
   if ($initial_creation_outdir) {
-    switch($_REQUEST["selectModel"]) {
+    switch ($_REQUEST["selectModel"]) {
       case "Default":
         $cmd = "cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname 2>&1";
         $hello = exec($cmd, $output, $ending);
@@ -44,7 +44,7 @@ if ($_REQUEST["generateImage"] == "1") {
         // echo "Python returned ($ending): <pre>";
         // print_r($output);
 
-        if($ending > 0) {
+        if ($ending > 0) {
           echo "Python returned ($ending): <pre>";
           print_r($output);
           echo " And here is the command that generated it: $cmd</pre>";
@@ -58,7 +58,7 @@ if ($_REQUEST["generateImage"] == "1") {
         // echo "Python returned ($ending): <pre>";
         // print_r($output);
 
-        if($ending > 0) {
+        if ($ending > 0) {
           echo "Python returned ($ending): <pre>";
           print_r($output);
           echo " And here is the command that generated it: $cmd</pre>";
@@ -72,26 +72,23 @@ if ($_REQUEST["generateImage"] == "1") {
         // echo "Python returned ($ending): <pre>";
         // print_r($output);
 
-        if($ending > 0) {
+        if ($ending > 0) {
           echo "Python returned ($ending): <pre>";
           print_r($output);
           echo " And here is the command that generated it: $cmd</pre>";
         }
         break;
-
-        // TODO: Why do we need a second break here???
-        break;
     }
   } ?>
 
   <div id="reconImg" style="text-align: center;"> <?php
-  if($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All") { ?>
+  if ($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterstage"] != "All") { ?>
     <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterstage"] ?> </figcaption><?php
-  } else if($_REQUEST["searchtype"] == "Period") { ?>
+  } else if ($_REQUEST["searchtype"] == "Period") { ?>
     <figcaption style="text-align: center; font-size: 45px;"> Reconstruction for <?=$_REQUEST[recondate_description]?> of <?= $_REQUEST["filterperiod"] ?> </figcaption><?php
   }
 
-  if(file_exists($outdirname_php."/final_image.png")) { ?>
+  if (file_exists($outdirname_php."/final_image.png")) { ?>
     <div>
       <a href="<?=$outdirname_php?>/final_image.png">
         <img src="<?=$outdirname_php?>/final_image.png" style="text-align:center" width="80%"/>
@@ -106,9 +103,9 @@ if ($_REQUEST["generateImage"] == "1") {
     // createImage();
     echo "No available reconstruction image";
   }
-} else if($_REQUEST["generateImage"] != "2") {
+} else if ($_REQUEST["generateImage"] != "2") {
   // User selection of reconstruction model
-  if(isset($_REQUEST["agefilterstart"])) {
+  if (isset($_REQUEST["agefilterstart"])) {
     $baseraw = $_REQUEST["agefilterstart"];
     $basepretty = number_format($baseraw, 2);
   } else {
