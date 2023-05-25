@@ -11,7 +11,6 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   $regionstosearch = array();
 
   foreach ($regions as $r) {
-    //if ($r["name"] == $_REQUEST["filterregion"][0]) {
     if (in_array($r["name"], $_REQUEST["filterregion"])) {
       array_push($regionstosearch, $r);
     }
@@ -150,12 +149,12 @@ $formaction = "general.php"; ?>
   $count = 0; // used for indexing through the stageConversion array
 
   foreach ($info as $element) {
-    foreach($element as $key => $val) {
-      if($key == "stage") {
+    foreach ($element as $key => $val) {
+      if ($key == "stage") {
         array_push($stageConversion, array($val => "none"));
         $storedStage = $val;
       }
-      if($key == "color") {
+      if ($key == "color") {
         $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
         $count = $count + 1;
       }
@@ -164,8 +163,10 @@ $formaction = "general.php"; ?>
 
   $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
   if ($didsearch) {
-    if (count($results) < 0) {
-      echo "No results found.";
+    if (count($allformations) == 0) { ?>
+      <div class="no-results-message">
+        <h3 style="text-align: center;">No formations found. <?=$synonSearch?></h3>
+      </div> <?php
     } else {
       /*
         Provide option for showing reconstruction image when using:
@@ -209,20 +210,21 @@ $formaction = "general.php"; ?>
           <h3 class="region-title"><?=$regionname?></h3>
           <hr>
           <div> <?php
-            $sortByPeriod = array();
             foreach ($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
               <hr>
               <h3><?=$province?></h3>
               <div class="province-container"> <?php
-                foreach($periodsDate as $p) {
-                  foreach($provinceinfo["groupbyperiod"] as $pname => $formations) {
-                    if( $pname !== $p["period"]) continue; ?>
+                foreach ($periodsDate as $p) {
+                  foreach ($provinceinfo["groupbyperiod"] as $pname => $formations) {
+                    if ($pname !== $p["period"]) {
+                      continue;
+                    } ?>
                     <h5><?=$pname?></h5>
                     <div class="period-container"> <?php
                       $geojsonIndex = 0;
-                      foreach($formations as $fname => $finfo) {
+                      foreach ($formations as $fname => $finfo) {
                         $finfoArr = json_decode(json_encode($finfo), true); ?>
-                        <div style="background-color:rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button"> <?php
+                        <div style="background-color: rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button"> <?php
                           if ($finfoArr['geojson']) { // if geoJSON exists ?>
                             <div style="padding-right: 10px; font-size:13px;">&#127758</div> <?php
                           } ?>

@@ -22,34 +22,34 @@ include_once("TimescaleLib.php");
 </style>
 
 <?php
-  // Get all the unique periods and provinces
-  $sql = "SELECT name, period, province, lithology FROM formation";
-  $result = mysqli_query($conn, $sql);
-  $filters = array();
-  // We need to clean up the html tags from the periods and provinces to get a canonical name
-  while ($row = mysqli_fetch_array($result)) {
-    foreach (array("province", "period") as $v) {
-      // $canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
-      $canonical = trim($canonical);
-      $canonical = strtoupper($canonical);
-      $canonical = explode(",", $canonical);
-      foreach ($canonical as $c) {
-        $c = trim($c);
-        if (strlen($c) > 0) {
-          $filters[$v][$c] = true;
-        }
+// Get all the unique periods and provinces
+$sql = "SELECT name, period, province, lithology FROM formation";
+$result = mysqli_query($conn, $sql);
+$filters = array();
+// We need to clean up the html tags from the periods and provinces to get a canonical name
+while ($row = mysqli_fetch_array($result)) {
+  foreach (array("province", "period") as $v) {
+    // $canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
+    $canonical = trim($canonical);
+    $canonical = strtoupper($canonical);
+    $canonical = explode(",", $canonical);
+    foreach ($canonical as $c) {
+      $c = trim($c);
+      if (strlen($c) > 0) {
+        $filters[$v][$c] = true;
       }
     }
   }
+}
 
-  if (!$formaction) {
-    $formaction = "searchFm.php";
-  }
+if (!$formaction) {
+  $formaction = "searchFm.php";
+}
 
-  /* For Stage filter conversion */
-  $timescale = parseDefaultTimescale();
+/* For Stage filter conversion */
+$timescale = parseDefaultTimescale();
 
-  include_once("constants.php"); // gets us $periods and $regions
+include_once("constants.php"); // gets us $periods and $regions
 ?>
 
 <body>
@@ -272,7 +272,6 @@ include_once("TimescaleLib.php");
     }
 
     window.onload = onLoad();
-
   </script>
 </body>
 </html>
