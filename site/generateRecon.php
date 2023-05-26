@@ -44,11 +44,11 @@ if ($_REQUEST["generateImage"] == "1") {
         // echo "Python returned ($ending): <pre>";
         // print_r($output);
 
-        if ($ending > 0) {
-          echo "Python returned ($ending): <pre>";
-          print_r($output);
-          echo " And here is the command that generated it: $cmd</pre>";
-        }
+        // if ($ending > 0) {
+        //   echo "Python returned ($ending): <pre>";
+        //   print_r($output);
+        //   echo " And here is the command that generated it: $cmd</pre>";
+        // }
         break;
       case "Marcilly":
         $cmd = "cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
@@ -58,11 +58,11 @@ if ($_REQUEST["generateImage"] == "1") {
         // echo "Python returned ($ending): <pre>";
         // print_r($output);
 
-        if ($ending > 0) {
-          echo "Python returned ($ending): <pre>";
-          print_r($output);
-          echo " And here is the command that generated it: $cmd</pre>";
-        }
+        // if ($ending > 0) {
+        //   echo "Python returned ($ending): <pre>";
+        //   print_r($output);
+        //   echo " And here is the command that generated it: $cmd</pre>";
+        // }
         break;
       case "Scotese":
         $cmd = "cd pygplates && ./ScoteseModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
@@ -72,11 +72,11 @@ if ($_REQUEST["generateImage"] == "1") {
         // echo "Python returned ($ending): <pre>";
         // print_r($output);
 
-        if ($ending > 0) {
-          echo "Python returned ($ending): <pre>";
-          print_r($output);
-          echo " And here is the command that generated it: $cmd</pre>";
-        }
+        // if ($ending > 0) {
+        //   echo "Python returned ($ending): <pre>";
+        //   print_r($output);
+        //   echo " And here is the command that generated it: $cmd</pre>";
+        // }
         break;
     }
   } ?>
