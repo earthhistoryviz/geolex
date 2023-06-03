@@ -5,7 +5,7 @@ $searchquery = addslashes($_REQUEST['searchquery']);
 $periodfilter = addslashes($_REQUEST['periodfilter']);
 $provincefilter = addslashes($_REQUEST['provincefilter']);
 $agefilterstart = addslashes($_REQUEST['agefilterstart']);
-$agefilterend =  addslashes($_REQUEST['agefilterend']);
+$agefilterend = addslashes($_REQUEST['agefilterend']);
 $lithofilter = addslashes($_REQUEST['lithoSearch']);
 
 if (!$searchquery) {
@@ -36,7 +36,7 @@ if (strcmp($lithofilter, "") === 0) {
   $lithofilter_lower = strtolower($lithofilter);
 
   if (strpos($lithofilter_lower, ' and ') !== false) { // if the user wants to search with 'and'
-    $lithofilter_array = (explode(" and ", $lithofilter_lower));
+    $lithofilter_array = explode(" and ", $lithofilter_lower);
     foreach ($lithofilter_array as $value) {
       $sql .= "AND lithology LIKE '%$value%' ";
     }
@@ -127,7 +127,7 @@ while ($row = mysqli_fetch_array($result)) {
     $output["features"][0]["properties"]["NAME"] = $name;
     $output["features"][0]["properties"]["FROMAGE"] = null;
     $output["features"][0]["properties"]["TOAGE"] = null;
-    $output =  json_encode($output["features"][0], JSON_PRETTY_PRINT);
+    $output = json_encode($output["features"][0], JSON_PRETTY_PRINT);
   } else {
     // condition 4 of geojson processing
     $output = json_encode($output, JSON_PRETTY_PRINT);

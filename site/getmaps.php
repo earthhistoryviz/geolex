@@ -1,8 +1,18 @@
 <?php
 
 global $maps;
-$dir = dirname(__FILE__) . "/Mapinfo";
-$maps  = glob("$dir/*_Country_Map.php");
+$dir = dirname(__FILE__)."/Mapinfo";
+$maps = glob("$dir/*_Country_Map.php");
+
+global $mapperiods;
+$unsorted_periods = array_map('mapPeriodFromFilename', $maps);
+$mapperiods = array(count($unsorted_periods));
+
+foreach ($unsorted_periods as $up) {
+  $order = (int)($up["order"]);
+  $mapperiods[$order] = $up;
+}
+ksort($mapperiods); // they are still in insertion order until you re-sort by numeric keys
 
 function mapPeriodFromFilename($name) {
   global $dir;
@@ -15,23 +25,13 @@ function mapPeriodFromFilename($name) {
     "filename" => $name,
   );
 }
-global $mapperiods;
 
-$unsorted_periods = array_map('mapPeriodFromFilename', $maps);
-$mapperiods = array(count($unsorted_periods));
-foreach ($unsorted_periods as $up) {
-  $order = (int)($up["order"]);
-  $mapperiods[$order] = $up;
-}
-ksort($mapperiods); // they are still in insertion order until you re-sort by numeric keys
 function mapForPeriod($period) {
   global $mapperiods;
-  foreach($mapperiods as $mp) {
+  foreach ($mapperiods as $mp) {
     if (strtoupper(trim($period)) == strtoupper(trim($mp["period"]))) {
       return $mp["filename"];
     }
   }
   return '';
-}
-
-?>
+} ?>
