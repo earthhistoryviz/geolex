@@ -165,7 +165,7 @@ $formaction = "general.php"; ?>
   if ($didsearch) {
     if (count($allformations) == 0) { ?>
       <div class="no-results-message">
-        <h3 style="text-align: center;">No formations found. <?=$synonSearch?></h3>
+        <h3 style="text-align: center;">No formations found.</h3>
       </div> <?php
     } else {
       /*
@@ -224,9 +224,9 @@ $formaction = "general.php"; ?>
                       $geojsonIndex = 0;
                       foreach ($formations as $fname => $finfo) {
                         $finfoArr = json_decode(json_encode($finfo), true); ?>
-                        <div style="background-color: rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class = "button"> <?php
+                        <div style="background-color: rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class="button"> <?php
                           if ($finfoArr['geojson']) { // if geoJSON exists ?>
-                            <div style="padding-right: 10px; font-size:13px;">&#127758</div> <?php
+                            <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
                           } ?>
                           <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
                         </div> <?php

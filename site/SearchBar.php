@@ -56,7 +56,7 @@ function selectFilter($v) { // TODO: keep last selected option after submit
 } ?>
 
 <body>
-  <div class="search-container">
+  <div class="search-container" style="padding-bottom: 20px;">
     <form id="form" action="searchFm.php" method="request">
       <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
       <input id="submitbtn1" type="submit" value="Submit" <?php if (!isset($_REQUEST['search'])) echo "disabled"; ?>>

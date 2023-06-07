@@ -3,7 +3,6 @@ global $conn;
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 $arr = array();
-$count = -1;
 $sql2 = "SELECT province FROM formation";
 $result = mysqli_query($conn, $sql2);
 $province_list = array_unique($result);
@@ -94,31 +93,29 @@ if (isset($_REQUEST['search'])) {
   // echo '<pre>'.$sql.'</pre>';
   /* ---------- Debugging ---------- */
 
-  $count = mysqli_num_rows($result);
+  $synonOutput = '';
   $noFormation = false;
-
-  if ($count == 0) {
-    $synonOutput = '';
-    
-    // if formation name is not found, search Synonymns
+  if (mysqli_num_rows($result) == 0) {    
+    // if formation name is not found, search Synonyms
     $sql = "SELECT * "
       ."FROM formation "
       ."WHERE type_locality LIKE '%$searchquery%' "
       ."AND period LIKE '%$periodfilter%' "
-      ."AND province LIKE '%$provincefilter%' "
-      ."AND NOT (beg_date < $agefilterend "
-      ."OR end_date > $agefilterstart) "
-      ."AND beg_date != '' "
-      ."AND end_date != '' ";
+      ."AND province LIKE '%$provincefilter%' ";
+    if ($agefilterstart != "") {
+      $sql .= "AND NOT (beg_date < $agefilterend "
+        ."OR end_date > $agefilterstart) "
+        ."AND beg_date != '' "
+        ."AND end_date != '' ";
+    }
     $result = mysqli_query($conn, $sql);
 
-    $count = mysqli_num_rows($result);
-    if ($count != 0) {
-      $synonOutput .= '<pre><h5>'.'No formations were found in the main Fm/Gr field...'.'</h5></pre>';
-      $synonOutput .= '<pre><h5>'.'However \''.$searchquery. '\' was found in Synonymns field and other occurences of Type Locality and Naming Field'.'</h5></pre>';
-      $synonOutput .= '<hr>';
+    if (mysqli_num_rows($result) != 0) {
+      $synonOutput .= "No formations were found in the main Fm/Gr field.<br>";
+      $synonOutput .= "However \"".$searchquery."\" was found in Synonyms field and other occurences of Type Locality and Naming Field.";
     } else {
       $noFormation = true;
+      $synonOutput .= "There are no formations found. Please search again.";
     }
   }
 
@@ -141,7 +138,6 @@ if (isset($_REQUEST['search'])) {
     ];
     array_push($arr, $nameObj);
     $formationLookup[$name] = $stage;
-    $output = '<h4>'.$name.'</h4>';
     $count++;
   }
 }
@@ -191,7 +187,7 @@ $storedStage = "none";
 $count = 0; // used for indexing through the stageConversion array
 foreach ($info as $element) {
   foreach ($element as $key => $val) {
-    if($key == "stage"){
+    if ($key == "stage") {
       array_push($stageConversion, array($val => "none"));
       $storedStage = $val;
     }
@@ -215,28 +211,28 @@ include("navBar.php");
 include("SearchBar.php");
 ?>
 
-<form method="post" style="padding-bottom: 20px;">
-  <input
-    type="submit"
-    style="color:#b75f02; border: 1px solid #b75f02; border-radius: 3px; font-size: 1em; box-shadow: 5px 5px 8px #888888; background-color: #FFFFFF;"
-    name="<?php echo $displayAlphabetButton ? 'alphabetButton' : 'timeButton'; ?>"
-    value="<?php echo $displayAlphabetButton ? 'Change to Alphabetical Listing' : 'Change to By-Age Listing'; ?>"
-  />
-</form>
-
 <div class="formation-container"> <?php
-  if ($count < 1) {
-    $output = '<h4>'.'Formation not found'.'</h4>';
-    print($output);
-  } else if ($noFormation && $lithofilter !== "") {
-    $output = '<h4>'.'There are no formations found with \''.$lithofilter. '\''.'</h4>';
-    print($output);
+  if ($noFormation) { ?>
+    <div class="no-results-message" style="text-align: center; padding-bottom: 20px; font-size: 20px">
+      <?=$synonOutput ?>
+    </div> <?php
   } else {
-    if ($synonOutput != '') {
-      $synonOutput .= '</br> ';
-      $synonOutput .= '</br> ';
-      print($synonOutput);
-    }
+    if ($synonOutput !== "") { ?>
+      <div class="synon-only-message" style="padding-bottom: 20px; font-size: 20px">
+        <?=$synonOutput ?>
+      </div> <?php
+    } ?>
+
+    <div class="change-order-button" style="padding-bottom: 20px; width: 100%">
+      <form method="post">
+        <input
+          type="submit"
+          style="color: #b75f02; border: 1px solid #b75f02; border-radius: 3px; font-size: 1em; box-shadow: 5px 5px 8px #888888; background-color: #FFFFFF;"
+          name="<?php echo $displayAlphabetButton ? 'alphabetButton' : 'timeButton'; ?>"
+          value="<?php echo $displayAlphabetButton ? 'Change to Alphabetical Listing' : 'Change to By-Age Listing'; ?>"
+        />
+      </form>
+    </div> <?php
 
     $geojsonIndex = 0;
     foreach ($newArr as $formation) { ?>
@@ -244,7 +240,7 @@ include("SearchBar.php");
         if ($newGeoArr[$geojsonIndex] !== "null") { ?>
           <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
         } ?>
-        <a href="displayInfo.php?formation=<?=$formation?>" target="_blank"><?=$formation?></a>
+        <a href="displayInfo.php?formation=<?=$formation?>" target="_blank"><?=$formation ?></a>
       </div> <?php
       $geojsonIndex++;
     }

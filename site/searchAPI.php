@@ -80,12 +80,19 @@ if ($count == 0) {
     ."FROM formation "
     ."WHERE type_locality LIKE '%$searchquery%' "
     ."AND period LIKE '%$periodfilter%' "
-    ."AND province LIKE '%$provincefilter%' "
-    ."AND NOT (beg_date < $agefilterend "
-    ."OR end_date > $agefilterstart) "
-    ."AND beg_date != '' "
-    ."AND end_date != '' ";
+    ."AND province LIKE '%$provincefilter%' ";
+  if ($agefilterstart != "") {
+    $sql .= "AND NOT (beg_date < $agefilterend "
+      ."OR end_date > $agefilterstart) "
+      ."AND beg_date != '' "
+      ."AND end_date != '' ";
+  }
   $result = mysqli_query($conn, $sql);
+
+  /* ---------- Debugging ---------- */
+  // echo '<pre>'."HERE'S THE SQL QUERY".'</pre>';
+  // echo '<pre>'.$sql.'</pre>';
+  /* ---------- Debugging ---------- */
 }
 
 $whileIter = 0; // checks if on the first run of the while loop for output file purposes
