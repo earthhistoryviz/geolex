@@ -175,7 +175,7 @@ $formaction = "general.php"; ?>
             a. no End Date
             b. Start Date == End Date
        */
-      if ($_REQUEST[agefilterstart] != "" || $_REQUEST[agefilterstart] != "" && $_REQUEST[agefilterend] == "") { ?>
+      if ($_REQUEST['agefilterstart'] != "" || $_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "") { ?>
         <div class="reconstruction"> <?php
           include_once("./makeButtons.php"); ?>
         </div> <?php

@@ -42,7 +42,7 @@ def lithoDictCreate():
 
 def pygplateReconstructions():
     print(outdirname)
-    input_geometries = pygplates.FeatureCollection(outdirname+'/recon.geojson')
+    input_geometries = pygplates.FeatureCollection(outdirname + '/recon.geojson')
 
     # static polygons are the 'partitioning features'
     static_polygons = pygplates.FeatureCollection('./config/shapes_static_polygons_Merdith_et_al.gpml')
@@ -56,7 +56,7 @@ def pygplateReconstructions():
     # partition features
     partitioned_geometries = pygplates.partition_into_plates(static_polygons, rotation_model, input_geometries, partition_method=pygplates.PartitionMethod.most_overlapping_plate)
 
-    pygplates.reconstruct(partitioned_geometries, rotation_model,outdirname + '/reconstructed_geom.gmt', age)
+    pygplates.reconstruct(partitioned_geometries, rotation_model, outdirname + '/reconstructed_geom.gmt', age)
 
     # Reconstruct the geometries
     pygplates.reconstruct(static_polygons, rotation_model, outdirname + '/reconstructed_static_polygons.gmt', age)
@@ -118,7 +118,7 @@ def plotting_shapes_and_lithology(patternList, patternDict):
     patternListIndex = 0 # index of the pattern Color in patternList of the formation to be plotted
 
     # reads all of the formation's coordinates except for the last one
-    with open(outdirname+'/reconstructed_geom.gmt', 'r') as f:
+    with open(outdirname + '/reconstructed_geom.gmt', 'r') as f:
         for data in f:
             data = data.rstrip()
             if bool(re.match(r'(^-?\d+.\d+ -?\d+.\d+)', data)): # only decimal numbers starting at the beginning of the line will be matched from the regex
@@ -137,7 +137,7 @@ def plotting_shapes_and_lithology(patternList, patternDict):
                         if len(patternList) == 0:
                             raise KeyError
 
-                        patternColor = (patternList[patternListIndex])
+                        patternColor = patternList[patternListIndex]
                         patternColor = patternDict[patternColor]
 
                     except KeyError:

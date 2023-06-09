@@ -14,7 +14,6 @@ import os
 
 user_age = float(sys.argv[1]) #this is the user's inputted age
 age_label = str(user_age) + ' Ma'
-grid = ""
 outdirname = sys.argv[2]
 filename = outdirname + "/reconstructed_geom.gmt"
 
@@ -67,12 +66,15 @@ def getPatternListFromGMTFile():
                 sections.append(list(group))
     for i in range(1, len(sections)):
         info = sections[i][0].replace('\"', '').split('|')
-        patternList.append((info[4].replace('\n', '')).lower())
-        
+        if len(info) == 5:
+            patternList.append((info[4].replace('\n', '')).lower())
+        else:
+            patternList.append('unknown')  
     return patternList
 
 def getGrid():
     corrected_age = 0
+    grid = ""
     
     if user_age == 0:
         grid = "Map01_PALEOMAP_6min_Holocene_0Ma.nc" 
@@ -87,7 +89,6 @@ def getGrid():
                 if (user_age <= float(row[1])) and (user_age >= float(row[2])):
                     grid = row[0]
                     corrected_age = float(row[1])
-                    print(corrected_age)
                     break
     
     if grid == "":
@@ -214,8 +215,8 @@ def labeling_shapes_with_names(patternList):
         for i in range(1, len(sections)):
             info = sections[i][0].replace('\"', '').split('|')
             co_or = sections[i][2].replace('\n', '').split(' ')
-            output[info[3]] = co_or
-
+            if len(info) == 5:
+                output[info[3]] = co_or
             if(len(patternList) <= 3):
                 fig.text(text=info[3], x=float(co_or[0]), y=float(co_or[1]), N=True, D="0/0.2c", font="7p,Helvetica-Bold,black")
 

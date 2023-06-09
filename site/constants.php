@@ -7,7 +7,7 @@ $timescale = parseDefaultTimescale();
 $periodsDate = array();
 $epochDate = array();
 
-foreach($timescale as $stage) {
+foreach ($timescale as $stage) {
   if (!array_key_exists($stage["period"], $periodsDate)) {
     $periodsDate[$stage["period"]] = array(
       "begDate" => $stage["base"],
@@ -56,17 +56,36 @@ $periods = array(
 );
  */
  
-$periodsOrdered = array(0 => "QUATERNARY", 1 => "NEOGENE", 2 => "PALEOGENE", 3 => "CRETACEOUS", 4 => "JURASSIC",
-	5 => "TRIASSIC", 6 => "PERMIAN", 7 => "CARBONIFEROUS", 8 => "DEVONIAN", 9 => "SILURIAN", 10 => "ORDOVICIAN",
-	11 => "CAMBRIAN", 12 => "EDIACARAN");	
+$periodsOrdered = array(
+  0 => "QUATERNARY",
+  1 => "NEOGENE",
+  2 => "PALEOGENE",
+  3 => "CRETACEOUS",
+  4 => "JURASSIC",
+	5 => "TRIASSIC",
+  6 => "PERMIAN",
+  7 => "CARBONIFEROUS",
+  8 => "DEVONIAN",
+  9 => "SILURIAN",
+  10 => "ORDOVICIAN",
+	11 => "CAMBRIAN",
+  12 => "EDIACARAN"
+);	
 
-$regions = array (
+$regions = array(
     array( "name" => "China", "searchurl" => "http://chinalex.geolex.org/searchAPI.php", "linkurl" => "http://chinalex.geolex.org/displayInfo.php"),
     array( "name" => "Indian Plate", "searchurl" => "http://indplex.geolex.org/searchAPI.php", "linkurl" => "http://indplex.geolex.org/displayInfo.php"),
     array( "name" => "Thailand", "searchurl" => "http://thailex.geolex.org/searchAPI.php", "linkurl" => "http://thailex.geolex.org/displayInfo.php"),
     array( "name" => "Vietnam", "searchurl" => "http://vietlex.geolex.org/searchAPI.php", "linkurl" => "http://vietlex.geolex.org/displayInfo.php"),
-    array( "name" => "Niger", "searchurl" => "http://nigerlex.geolex.org/searchAPI.php", "linkurl" => "http://nigerlex.geolex.org/displayInfo.php")
-  );
+    array( "name" => "Niger", "searchurl" => "http://nigerlex.geolex.org/searchAPI.php", "linkurl" => "http://nigerlex.geolex.org/displayInfo.php"),
+    array( "name" => "Malaysia", "searchurl" => "http://malaylex.geolex.org/searchAPI.php", "linkurl" => "http://malaylex.geolex.org/displayInfo.php"),
+    array( "name" => "Africa", "searchurl" => "http://africalex.geolex.org/searchAPI.php", "linkurl" => "http://africalex.geolex.org/displayInfo.php"),
+    array( "name" => "Belgium", "searchurl" => "http://belgiumlex.geolex.org/searchAPI.php", "linkurl" => "http://belgiumlex.geolex.org/displayInfo.php"),
+    array( "name" => "Middle East", "searchurl" => "http://mideastlex.geolex.org/searchAPI.php", "linkurl" => "http://mideastlex.geolex.org/displayInfo.php"),
+    array( "name" => "Panama", "searchurl" => "http://panamalex.geolex.org/searchAPI.php", "linkurl" => "http://panamalex.geolex.org/displayInfo.php"),
+    array( "name" => "Qatar", "searchurl" => "http://qatarlex.geolex.org/searchAPI.php", "linkurl" => "http://qatarlex.geolex.org/displayInfo.php"),
+    array( "name" => "South America", "searchurl" => "http://southamerlex.geolex.org/searchAPI.php", "linkurl" => "http://southamerlex.geolex.org/displayInfo.php")
+);
 if ($_SERVER["SERVER_NAME"] == "dev") {
   array_push($regions, array(
     "name" => "Dev", "searchurl" => "http://dev.geolex.org/searchAPI.php", "linkurl" => "http://dev.geolex.org/displayInfo.php"
