@@ -40,10 +40,14 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       "linkurl" => $r["linkurl"],
       "formations" => $response,
       "groupbyprovince" => array(),
+      "isSynonym" => false,
     );
 
     // Look through all the formations to find any overlapping provice names so the grouping will work
     foreach ($response as $fname => $finfo) {
+      if ($finfo->isSynonym) {
+        $results[$r["name"]]["isSynonym"] = true;
+      }
       // Keep all the formations in a flat array so we can create the geojson from them
       $allformations = array_merge($allformations, array($finfo));
       $p = $finfo->province;
@@ -207,8 +211,17 @@ $formaction = "general.php"; ?>
       */
       foreach ($results as $regionname => $regioninfo) { ?>
         <div class="formation-container">
-          <h3 class="region-title"><?=$regionname?></h3>
-          <hr>
+          <h3 class="region-title"><?=$regionname?></h3> <?php
+          if ($regioninfo["isSynonym"]) { ?>
+            <div class="synonym-message">
+              <h3>
+                No formation with name "<?=$_REQUEST["search"]?>" was found in this Region.
+                <br>
+                However, "<?=$_REQUEST["search"]?>" was found in Synonyms field and other occurences of Type Locality and Naming Field.
+              </h3>
+            </div><?php
+          } ?>
+          <br>
           <div> <?php
             foreach ($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
               <hr>
