@@ -423,7 +423,7 @@ function createReconstruction($searchType, $allgeoJSONs, $fmdata){
         $writtenGeoJSON = json_decode(json_encode($allgeoJSONs), True);
         file_put_contents($reconfilename, json_encode($allgeoJSONs));
         $finalPath = $outdirname_php. "/final_image.png";
-        $cmd = "cd pygplates && ./master_run_pygplates_pygmt.py ".$fmdata['beg_date']. " $outdirname ". "2>&1";
+        $cmd = "cd pygplates && ./DefaultModel.py ".$fmdata['beg_date']. " $outdirname ". "2>&1";
         //$hello = passthru($cmd, $output, $ending);
         //$hello = exec($cmd, $output, $ending);
         $hello = shell_exec($cmd);

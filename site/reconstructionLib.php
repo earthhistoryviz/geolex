@@ -175,7 +175,7 @@ if ($_REQUEST["generateImage"] == "1") {
 
 switch($_REQUEST["selectModel"]) {
         case "Default":
-          exec("cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname", $ending);
+          exec("cd pygplates && ./DefaultModel.py ".$_REQUEST['recondate']." $outdirname", $ending);
         break;
         case "Marcilly": 
           exec("cd pygplates && ./MarcillyModel.py ".$_REQUEST['recondate']." $outdirname", $ending);

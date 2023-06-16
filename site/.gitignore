@@ -1,6 +1,4 @@
 php_errors.log
-pygplates/livedata/*
-pygplates/Marcilly/*
 Mapinfo/*
 !Mapinfo/TEMPLATE.php
 wells/*

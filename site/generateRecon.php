@@ -37,7 +37,7 @@ if ($_REQUEST["generateImage"] == "1") {
   if ($initial_creation_outdir) {
     switch ($_REQUEST["selectModel"]) {
       case "Default":
-        $cmd = "cd pygplates && ./master_run_pygplates_pygmt.py ".$_REQUEST['recondate']." $outdirname 2>&1";
+        $cmd = "cd pygplates && ./DefaultModel.py ".$_REQUEST['recondate']." $outdirname 2>&1";
         $hello = exec($cmd, $output, $ending);
 
         // Sabrina's debugging
