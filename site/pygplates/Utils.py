@@ -5,6 +5,7 @@ import sys
 import pygmt
 import csv
 import numpy as np
+import re
 from Constants import (
     RECON_GEOM_FILE_SUFFIX,
     PATTERN_COLOR_CODE_FILE,
@@ -57,21 +58,32 @@ def parse_GMT_file(outdirname):
     pattern_list = []
     name_list = []
     coor_list = [[], []]
+    prev_name = ''
+    prev_pattern = ''
     for formation in contents:
-        sections = formation.splitlines()
-        # First line will be empty (trailing \n from >)
-        info = sections[1].replace('\"', '').split('|')
+        sections = formation.splitlines() # First line will be empty (trailing \n from >)
+        data_line_begin = 3
 
-        name_list.append(info[3])
+        info = sections[1]
+        if '|' in info:
+            info = info.replace('\"', '').split('|')
 
-        if len(info) == 5:
-            pattern_list.append(info[4].lower())
+            prev_name = info[3]
+            name_list.append(prev_name)
+
+            if len(info) >= 5:
+                prev_pattern = info[4].lower()
+            else:
+                prev_pattern = 'unknown'
+            pattern_list.append(prev_pattern)
         else:
-            pattern_list.append('unknown')
+            data_line_begin = 2
+            name_list.append(prev_name)
+            pattern_list.append(prev_pattern)
 
         x_coor = []
         y_coor = []
-        for line in sections[3:]:
+        for line in sections[data_line_begin:]:
             coords = line.rstrip().split(" ")
             x_coor.append(float(coords[0]))
             y_coor.append(float(coords[1]))
