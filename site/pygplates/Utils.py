@@ -5,10 +5,9 @@ import sys
 import pygmt
 import csv
 import numpy as np
-import re
 from Constants import (
-    RECON_GEOM_FILE_SUFFIX,
-    PATTERN_COLOR_CODE_FILE,
+    GEOM_FILE,
+    LITHO_COLOR_CODE_FILE,
 )
 
 
@@ -28,20 +27,21 @@ def create_litho_dict():
     Name and patterns are read from the "TSCreator_litho-pattern_to_GMT-fixed_pattern_code.csv" file created by Wen Du and Professor Ogg's TSC pattern code to pattern color code for GMT.
     All keys are lowercase.
     """
-    color_dict = {}
+    litho_dict = {}
+    
     try:
-        with open(PATTERN_COLOR_CODE_FILE, 'r') as csv_file:
+        with open(LITHO_COLOR_CODE_FILE, 'r') as csv_file:
             csv_reader = csv.reader(csv_file)
             # Skip headers
             next(csv_reader)
             next(csv_reader)
 
             for line in csv_reader:
-                color_dict[line[0].lower()] = line[2]
+                litho_dict[line[0].lower()] = line[2]
     except Exception as e:
         print(f'The error is {e}', file=sys.stderr)
 
-    return color_dict
+    return litho_dict
 
 
 def parse_GMT_file(outdirname):
@@ -52,7 +52,7 @@ def parse_GMT_file(outdirname):
         2) a list of the names of all formations
         3) a list of coordinates of all formations
     """
-    with open(outdirname + RECON_GEOM_FILE_SUFFIX, 'r') as f:
+    with open(outdirname + GEOM_FILE, 'r') as f:
         contents = f.read().split('>')[1:]
 
     pattern_list = []
@@ -84,7 +84,7 @@ def parse_GMT_file(outdirname):
         x_coor = []
         y_coor = []
         for line in sections[data_line_begin:]:
-            coords = line.rstrip().split(" ")
+            coords = line.rstrip().split(' ')
             x_coor.append(float(coords[0]))
             y_coor.append(float(coords[1]))
         coor_list[0].append(x_coor)
@@ -93,22 +93,22 @@ def parse_GMT_file(outdirname):
     return pattern_list, name_list, coor_list
 
 
-def plotting_shapes_and_lithology(pattern_list, color_dict, coor_list, fig):
+def plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='afg30'):
     """
     This function draws the shape of each reconstruction and fills the shape with the correct color according to its lithology pattern.
     """
     for pattern, x_arr, y_arr in zip(pattern_list, coor_list[0], coor_list[1]):
-        color = color_dict[pattern]
+        color = litho_dict[pattern] if pattern in litho_dict else litho_dict['unknown']
         fig.plot(
             x=np.array(x_arr),
             y=np.array(y_arr),
-            pen="0.25p,black",
-            frame="afg30",
+            pen='0.25p,black',
+            frame=frame_text,
             color=color
         )
 
 
-def labeling_shapes_with_names(name_list, coor_list, fig):
+def label_shapes_with_names(name_list, coor_list, fig):
     """
     This function labels shapes with corresponding names.
     """
@@ -118,16 +118,29 @@ def labeling_shapes_with_names(name_list, coor_list, fig):
             x=x_arr[0],
             y=y_arr[0],
             N=True,
-            D="0.0/0.3c",
-            font="7p,Helvetica-Bold,black"
+            D='0.0/0.3c',
+            font='7p,Helvetica-Bold,black'
         )
 
 
-def get_edges(coor_list):
+def calculate_edges(coor_list):
     """
-    This functions locates the most Eastern, Western, Southern, Northern point of all formations.
+    This functions locates the Eastern-, Western-, Southern-, Northern-most points across all formations.
     """
     lon_list = [lon for longitudes in coor_list[0] for lon in longitudes]
     lat_list = [lat for latitudes in coor_list[1] for lat in latitudes]
 
-    return [min(lon_list), max(lon_list), min(lat_list), max(lat_list)]
+    edge_coor = [min(lon_list), max(lon_list), min(lat_list), max(lat_list)]
+    edge_label = str(edge_coor[0] - 60) + '/' + str(edge_coor[1] + 60) + '/' + str(edge_coor[2] - 20) + '/' + str(edge_coor[3] + 20)
+
+    return edge_coor, edge_label
+
+
+def calculate_central_coor(edges):
+    """
+    This function calculate the central latitude and longitude of across all formations.
+    """
+    central_lon = (edges[0] + edges[1]) / 2
+    central_lat = (edges[2] + edges[3]) / 2
+
+    return central_lon, central_lat
