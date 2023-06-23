@@ -72,11 +72,10 @@ def reading_datapack(columns_dict):
             
         else: #not .csv file
             try:
-                with open(dataPackPath, newline='' ) as csvfile: #default encoding
+                with open(dataPackPath, newline='') as csvfile:
                     data_file= list(csv.reader(csvfile, delimiter = '\t')) #converts the read data file into a list for easy parsing.
-
-            except UnicodeDecodeError:#encoding is in UTF-16 instead
-                with open(dataPackPath, newline='' , encoding='utf-16') as csvfile:      
+            except UnicodeDecodeError: #encoding is in UTF-16 instead
+                with open(dataPackPath, newline='', encoding='utf-16') as csvfile:
                     data_file= list(csv.reader(csvfile, delimiter = '\t')) #converts the read data file into a list for easy parsing.
                     
 
@@ -120,16 +119,17 @@ def reading_datapack(columns_dict):
                 print('No ' + line[0] + 'in Mappack') #column might not exist in the MapPack so no coordinates
                 continue
 
+        return list_of_formation
 
     except Exception as e:
         print("INVALID data PACK!!!!")
         return 1
-        
+
     #Debugging info
     # for formation in list_of_formation:
     #     print("Lithology: ", formation.lithology_pattern, "Name: ", formation.name, "begin Date:", formation.begin_date, "End Date: ", formation.end_date, "lat_lon", formation.lat_lon)
 
-    return list_of_formation
+    
 
 
 def reading_MapLocations():
@@ -188,9 +188,9 @@ def reading_MapLocations():
 def main():
     columns_dict = reading_MapLocations() #reads file number 1 and returns a dictionary that has the column's name as keys the values is a tuple of the column's lat and lon for the formation
     list_of_formations = reading_datapack(columns_dict) #reads file number 2 and returns a list of object Formation
-
     
     index = 0
+    string = ""
     formationFileName = "./uploads1/" +(str(sys.argv[3])[0:8]).replace(" ", "") +"_formations.json"
 
 

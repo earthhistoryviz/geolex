@@ -184,7 +184,7 @@ if (!$_SESSION["loggedIn"]) {
         
             if($ending > 0) {
                 echo "Python returned ($ending): <pre>";
-                print_r($output[0]);
+                print_r($output);
                 echo " And here is the command that generated it: $cmd</pre>";
               }
 

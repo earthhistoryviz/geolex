@@ -22,12 +22,12 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   foreach ($regionstosearch as $r) {
     // Get the info about the matched formations from the external API:
-    $url = $r["searchurl"]."?searchquery="
-      .$_REQUEST["search"]."&periodfilter="
-      .$_REQUEST["filterperiod"]."&agefilterstart="
-      .$_REQUEST["agefilterstart"]."&agefilterend="
-      .$_REQUEST["agefilterend"]."&lithoSearch="
-      .urlencode($_REQUEST["lithoSearch"]);
+    $url = $r["searchurl"]
+      ."?searchquery=".urlencode($_REQUEST["search"])
+      ."&periodfilter=".$_REQUEST["filterperiod"]
+      ."&agefilterstart=".$_REQUEST["agefilterstart"]
+      ."&agefilterend=".$_REQUEST["agefilterend"]
+      ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"]);
 
     if ($_REQUEST["generateImage"]) {
       $url .= "&generateImage=1";
