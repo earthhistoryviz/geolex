@@ -34,7 +34,13 @@ include_once("constants.php"); // gets us $periods and $regions
 <body>
   <div class="search-container">
     <form id='form' action="<?=$formaction?>" method="request">
-      <input id="searchbar" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
+      <input
+        id="searchbar"
+        type="text"
+        name="search"
+        placeholder="Search Formation Name..."
+        value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>"
+        onkeypress="if (event.keyCode == 13) submitFilter()">
       <button id="submitbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
 
       <br><br> <?php
@@ -71,7 +77,13 @@ include_once("constants.php"); // gets us $periods and $regions
         <div id="selected-filter" style="padding: 5px; white-space: nowrap;"></div>
         <div style="padding: 5px;">
           Lithology includes:
-          <input id="lithoSearch" type="text" style="width: 75px" name="lithoSearch" value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>">
+          <input
+            id="lithoSearch"
+            type="text"
+            style="resize: both; overflow: auto;"
+            name="lithoSearch"
+            value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>"
+            onkeypress="if (event.keyCode == 13) submitFilter()">
         </div>
       </div>
     </form>

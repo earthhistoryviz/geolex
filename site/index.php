@@ -7,7 +7,7 @@ if ($_REQUEST["filterperiod"]) {
   $did_search = true;
 
   $url = "http://localhost/searchAPI.php"
-    ."?searchquery=".$_REQUEST["search"]
+    ."?searchquery=".urlencode($_REQUEST["search"])
     ."&periodfilter=".$_REQUEST["filterperiod"]
     ."&agefilterstart=".$_REQUEST["agefilterstart"]
     ."&agefilterend=".$_REQUEST["agefilterend"]

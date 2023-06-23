@@ -42,31 +42,33 @@ $sql .= ") ";
 $sql .= "AND period LIKE '%$periodfilter%' "
   ."AND province LIKE '%$provincefilter%' ";
 
+$litho = "";
 if (strcmp($lithofilter, "") === 0) {
-  $sql .= "AND lithology LIKE '%$lithofilter%' ";
+  $litho .= "AND lithology LIKE '%$lithofilter%' ";
 } else {
   $lithofilter_lower = strtolower($lithofilter);
 
   if (strpos($lithofilter_lower, ' and ') !== false) { // if the user wants to search with 'and'
     $lithofilter_array = explode(' and ', $lithofilter_lower);
     foreach ($lithofilter_array as $value) {
-      $sql .= "AND lithology LIKE '%$value%' ";
+      $litho .= "AND lithology LIKE '%$value%' ";
     }
   } else if (strpos($lithofilter_lower, ' or ') !== false) { // if the user wants to search with 'or'
     $lithofilter_array = explode(' or ', $lithofilter_lower);
     $index = 0;
     foreach ($lithofilter_array as $value) {
       if ($index === 0) {
-        $sql .= "AND lithology LIKE '%$value%' ";
+        $litho .= "AND lithology LIKE '%$value%' ";
       } else {
-        $sql .= "OR lithology LIKE '%$value%' ";
+        $litho .= "OR lithology LIKE '%$value%' ";
       }
       $index++;
     }
   } else { // user does not want to search and/or
-    $sql .= "AND lithology LIKE '%$lithofilter%' ";
+    $litho .= "AND lithology LIKE '%$lithofilter%' ";
   }
 }
+$sql .= $litho;
 
 preg_replace("+", "%", $searchquery);
 
@@ -92,7 +94,8 @@ if (mysqli_num_rows($result) == 0) {
     ."FROM formation "
     ."WHERE type_locality LIKE '%$searchquery%' "
     ."AND period LIKE '%$periodfilter%' "
-    ."AND province LIKE '%$provincefilter%' ";
+    ."AND province LIKE '%$provincefilter%' "
+    .$litho;
   if ($agefilterstart != "") {
     $sql .= "AND NOT (beg_date < $agefilterend "
       ."OR end_date > $agefilterstart) "
