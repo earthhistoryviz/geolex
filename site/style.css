@@ -1,27 +1,25 @@
-
 .mainBody {
   padding-left: 10px;
 }
 
-*{
-/*    margin:0;
-    padding: 0; */
+body {
+  background-color: #fff;
+  color: #333;
+  font-family: arial;
 }
-body{
-    background-color: #fff;
-    color: #333;
-    font-family: arial;
-}
+
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 400;
-    font-size: 16px;
+  font-weight: 400;
+  font-size: 24px;
 }
-.container{
-    overflow: auto;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
+
+.container {
+  overflow: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
 }
+
 .left-menu {
   height: 100%;
   width: 20%;
@@ -31,108 +29,110 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   align-items: center;
 }
+
 .left-menu-ul {
   display: flex;
   flex-direction: column;
 }
-html,body,.aside-left{
 
-    height: 100%;
+html, body, .aside-left {
+  height: 100%;
 }
-.fl{
-    float: left;
+
+.fl {
+  float: left;
 }
-.fr{
+
+.fr {
     float: right;
 }
-    .formation-container {
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row;
-      align-items: center;
-    }
-    .formationitem {
-      padding-left: 15px;
-      padding-right: 15px;
-      padding-top: 5px;
-      padding-bottom: 5px;
-      margin: 5px;
-      border: solid grey 1px;
-      border-radius: 5px;
-      width: 170px;
-      display: flex;
-      align-items: center;
-    }
 
-.aside-left{
-    width: 20%;
-    float: left;
-    height: 100%;
-    background-color: #313540;
-}
-.aside-left .m-title{
-    background-color: #70808f;
-    color: #fff;
-    font-size: 24px;
-}
-.aside-left ul{
-    height: 100%;
-}
-.aside-left ul li{
-    height: 80px;
-    line-height: 80px;
-    text-align: center;
-}
-.aside-left ul li a{
-    color: #707782;
-    text-decoration: none;
-    display: block;
-
-}
-.aside-left ul .active a{
-    color: #fff;
-    background-color: #272a33;
+.formation-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
 }
 
-.aside-right{
-/*    width: 80%;
-    float: left; */
+.formationitem {
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin: 5px;
+  border: solid grey 1px;
+  border-radius: 5px;
+  width: 170px;
+  display: flex;
+  align-items: center;
 }
-.aside-right .top h1{
-    font-size: 24px;
-    font-weight: bold;
-    padding-left: 30px;
+
+.aside-left {
+  width: 20%;
+  float: left;
+  height: 100%;
+  background-color: #313540;
 }
-.aside-right .top .user{
-    margin-right: 30px;
+.aside-left .m-title {
+  background-color: #70808f;
+  color: #fff;
+  font-size: 24px;
 }
-.aside-right .top .logout{
-    color: #fff;
-    background-color: #70808f;
-    position: absolute;
-    right: 15%;
-    top: 0;
-    padding: 3px 5px;
-    display: inline-block;
-    line-height: 1.6;
+.aside-left ul {
+  height: 100%;
 }
-.db{
-    width: 400px;
-    margin: 150px auto 0;
+.aside-left ul li {
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
 }
-.h2,.sch{
-    font-size: 30px;
+.aside-left ul li a {
+  color: #707782;
+  text-decoration: none;
+  display: block;
 }
-.sch{
-    margin-top: 10px;
+.aside-left ul .active a {
+  color: #fff;
+  background-color: #272a33;
 }
-.sch input{
-    margin-left: 10px;
-    position: relative;
-    top: -5px;
-    height: 30px;
-    width: 200px;
-    line-height: 30px;
+
+.aside-right .top h1 {
+  font-size: 24px;
+  font-weight: bold;
+  padding-left: 30px;
+}
+.aside-right .top .user {
+  margin-right: 30px;
+}
+.aside-right .top .logout {
+  color: #fff;
+  background-color: #70808f;
+  position: absolute;
+  right: 15%;
+  top: 0;
+  padding: 3px 5px;
+  display: inline-block;
+  line-height: 1.6;
+}
+
+.db {
+  width: 400px;
+  margin: 150px auto 0;
+}
+
+.h2, .sch {
+  font-size: 30px;
+}
+.sch {
+  margin-top: 10px;
+}
+.sch input {
+  margin-left: 10px;
+  position: relative;
+  top: -5px;
+  height: 30px;
+  width: 200px;
+  line-height: 30px;
 }
 
 .item {
@@ -144,7 +144,6 @@ html,body,.aside-left{
 
 .menu-link {
   color: #ffffff;
-
 }
 
 .error {

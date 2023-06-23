@@ -45,6 +45,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
     // Look through all the formations to find any overlapping provice names so the grouping will work
     foreach ($response as $fname => $finfo) {
+      // Check if any formation is a result of Synonym search
       if ($finfo->isSynonym) {
         $results[$r["name"]]["isSynonym"] = true;
       }
@@ -137,11 +138,15 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
 <link rel="stylesheet" href="generalStyling.css">
+<title>Multi-Country Search</title>
 
 <?php include("navBar.php"); /* navBar will set $period for us */ ?>
 
-<h2 style="text-align: center; color: blue;">Welcome to the International Geology Website and Database!<br>Please enter a formation name or group to retrieve more information.</h2>
-<?php include("generalSearchBar.php"); ?>
+<h2 style="text-align: center; color: blue;">
+  Welcome to the International Geology Website and Database!<br>
+  Please enter a formation name or group to retrieve more information.
+</h2> <?php
+include("generalSearchBar.php"); ?>
 
 <div style="display: flex; flex-direction: column;"> <?php
   $sorted = array();
@@ -254,7 +259,7 @@ $formaction = "general.php"; ?>
       }
     } /* end else */
 
-    if ($timedout) { ?>
+    if (isset($timedout) && $timedout === true) { ?>
       NOTE: Timed out awaiting external image creation, had to re-start <?php
     }
   } /* end did search if */ ?>

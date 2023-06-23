@@ -373,8 +373,8 @@ function createReconstruction($searchType, $allgeoJSONs, $fmdata){
     if($searchType == "Formation Id" || $searchType == "formation id"){
         //$outdirhash = 'pottsville';
         $outdirhash = $fmdata['name'];
-        $outdirname_php = './pygplates/livedata/default/' .$outdirhash; // we want to use this when wri
-        $outdirname = './livedata/default/'. $outdirhash; // reconstruction files think "current directory" is the pygplates one 
+        $outdirname_php = './pygplates/livedata/scotese/' .$outdirhash; // we want to use this when wri
+        $outdirname = './livedata/scotese/'. $outdirhash; // reconstruction files think "current directory" is the pygplates one 
         // create the output directory with the appropriate recon.geojson file 
         // code taken from general.php 
         if (!file_exists($outdirname_php)) {
@@ -384,15 +384,18 @@ function createReconstruction($searchType, $allgeoJSONs, $fmdata){
         $reconfilename = "$outdirname_php/recon.geojson";
         file_put_contents($reconfilename, json_encode($allgeoJSONs));
         $finalPath = $outdirname_php. "/final_image.png";
-        $cmd = "cd pygplates && ./ScoteseModel.py ".$fmdata['beg_date']." $outdirname";
+        $cmd = "cd pygplates && ./ScoteseModel.py ".$fmdata['beg_date']." $outdirname ". "2>&1";
         $hello = exec($cmd, $output, $ending);
+        echo "<pre>";
+        print_r($hello);
+        echo "</pre>";
         return $finalPath; 
     }
     else if ($searchType == "Formation Name" || $searchType == "formation name") {
         $outdirhash = str_replace(' ', '%20', $id); 
         $outdirhash = $fmdata['name'];
-        $outdirname_php = './pygplates/livedata/default/' .$outdirhash; // we want to use this when wri
-        $outdirname = './livedata/default/'. $outdirhash; // reconstruction files think "current directory" is the pygplates one
+        $outdirname_php = './pygplates/livedata/scotese/' .$outdirhash; // we want to use this when wri
+        $outdirname = './livedata/scotese/'. $outdirhash; // reconstruction files think "current directory" is the pygplates one
         // create the output directory with the appropriate recon.geojson file 
         // code taken from general.php 
         if (!file_exists($outdirname_php)) {
@@ -404,8 +407,12 @@ function createReconstruction($searchType, $allgeoJSONs, $fmdata){
         file_put_contents($reconfilename, json_encode($allgeoJSONs));
         $finalPath = $outdirname_php. "/final_image.png";
         //$fmdata['beg_date'] = 317.5;
-        $cmd = "cd pygplates && ./ScoteseModel.py ".$fmdata['beg_date']." $outdirname";
+        $cmd = "cd pygplates && ./ScoteseModel.py ".$fmdata['beg_date']." $outdirname ". "2>&1";
         $hello = exec($cmd, $output, $ending);
+        echo "<pre>";
+        print "Hello!!";
+        print_r($hello);
+        echo "</pre>";
         return $finalPath; 
     }
     else if ($searchType == "formation age" || $searchType == "date range"){

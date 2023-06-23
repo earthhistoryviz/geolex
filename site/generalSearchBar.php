@@ -11,7 +11,7 @@ include_once("TimescaleLib.php");
     height: 40px;
     width: 700px;
   }
-  #submitbtn1, #submitbtn2, #submitbtn3 {
+  #submitbtn {
     height: 40px;
     border: 3px solid #000000;
   }
@@ -19,31 +19,10 @@ include_once("TimescaleLib.php");
     text-align: center;
     margin-top: 10px;
   }
-</style>
-
-<?php
-// Get all the unique periods and provinces
-$sql = "SELECT name, period, province, lithology FROM formation";
-$result = mysqli_query($conn, $sql);
-$filters = array();
-// We need to clean up the html tags from the periods and provinces to get a canonical name
-while ($row = mysqli_fetch_array($result)) {
-  foreach (array("province", "period") as $v) {
-    // $canonical = preg_replace("/<[^>]+>/", "", $row[$v]);
-    $canonical = trim($canonical);
-    $canonical = strtoupper($canonical);
-    $canonical = explode(",", $canonical);
-    foreach ($canonical as $c) {
-      $c = trim($c);
-      if (strlen($c) > 0) {
-        $filters[$v][$c] = true;
-      }
-    }
-  }
-}
+</style> <?php
 
 if (!$formaction) {
-  $formaction = "searchFm.php";
+  $formaction = "index.php";
 }
 
 /* For Stage filter conversion */
@@ -55,67 +34,62 @@ include_once("constants.php"); // gets us $periods and $regions
 <body>
   <div class="search-container">
     <form id='form' action="<?=$formaction?>" method="request">
-      <input id="searchbar" onkeyup="verify()" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
-      
-      <br><br>
-      
-      <?php
-        $selected_values = $_REQUEST['filterregion'] ?? [];
-      ?>
+      <input id="searchbar" type="text" name="search" placeholder="Search Formation Name..." value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>">
+      <button id="submitbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
 
-      Search Region 
-      <select name="filterregion[]" multiple> <?php
-        foreach($regions as $r) {
-          $selected = in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
-          <option value="<?=$r["name"]?>" <?=$selected?>><?=$r["name"]?></option> <?php
-        } ?>
-      </select>
+      <br><br> <?php
+      
+      if (!isset($isFixedRegion)) { ?>
+        <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+          <div style="padding: 5px;">
+            Select Regions to search<br>
+            Hold Ctrl key to select multiple
+          </div> <?php
 
-      <div id="searchcontainer" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+          $selected_values = $_REQUEST['filterregion'] ?? []; ?>
+          <select name="filterregion[]" multiple> <?php
+            foreach ($regions as $r) {
+              $selected = in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
+              <option value="<?=$r["name"]?>" <?=$selected?>><?=$r["name"]?></option> <?php
+            } ?>
+          </select>
+        </div> <?php
+      } ?>
+
+      <div id="filter-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
         <div style="padding: 5px;">
           Search by 
         </div>
         <div style="padding: 5px;">
-          <select id="selectType" name="searchtype" onchange="changeFilter()" multiple >
+          <select id="searchtype-select" name="searchtype" onchange="changeFilter()" multiple >
             <option value="Period" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Period' || !isset($_REQUEST['searchtype'])) ? 'selected' : ''; ?>>Period</option>
             <option value="Date" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Date') ? 'selected' : ''; ?>>Date</option>
             <option value="Date Range" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Date Range') ? 'selected' : ''; ?>>Date Range</option>
           </select>
         </div>
         
-        <div id="searchform" style="padding: 5px; white-space: nowrap;"></div>
+        <div id="selected-filter" style="padding: 5px; white-space: nowrap;"></div>
         <div style="padding: 5px;">
-         Lithology includes:
-         <input id="lithoSearch" type="text" style="width: 75px" name="lithoSearch" value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>">
-          <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
+          Lithology includes:
+          <input id="lithoSearch" type="text" style="width: 75px" name="lithoSearch" value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>">
         </div>
       </div>
     </form>
   </div>
 
   <script type="text/javascript">
-    function verify() {
-      if (document.getElementById("searchbar").value === "") {
-        document.getElementById("submitbtn1").disabled = true;
-      }
-      else {
-        document.getElementById("submitbtn1").disabled = false;
-      }
-    }
-
     function submitFilter() { // TODO: check if agefilterend is greater than agefilterstart. If so, pop alert. (Currently agefilterend is set to agefilterstart in searchAPI.php if so)
       document.getElementById('form').submit();
     }
 
-    /* Change visible selection box/text box(es) based on user selection on <selectType> */
+    /* Change visible selection box/text box(es) based on user selection on <searchtype-select> */
     function changeFilter() {
-      var box = document.getElementById("selectType");
+      var box = document.getElementById("searchtype-select");
       if (!box) {
         return;
       }
       var chosen = box.options[box.selectedIndex].value;
-      var searchForm = document.getElementById("searchform");      
-      
+      var searchForm = document.getElementById("selected-filter");
 
       if (chosen == "Period") {
         var periodHTML = 

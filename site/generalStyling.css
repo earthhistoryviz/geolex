@@ -1,4 +1,4 @@
-.button{
+.button {
 	padding-left: 15px;
 	padding-right: 15px;
 	padding-top: 5px;
@@ -32,9 +32,8 @@
 	display: flex;
 	align-items: center;
 	text-decoration: none;
-	
 }
-.button a{
+.button a {
 	text-decoration: none;
 	color: #000;
 }
