@@ -1,3 +1,8 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 .region-container {
   display: flex;
   flex-direction: column;
@@ -31,17 +36,16 @@
 }
 
 .period-container {
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   flex-grow: 1;
 }
 
 .period-title {
-  width: 100%;
   padding-left: 10px;
   margin-top: 5px;
-  margin-bottom: 0;
   font-family: Arial;
 }
 
