@@ -43,26 +43,7 @@ include_once("constants.php"); // gets us $periods and $regions
         onkeypress="if (event.keyCode == 13) submitFilter()">
       <button id="submitbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
 
-      <br><br> <?php
-      
-      if (!isset($isFixedRegion)) { ?>
-        <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
-          <div style="padding: 5px;">
-            Select Regions to search<br>
-            Hold Ctrl key to select multiple
-          </div> <?php
-
-          $selected_values = $_REQUEST['filterregion'] ?? ["All"]; ?>
-          <select name="filterregion[]" multiple> <?php
-            $selected_all = in_array("All", $selected_values); ?>
-            <option value="All" <?php echo $selected_all ? 'selected' : ''; ?>>All</option> <?php
-            foreach ($regions as $r) {
-              $selected = !$selected_all && in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
-              <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
-            } ?>
-          </select>
-        </div> <?php
-      } ?>
+      <br><br>
 
       <div id="filter-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
         <div style="padding: 5px;">
@@ -87,7 +68,26 @@ include_once("constants.php"); // gets us $periods and $regions
             value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>"
             onkeypress="if (event.keyCode == 13) submitFilter()">
         </div>
-      </div>
+      </div> <?php
+      
+      if (!isset($isFixedRegion)) { ?>
+        <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+          <div style="padding: 5px;">
+            Select Regions to search<br>
+            Hold Ctrl key to select multiple
+          </div> <?php
+
+          $selected_values = $_REQUEST['filterregion'] ?? ["All"]; ?>
+          <select name="filterregion[]" size="9" style="height: auto; width: auto;" multiple> <?php
+            $selected_all = in_array("All", $selected_values); ?>
+            <option value="All" <?php echo $selected_all ? 'selected' : ''; ?>>All</option> <?php
+            foreach ($regions as $r) {
+              $selected = !$selected_all && in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
+              <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
+            } ?>
+          </select>
+        </div> <?php
+      } ?>
     </form>
   </div>
 
