@@ -128,7 +128,7 @@ if ($did_search) {
     
     <div class="formation-container"> <?php
       foreach ($all_formations as $formation) { ?>
-        <div class="formationitem" style="background-color: rgb(<?=$stageArray[$formation["stage"]] ?>, 0.8);"> <?php
+        <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation["stage"]] ?>, 0.8);"> <?php
           if ($formation["geoJSON"] !== "") { ?>
             <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
           } ?>

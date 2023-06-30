@@ -52,11 +52,13 @@ include_once("constants.php"); // gets us $periods and $regions
             Hold Ctrl key to select multiple
           </div> <?php
 
-          $selected_values = $_REQUEST['filterregion'] ?? []; ?>
+          $selected_values = $_REQUEST['filterregion'] ?? ["All"]; ?>
           <select name="filterregion[]" multiple> <?php
+            $selected_all = in_array("All", $selected_values); ?>
+            <option value="All" <?php echo $selected_all ? 'selected' : ''; ?>>All</option> <?php
             foreach ($regions as $r) {
-              $selected = in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
-              <option value="<?=$r["name"]?>" <?=$selected?>><?=$r["name"]?></option> <?php
+              $selected = !$selected_all && in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
+              <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
             } ?>
           </select>
         </div> <?php
@@ -90,7 +92,7 @@ include_once("constants.php"); // gets us $periods and $regions
   </div>
 
   <script type="text/javascript">
-    function submitFilter() { // TODO: check if agefilterend is greater than agefilterstart. If so, pop alert. (Currently agefilterend is set to agefilterstart in searchAPI.php if so)
+    function submitFilter() {
       document.getElementById('form').submit();
     }
 

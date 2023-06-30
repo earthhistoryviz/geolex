@@ -9,9 +9,10 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   $didsearch = true;
 
   $regionstosearch = array();
+  $searched_all = in_array("All", $_REQUEST["filterregion"]);
 
   foreach ($regions as $r) {
-    if (in_array($r["name"], $_REQUEST["filterregion"])) {
+    if ($searched_all || in_array($r["name"], $_REQUEST["filterregion"])) {
       array_push($regionstosearch, $r);
     }
   }
@@ -213,50 +214,49 @@ include("generalSearchBar.php"); ?>
           .
           .
           .
-      */
-      foreach ($results as $regionname => $regioninfo) { ?>
-        <div class="formation-container">
-          <h3 class="region-title"><?=$regionname?></h3> <?php
-          if ($regioninfo["isSynonym"]) { ?>
-            <div class="synonym-message">
-              <h3>
-                No formation with name "<?=$_REQUEST["search"]?>" was found in this Region.
-                <br>
-                However, "<?=$_REQUEST["search"]?>" was found in Synonyms field and other occurences of Type Locality and Naming Field.
-              </h3>
-            </div><?php
-          } ?>
-          <br>
-          <div> <?php
+      */ ?>
+      <div class="result-container"> <?php
+        foreach ($results as $regionname => $regioninfo) { ?>
+          <div class="region-container" id="<?=$regionname ?>-container">
+            <h3 class="region-title"><?=$regionname?></h3> <?php
+            if ($regioninfo["isSynonym"]) { ?>
+              <div class="synonym-message">
+                <h3>
+                  No formation with name "<?=$_REQUEST["search"]?>" was found in this Region.
+                  <br>
+                  However, "<?=$_REQUEST["search"]?>" was found in Synonyms field and other occurences of Type Locality and Naming Field.
+                </h3>
+              </div><?php
+            }
             foreach ($regioninfo["groupbyprovince"] as $province => $provinceinfo) { ?>
-              <hr>
-              <h3><?=$province?></h3>
-              <div class="province-container"> <?php
+              <div class="province-container" id="<?=$province ?>-container">
+                <h4 class="province-title"><?=$province?></h4> <?php
                 foreach ($periodsDate as $p) {
                   foreach ($provinceinfo["groupbyperiod"] as $pname => $formations) {
                     if ($pname !== $p["period"]) {
                       continue;
                     } ?>
-                    <h5><?=$pname?></h5>
-                    <div class="period-container"> <?php
-                      $geojsonIndex = 0;
-                      foreach ($formations as $fname => $finfo) {
-                        $finfoArr = json_decode(json_encode($finfo), true); ?>
-                        <div style="background-color: rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);" class="button"> <?php
-                          if ($finfoArr['geojson']) { // if geoJSON exists ?>
-                            <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
-                          } ?>
-                          <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
-                        </div> <?php
-                      } ?>
+                    <div class="period-container" id="<?=$pname ?>-container">
+                      <h5 class="period-title"><?=$pname?></h5>
+                      <div class="formation-container"> <?php
+                        foreach ($formations as $fname => $finfo) {
+                          $finfoArr = json_decode(json_encode($finfo), true); ?>
+                          <div class="formation-item" id="<?=$fname ?>" style="background-color: rgb(<?=$stageArray[$finfoArr["stage"]]?>, 0.8);"> <?php
+                            if ($finfoArr['geojson']) { // if geoJSON exists ?>
+                              <div class="geojson-icon">&#127758</div> <?php
+                            } ?>
+                            <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
+                          </div> <?php
+                        } ?>
+                      </div>
                     </div> <?php
                   }
                 } ?>
               </div> <?php
             } ?>
-          </div>
-        </div> <?php
-      }
+          </div> <?php
+        } ?>
+      </div> <?php
     } /* end else */
 
     if (isset($timedout) && $timedout === true) { ?>

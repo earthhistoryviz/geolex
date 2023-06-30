@@ -1,4 +1,58 @@
-.button {
+.region-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.region-title {
+  background-color: #99CCFF;
+  color: #FFFFFF;
+  width: 100%;
+  padding-left: 10px;
+  margin-top: 5px;
+  font-size: 3em;
+  font-family: Arial;
+}
+
+.province-container {
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.province-title {
+  width: 100%;
+  padding-left: 5px;
+  margin-top: 5px;
+  font-family: Arial;
+}
+
+.period-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.period-title {
+  width: 100%;
+  padding-left: 10px;
+  margin-top: 5px;
+  margin-bottom: 0;
+  font-family: Arial;
+}
+
+.formation-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+}
+
+.formation-item {
 	padding-left: 15px;
 	padding-right: 15px;
 	padding-top: 5px;
@@ -33,35 +87,13 @@
 	align-items: center;
 	text-decoration: none;
 }
-.button a {
+.formation-item a {
 	text-decoration: none;
-	color: #000;
-}
-
-.formation-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.province-container {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  flex-grow: 1;
-}
-
-.period-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  flex-grow: 1;
-}
-
-.region-title {
-  background-color: #99CCFF;
-  color: #FFFFFF;
-  width: 100%;
-  padding-left: 10px;
-  font-size: 3em;
+  color: #000000;
   font-family: Arial;
+}
+
+.geojson-icon {
+  padding-right: 10px;
+  font-size: 13px;
 }

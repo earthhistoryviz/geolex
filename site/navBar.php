@@ -79,27 +79,9 @@
         $period = "Devonian";
       }
 
-      /* 
-      $periods = array(
-        array( "name" => "Quaternary", "color" => "#F9F97F"),
-        array( "name" => "Neogene", "color" => "#FFE619"),
-        array( "name" => "Paleogene", "color" => "#FD9A52"),
-        array( "name" => "Cretaceous", "color" => "#7FC64E"),
-        array( "name" => "Jurassic", "color" => "#34B2C9"),
-        array( "name" => "Triassic", "color" => "#812B92"),
-        array( "name" => "Permian", "color" => "#F04028"),
-        array( "name" => "Carboniferous", "color" => "#67A599"),
-        array( "name" => "Devonian", "color" => "#CB8C37"),
-        array( "name" => "Silurian", "color" => "#B3E1B6"),
-        array( "name" => "Ordovician", "color" => "#009270"),
-        array( "name" => "Cambrian", "color" => "#7FA056"),
-        array( "name" => "Ediacaran", "color" => "#FED96A"),
-      );
-      */
-
       foreach ($mapperiods as $p) { ?>
         <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
-          <a href="/index.php?period=<?php echo $p["period"] ?>"><?php echo $p["period"] ?></a>
+          <a href="/index.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
         </div> <?php
       } ?>
     </div>
