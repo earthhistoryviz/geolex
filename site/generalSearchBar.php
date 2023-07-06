@@ -77,13 +77,29 @@ include_once("constants.php"); // gets us $periods and $regions
             Hold Ctrl key to select multiple
           </div> <?php
 
-          $selected_values = $_REQUEST['filterregion'] ?? ["All"]; ?>
+          $selected_regions = $_REQUEST['filterregion'] ?? ["All"]; ?>
           <select name="filterregion[]" size="9" style="height: auto; width: auto;" multiple> <?php
-            $selected_all = in_array("All", $selected_values); ?>
-            <option value="All" <?php echo $selected_all ? 'selected' : ''; ?>>All</option> <?php
+            $selected_all_regions = in_array("All", $selected_regions); ?>
+            <option value="All" <?php echo $selected_all_regions ? 'selected' : ''; ?>>All</option> <?php
             foreach ($regions as $r) {
-              $selected = !$selected_all && in_array($r["name"], $selected_values) ? 'selected' : ''; ?>
+              $selected = !$selected_all_regions && in_array($r["name"], $selected_regions) ? 'selected' : ''; ?>
               <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
+            } ?>
+          </select>
+        </div> <?php
+      } else {
+        $url = "http://localhost/provinceAPI.php";
+        $available_provinces = json_decode(file_get_contents($url)); ?>
+        <div id="province-search" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+          <div style="padding: 5px;">
+            Select Province to search<br>
+          </div>
+
+          <select name="filterprovince" style="height: auto; width: auto;"> <?php
+            $selected_all_provinces = !isset($_REQUEST['filterprovince']) || $_REQUEST['filterprovince'] == "All"; ?>
+            <option value="All" <?php echo $selected_all_provinces ? '' : 'selected'; ?>>All</option> <?php
+            foreach ($available_provinces as $p) { ?>
+              <option value="<?=$p ?>" <?php echo $_REQUEST['filterprovince'] == $p ? 'selected' : ''; ?>><?=$p ?></option> <?php
             } ?>
           </select>
         </div> <?php

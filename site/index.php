@@ -9,6 +9,7 @@ if ($_REQUEST["filterperiod"]) {
   $url = "http://localhost/searchAPI.php"
     ."?searchquery=".urlencode($_REQUEST["search"])
     ."&periodfilter=".$_REQUEST["filterperiod"]
+    ."&provincefilter=".urlencode($_REQUEST["filterprovince"])
     ."&agefilterstart=".$_REQUEST["agefilterstart"]
     ."&agefilterend=".$_REQUEST["agefilterend"]
     ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"]);

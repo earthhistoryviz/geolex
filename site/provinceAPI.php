@@ -1,0 +1,24 @@
+<?php
+include_once("SqlConnection.php");
+
+$sql = "SELECT DISTINCT province FROM formation";
+$results = mysqli_query($conn, $sql);
+
+header("Content-Type: application/json");
+
+$output = array();
+while ($row = mysqli_fetch_array($results)) {
+    $canonical = preg_replace("/<[^>]+>/", "", $row['province']);
+    $canonical = trim($canonical);
+    $canonical = explode(",", $canonical);
+    foreach ($canonical as $c) {
+        $c = trim($c);
+        if (!empty($c)) {
+            array_push($output, $c);
+        }
+    }
+}
+
+echo json_encode($output);
+
+?>
