@@ -2,6 +2,8 @@
 global $conn;
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
+// Sets up the reconstruction variables: $recongeojson, etc.:
+include_once("./makeReconstruction.php");
 
 if ($_REQUEST["filterperiod"]) {
   $did_search = true;
@@ -14,6 +16,9 @@ if ($_REQUEST["filterperiod"]) {
     ."&agefilterend=".$_REQUEST["agefilterend"]
     ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"]);
 
+  if ($_REQUEST["generateImage"]) {
+    $url .= "&generateImage=1";
+  }
   $raw = file_get_contents($url);
   $response = json_decode($raw);
   $all_formations = array();
@@ -58,6 +63,64 @@ if ($_REQUEST["filterperiod"]) {
     }
   }
   $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
+
+  // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
+  $midAge = ($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"]) / 2;
+  if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
+    $filteredformations = array();
+    foreach ($all_formations as $f) {
+      if ($midAge <= $f->begAge || $midAge >= $f->endAge) {
+        array_push($filteredformations, $f);
+      }
+    }
+    $all_formations = $filteredformations;
+  }
+
+  // Generate the merged geojson:
+  $recongeojson = createGeoJSONForFormations($all_formations);
+
+  // Only create the output directory if we are generating an image:
+  if ($_REQUEST["generateImage"]) {
+    $model = $_REQUEST["selectModel"] || "Default";
+    if ($_REQUEST["recondate_description"] == "middle") {
+      $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$midAge.$_REQUEST["selectModel"];
+    } else {
+      $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
+    }
+
+    $outdirhash = md5($toBeHashed);
+    // outdirname is what pygplates should see
+    switch ($_REQUEST["selectModel"]) {
+      case  "Default": $outdirname = "livedata/default/$outdirhash";  break;
+      case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
+      case  "Scotese": $outdirname = "livedata/scotese/$outdirhash";  break;
+      default:         $outdirname = "livedata/unknown/$outdirhash";  break;
+    }
+
+    // and php is running one level up:
+    $outdirname_php = "pygplates/$outdirname";
+    $initial_creation_outdir = false; // did we have to make the output hash directory name?
+    if ($_REQUEST["debug"]) {
+      $initial_creation_outdir = true;
+    }
+
+    if (!file_exists($outdirname_php)) {
+      $initial_creation_outdir = true;
+      mkdir($outdirname_php, 0777, true);
+    }
+    $reconfilename = "$outdirname_php/recon.geojson";
+
+    if ($_REQUEST["debug"]) {
+      echo "The directory path for this reconstruction is: $outdirname";
+    }
+
+    if (!file_exists($reconfilename) || $_REQUEST["debug"]) {
+      if ($_REQUEST["debug"]) {
+        echo "Debugging mode, writing geojson file to $reconfilename";
+      }
+      file_put_contents($reconfilename, $recongeojson);
+    }
+  }
 }
 
 function sortByAge($a, $b) {
@@ -113,6 +176,11 @@ if ($did_search) {
           No formation with name "<?=$_REQUEST["search"] ?>" was found in this Region.<br>
           However, "<?=$_REQUEST["search"] ?>" was found in Synonyms field and other occurences of Type Locality and Naming Field.
         </h3>
+      </div> <?php
+    }
+    if ($_REQUEST['agefilterstart'] != "" || $_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "") { ?>
+      <div class="reconstruction"> <?php
+        include_once("./makeButtons.php"); ?>
       </div> <?php
     } ?>
 
