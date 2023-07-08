@@ -21,7 +21,7 @@ if ($_REQUEST["filterperiod"]) {
   }
   $raw = file_get_contents($url);
   $response = json_decode($raw);
-  $all_formations = array();
+  $allFormations = array();
 
   $isSynonym = false;
   foreach ($response as $fname => $finfo) {
@@ -29,21 +29,16 @@ if ($_REQUEST["filterperiod"]) {
       $isSynonym = true;
     }
 
-    array_push($all_formations, array(
-      "name" => $fname,
-      "stage" => $finfo->stage,
-      "begAge" => $finfo->begAge,
-      "geoJSON" => $finfo->geojson,
-    ));
+    $allFormations = array_merge($allFormations, array($finfo));
   }
 
   // Either sort by age or by alphabet depending on user selection (default is by alphabet)
   $isSortedByAge = false;
   if (isset($_REQUEST["byAgeButton"])) {
-    uasort($all_formations, "sortByAge");
+    uasort($allFormations, "sortByAge");
     $isSortedByAge = true;
   } else {
-    sort($all_formations);
+    sort($allFormations);
     $isSortedByAge = false;
   }
 
@@ -68,16 +63,16 @@ if ($_REQUEST["filterperiod"]) {
   $midAge = ($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"]) / 2;
   if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
     $filteredformations = array();
-    foreach ($all_formations as $f) {
+    foreach ($allFormations as $f) {
       if ($midAge <= $f->begAge || $midAge >= $f->endAge) {
         array_push($filteredformations, $f);
       }
     }
-    $all_formations = $filteredformations;
+    $allFormations = $filteredformations;
   }
 
   // Generate the merged geojson:
-  $recongeojson = createGeoJSONForFormations($all_formations);
+  $recongeojson = createGeoJSONForFormations($allFormations);
 
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
@@ -124,9 +119,9 @@ if ($_REQUEST["filterperiod"]) {
 }
 
 function sortByAge($a, $b) {
-  $a1 = $a["begAge"];
+  $a1 = $a->begAge;
   $a1 = str_replace(",", "", $a1);
-  $b1 = $b["begAge"];
+  $b1 = $b->begAge;
   $b1 = str_replace(",", "", $b1);
 
   if ($a1 == $b1) {
@@ -165,7 +160,7 @@ $isFixedRegion = true; // For generalSearchBar.php to determine if we should dis
 include("generalSearchBar.php");
 
 if ($did_search) {
-  if (count($all_formations) == 0) { ?>
+  if (count($allFormations) == 0) { ?>
     <div class="no-results-message" style="text-align: center; padding-bottom: 20px; font-size: 20px">
       <h3>No formations found.</h3>
     </div> <?php
@@ -196,12 +191,12 @@ if ($did_search) {
     </div>
     
     <div class="formation-container"> <?php
-      foreach ($all_formations as $formation) { ?>
-        <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation["stage"]] ?>, 0.8);"> <?php
-          if ($formation["geoJSON"] !== "") { ?>
+      foreach ($allFormations as $formation) { ?>
+        <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);"> <?php
+          if ($formation->geojson) { ?>
             <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
           } ?>
-          <a href="displayInfo.php?formation=<?=$formation["name"]?>" target="_blank"><?=$formation["name"] ?></a>
+          <a href="displayInfo.php?formation=<?=$formation->name?>" target="_blank"><?=$formation->name ?></a>
         </div> <?php
       } ?>
     </div> <?php
