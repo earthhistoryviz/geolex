@@ -33,13 +33,13 @@ if ($_REQUEST["filterperiod"]) {
   }
 
   // Either sort by age or by alphabet depending on user selection (default is by alphabet)
-  $isSortedByAge = false;
-  if (isset($_REQUEST["byAgeButton"])) {
-    uasort($allFormations, "sortByAge");
-    $isSortedByAge = true;
-  } else {
+  $isSortedByAge = true;
+  if (isset($_REQUEST["byAlphabetButton"])) {
     sort($allFormations);
     $isSortedByAge = false;
+  } else {
+    uasort($allFormations, "sortByAge");
+    $isSortedByAge = true;
   }
 
   // Get all of the associated stage data
