@@ -70,7 +70,8 @@ include_once("constants.php"); // gets us $periods and $regions
         </div>
       </div> <?php
       
-      if (!isset($isFixedRegion)) { ?>
+      if (!isset($isFixedRegion)) {
+        // Show Region selection box in Multi-Country Search page ?>
         <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
           <div style="padding: 5px;">
             Select Regions to search<br>
@@ -86,8 +87,10 @@ include_once("constants.php"); // gets us $periods and $regions
               <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
             } ?>
           </select>
+          <input type="checkbox" name="select-macrostrat" value="1" style="margin-left: 15px; margin-right: 5px;" <?php echo isset($_REQUEST['select-macrostrat']) ? 'checked' : ''; ?>>Include Macrostrat
         </div> <?php
       } else {
+        // Show Province selection box in Home page
         $url = "http://localhost/provinceAPI.php";
         $available_provinces = json_decode(file_get_contents($url)); ?>
         <div id="province-search" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
