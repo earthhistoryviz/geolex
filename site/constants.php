@@ -36,25 +36,6 @@ foreach ($timescale as $stage) {
     }
   }
 }
-
-/*
-
-$periods = array(
-    "QUATERNARY",
-    "NEOGENE",
-    "PALEOGENE",
-    "CRETACEOUS",
-    "JURASSIC",
-    "TRIASSIC",
-    "PERMIAN",
-    "CARBONIFEROUS",
-    "DEVONIAN",
-    "SILURIAN",
-    "ORDOVICIAN",
-    "CAMBRIAN",
-    "EDIACARAN",
-);
- */
  
 $periodsOrdered = array(
   0 => "QUATERNARY",
@@ -91,4 +72,50 @@ if ($_SERVER["SERVER_NAME"] == "dev") {
     "name" => "Dev", "searchurl" => "http://dev.geolex.org/searchAPI.php", "linkurl" => "http://dev.geolex.org/displayInfo.php"
   ));
 }
+
+$macrostratLithoNames = array(
+  "dolomite-limestone" => "Dolomitic limestone",
+  "lime_mudstone" => "Limestone",
+  "sandstone" => "Sandstone",
+  "quartz arenite" => "Sandstone",
+  "litharenite" => "Coarse-grained sandstone",
+  "sand"=> "Sandstone",
+  "siltstone" => "Siltstone",
+  "silt" => "Siltstone",
+  "dolomitic siltstone" => "Dolomite", 
+  "shale" => "Claystone",
+  "limestone" => "Limestone",
+  "dolomite" => "Dolomite",
+  "conglomerate" => "Aus conglomerate",
+  "carbonate"=> "Limestone",
+  "dolomite-mudstone" => "Dolomite",
+  "dolostone" => "Dolomite",
+  "mudstone" => "Sandy_claystone",
+  "sandy-dolomite" => "Sandy limestone",
+  "quartzite" => "Sandstone",
+  "halite" => "Halite",
+  "basalt" => "Lava",
+  "rhyolite"=> "Lava",
+  "andesite" => "Lava", // lava
+  "till" => "Glacial till",
+  "loess" => "Siltstone",
+  "calcareous ooze" => "Chalk",
+  "chalk" => "Chalk",
+  "gravel" => "Aus conglomerate", // doesn't have a direct translation in lookup table in dropbox (temporary translation)
+  "plutonic" => "Granitic",
+  "granite" => "Granitic",
+  "clay" => "Claystone",
+  "syenite" => "Volcanics",
+  "tuff" => "Volcanic_ash", // doesn't have a direct translation in lookup table in dropbox (temporary translation)
+  "volcanic" => "Volcanics",
+  "metamorphic" => "Gneiss",
+  "volcaniclastic" => "Volcanic_ash",
+  "migmatite" => "Gneiss",
+  "gneiss" => "Gneiss",
+  "tonalite" => "Granitic",
+  "granodiorite" => "Granitic",
+  "monzonite" => "Granitic", // doesn't have a direct translation in lookup table in dropbox (temporary translation)
+  "argillite" => "Claystone"
+);
+
 ?>

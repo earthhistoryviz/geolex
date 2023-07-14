@@ -87,7 +87,7 @@ include_once("constants.php"); // gets us $periods and $regions
               <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
             } ?>
           </select>
-          <input type="checkbox" name="select-macrostrat" value="1" style="margin-left: 15px; margin-right: 5px;" <?php echo isset($_REQUEST['select-macrostrat']) ? 'checked' : ''; ?>>Include Macrostrat
+          <input type="checkbox" name="include-macrostrat" value="1" style="margin-left: 15px; margin-right: 5px;" <?php echo isset($_REQUEST['include-macrostrat']) ? 'checked' : ''; ?>>Include Macrostrat
         </div> <?php
       } else {
         // Show Province selection box in Home page

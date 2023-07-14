@@ -6,14 +6,9 @@
 include_once('navBar.php');
 include_once("TimescaleLib.php");
 
-
-
-
-
-
 // This part is setting up a user interface so users can search up formations by id (helps in testing process)
 ?> <form action="macrostratparse.php" method="get" id = 'macrostratsearch'>
-      <input type = "search" id="query" name="SearchFm" placeholder="Enter Formation id...">
+      <input type = "search" id="query" name="SearchFm" placeholder="Enter Formation name...">
       <button>Submit</button>
 </form> 
     <select id = "searchtype" name = "searchtypelist" form= "macrostratsearch">
@@ -51,9 +46,9 @@ include_once("TimescaleLib.php");
     */
 </script>
 <?php 
-echo "<pre>";
-print_r($_REQUEST);
-echo "</pre>";
+// echo "<pre>";
+// print_r($_REQUEST);
+// echo "</pre>";
 // initializing how we setup and extract information from the appropriate url with macrostrat 
 $id = $_REQUEST["SearchFm"];
 $searchType = $_REQUEST["searchtypelist"];
@@ -340,7 +335,7 @@ function setUpSearch($searchType, $id, $fmdata){
         $formationData = json_decode(file_get_contents($url), True);
         $formationData = $formationData['success']['data'];
         $totalFormations = sizeof($formationData);
-        echo $totalFormations;
+        // echo $totalFormations;
         // start creating the basic geojson collection to eventually be reconstructed by pygplates and pygmt 
         $geoJSONCollection = array(
             "type" => "FeatureCollection",
@@ -460,7 +455,7 @@ function coordinateReconstructionModel($fmdata, $geojson){
         $toBeHashed .= $_REQUEST["formation"]; //adds the formation name to the hash
         $outdirhash = md5($toBeHashed)."newest"; // md5 hashing for the output directory name 
     }
-    echo $outdirhash;
+    // echo $outdirhash;
     switch($_REQUEST["selectModel"]) {
         case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
         case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;

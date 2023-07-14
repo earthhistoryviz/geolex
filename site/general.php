@@ -87,6 +87,24 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     $allformations = $filteredformations;
   }
 
+  // Request data from Macrostrat when users select the option
+  if (isset($_REQUEST["include-macrostrat"])) {
+    $url = "http://localhost/macrostratAPI.php"
+      ."?searchquery=".urlencode($_REQUEST["search"])
+      ."&agefilterstart=".$_REQUEST["agefilterstart"]
+      ."&agefilterend=".$_REQUEST["agefilterend"];
+
+    $raw = file_get_contents($url);
+    $response = json_decode($raw);
+
+    foreach ($response as $fname => $finfo) {
+      $allformations = array_merge($allformations, array($finfo));
+    }
+    // echo "<pre>"."included Macrostrat\n";
+    // print_r($response);
+    // echo "</pre>";
+  }
+
   //----------------------------------------------
   // Generate the merged geojson:
   $recongeojson = createGeoJSONForFormations($allformations);
@@ -245,7 +263,7 @@ include("generalSearchBar.php"); ?>
                             if ($finfoArr['geojson']) { // if geoJSON exists ?>
                               <div class="geojson-icon">&#127758</div> <?php
                             } ?>
-                            <a href="<?=$regioninfo["linkurl"]?>?formation=<?=$fname?>" target="_blank"><?=$fname?></a>
+                            <a href="<?=$regioninfo["linkurl"] ?>?formation=<?=$fname ?>" target="_blank"><?=$fname ?></a>
                           </div> <?php
                         } ?>
                       </div>
