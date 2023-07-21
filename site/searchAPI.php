@@ -168,7 +168,6 @@ while ($row = mysqli_fetch_array($result)) {
     "geojson" => json_decode($output),
     "period" => $period,
     "stage" => $stage,
-    "ageFilterStart" => gettype($agefilterstart),
     "lithology_pattern" => $lithoPattern,
     "isSynonym" => $isSynonym,
   );

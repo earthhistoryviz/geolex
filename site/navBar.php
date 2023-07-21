@@ -59,12 +59,12 @@
              if currently in a lower level folder, use ../index.php */
     if (strcmp(getcwd(), "/app") == 0) { ?>
       <a href="index.php">Home</a>
-      <a href="general.php">Multi-Country Search</a> 
-      <a href="macrostratparse.php">Macrostrat Search</a> <?php
+      <a href="general.php">Multi-Country Search</a> <?php
+      // <a href="macrostratparse.php">Macrostrat Search</a>
     } else { ?>
       <a href="../index.php">Home</a>
-      <a href="../general.php">Multi-Country Search</a> 
-      <a href="../macrostratparse.php">Macrostrat Search</a> <?php
+      <a href="../general.php">Multi-Country Search</a>  <?php
+      // <a href="../macrostratparse.php">Macrostrat Search</a>
     } ?>
     <a style="float: right;" href="login.php">Admin Login</a>
   </div>
