@@ -13,7 +13,7 @@ while ($row = mysqli_fetch_array($results)) {
     $canonical = explode(",", $canonical);
     foreach ($canonical as $c) {
         $c = trim($c);
-        if (!empty($c)) {
+        if (!empty($c) && !in_array($c)) {
             array_push($output, $c);
         }
     }
