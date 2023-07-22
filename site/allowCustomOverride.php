@@ -8,14 +8,13 @@ function allowCustomOverride($pagepath_file) {
   $filename = basename($pagepath_file);
   $path = dirname($pagepath_file);
   if (preg_match("/^OVERRIDE_/", $filename)) {
-    return false;
+    return "";
   }
   $override_fullpath = "$path/OVERRIDE_$filename";
   if (file_exists($override_fullpath)) {
-    include($override_fullpath);
-    return true;
+    return $override_fullpath;
   }
   // Otherwise, no override, return as normal
-  return false;
+  return "";
 }
 ?>

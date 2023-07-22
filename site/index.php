@@ -139,8 +139,11 @@ function sortByAge($a, $b) {
 
 <?php
 include_once("allowCustomOverride.php");
-if (!allowCustomOverride(__FILE__)) { // "true" means we had an override. Override file will set the title message.
+$override_fullpath = allowCustomOverride(__FILE__);
+if (empty($override_fullpath)) {
   $titleMessage = "Welcome to the International Geology Website and Database!";
+} else {
+  include_once($override_fullpath); // Override file will set the title message.
 }
 
 // Default welcome page:
