@@ -1,7 +1,9 @@
 <?php
   include_once("allowCustomOverride.php");
-  if (allowCustomOverride(__FILE__)) {
-    return; // had overrid3
+  $override_fullpath = allowCustomOverride(__FILE__);
+  if (!empty($override_fullpath)) {
+    include($override_fullpath); // had override
+    return;
   }
 
   // Default navBar:
