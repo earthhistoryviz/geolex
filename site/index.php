@@ -142,8 +142,9 @@ include_once("allowCustomOverride.php");
 $override_fullpath = allowCustomOverride(__FILE__);
 if (empty($override_fullpath)) {
   $titleMessage = "Welcome to the International Geology Website and Database!";
+  $mapMessage = "Click on any provinces to view detailed information";
 } else {
-  include_once($override_fullpath); // Override file will set the title message.
+  include_once($override_fullpath); // Override file will set the title message and map Message.
 }
 
 // Default welcome page:
@@ -207,8 +208,7 @@ if ($did_search) {
 } else {
   global $period;
   if ($period) { ?>
-    <p>Map is clickable</p>
-    <p>Click on any provinces to view detailed information</p> <?php
+    <p><?=$mapMessage ?></p> <?php
     include mapForPeriod($period);
   }
 } ?>
