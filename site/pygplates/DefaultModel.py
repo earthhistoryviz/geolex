@@ -47,7 +47,6 @@ def pygplate_reconstructions(outdirname):
     pygplates.reconstruct(coastlines, rotation_model, outdirname + DEFAULT_COASTLINE_OUTPUT, age)
 
 
-
 def plotting_inset(central_lon, outdirname, fig):
     with fig.inset(position='jTR+w4c', box='+pblack+gwhite'):
         # Use a plotting function to create a figure inside the inset
