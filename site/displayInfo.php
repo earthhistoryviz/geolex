@@ -613,7 +613,7 @@ if ($auth) { ?>
     console.log(fmkeys);
     var editables = document.querySelectorAll(
       fmkeys.map(function(k) {
-        return "#'+k+'_value";
+        return "#" + k + "_value";
       }).join(", ") // "#name", "type_locality", ...
     );
     editBtn.addEventListener("click", function(e) {
