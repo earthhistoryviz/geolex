@@ -18,7 +18,7 @@ class Formation():
         self.formation_description = formation_description
         self.province = province
         self.latitude = latitude
-        self.longitude = longitude
+        self.longitude = longitude 
 
 #Encodes the formation class to json
 class FormationEncoder(json.JSONEncoder):
