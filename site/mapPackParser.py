@@ -65,6 +65,7 @@ def reading_datapack(columns_dict):
         if str2 == '.csv': #if file is a .csv file
             try:
                 with open(dataPackPath, newline='' ) as csvfile:
+                    print("here")
                     data_file= list(csv.reader(csvfile, delimiter = ',')) #converts the read data file into a list for easy parsing.
             except UnicodeDecodeError: #encoding is in UTF-16 instead
                 with open(dataPackPath, newline='', encoding='utf-16') as csvfile:
@@ -172,7 +173,7 @@ def reading_MapLocations():
                         #row[2] = LAT row[3] = LON
                         
                         try:
-                            cols_dict[row[1]] = (float(row[3]), float(row[2])) #adding lon and lat as a tuple 
+                            columns_dict[row[1]] = (float(row[3]), float(row[2])) #adding lon and lat as a tuple 
                         except ValueError:
                             continue
 

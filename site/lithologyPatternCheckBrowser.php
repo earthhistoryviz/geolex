@@ -122,7 +122,7 @@ if (!$_SESSION["loggedIn"]) {
 
     
     try { 
-        $pathofLithologyLookUp = "./pygplates/TSCreator_litho-pattern_to_GMT-fixed_pattern_code.csv";
+        $pathofLithologyLookUp = "./pygplates/config/TSCreator_litho-pattern_to_GMT-fixed_pattern_code.csv";
 
         $csvFile = file($pathofLithologyLookUp);
 
