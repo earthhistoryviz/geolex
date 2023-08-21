@@ -87,7 +87,7 @@ if __name__ == '__main__':
     central_lon, central_lat = calculate_central_coor(edge_coor)
 
     if abs(edge_coor[2]) > 35 or abs(edge_coor[3]) > 35: # if the boundary of map reaches beyond 55 degrees (35 after some conversions) north or south in latitude.
-        if abs(edge_coor[2] - edge_coor[3]) < 80: # And, if all polygons are in the same hemisphere, plot polar projection.
+        if abs(edge_coor[2] - edge_coor[3]) < 65: # And, if all polygons are in the same hemisphere, plot polar projection.
             projection = 'G' + str(central_lon) + '/' + str(central_lat) + '/60/7.5c'
             fig.coast(region='d', projection=projection, frame='a30g30', land='skyblue', water='skyblue')
 
