@@ -515,25 +515,30 @@ if ($auth) { ?>
   <script type="text/javascript">
     function deleteform() {
       console.log("delete pressed");
-      var title1 = document.getElementById("name_value").innerHTML;
-      console.log(title1);
+      var toDeleteHTML = document.getElementById("name_value");
+      var toDeleteText = toDeleteHTML.innerText || toDeleteHTML.textContent;
+      console.log(toDeleteText);
+
       newform = document.createElement("form");
       document.body.appendChild(newform);
       newform.method = "POST";
       newform.action = "deleteForm.php";
-      input = document.createElement("input");
+
+      var input = document.createElement("input");
       input.type = "hidden";
       input.name = "name";
-      input.value = title1;
+      input.value = toDeleteText;
+
       newform.appendChild(input);
       newform.submit();
-      document.removeChild(newform);
+      // document.removeChild(newform);
     }
+
     function delImageClicked(path, type, id) {
       console.log("delImageClicked: asked to delete image at path ", path);
       const fullpath = "/app" + path;
       let form = new FormData();
-      form.append("Img_select",fullpath);
+      form.append("Img_select", fullpath);
 
       let x = fetch("/delete_image.php", {method: "POST", body: form}).then(function(res) {
         res.text().then(function(val) {
