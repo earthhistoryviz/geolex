@@ -75,7 +75,7 @@ include_once("constants.php"); // gets us $periods and $regions
         <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
           <div style="padding: 5px;">
             Select Regions to search<br>
-            Hold Ctrl key to select multiple
+            Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple
           </div> <?php
 
           $selected_regions = $_REQUEST['filterregion'] ?? ["All"]; ?>
