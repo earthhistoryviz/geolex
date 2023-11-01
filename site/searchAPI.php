@@ -27,7 +27,7 @@ $apostrophes = array(
   "’",
   "’",
 );
-$allapostrophes = join($apostrophes, '');
+$allapostrophes = join('', $apostrophes);
 $regex = "/[$allapostrophes]/";
 
 $sql = "SELECT * "
@@ -70,7 +70,7 @@ if (strcmp($lithofilter, "") === 0) {
 }
 $sql .= $litho;
 
-preg_replace("+", "%", $searchquery);
+preg_replace("/\+/", "%", $searchquery);
 
 // In case of Date/Date Range search
 if ($agefilterstart != "") {
@@ -124,36 +124,25 @@ while ($row = mysqli_fetch_array($result)) {
   $lithoPattern = removeHTML($row['lithology_pattern']);
   // geojson processing before writing to output file
   // format without properties tag
-  $output = json_decode(strip_tags($row["geojson"]), true);
+  $geojsonData = json_decode(strip_tags($row["geojson"]), true);
+  // Initialize properties array
+  $properties = array(
+    "NAME" => $name,
+    "FROMAGE" => $begAge, 
+    "TOAGE" => $endAge
+  );
 
-  if (array_key_exists("features", $output) && !(array_key_exists("properties", $output["features"][0]) || array_key_exists("properties", $output)) && $output) {
-    // condition 1 of geojson processing
-    $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null); // creating properties array
-    $appendProp["properties"] = $properties;
-    array_splice($output["features"]["0"], 1, 0, $appendProp); // adding the properties array in with the geojson
-    $output["features"]["0"]["properties"] = $output["features"]["0"][0]; // properties array in json is indexed with number rather than phrase "properties"
-    unset($output["features"]["0"][0]); // renaming the key 0 to be properties instead
-    krsort($output["features"]["0"]); // reverse sorting so that properties is in right place and pygplates can partition correctly
-    $output = json_encode($output["features"]["0"], JSON_PRETTY_PRINT); // altering displayed geojson
-  } else if (!(array_key_exists("features", $output)) && !(array_key_exists("properties", $output["features"][0]) ||array_key_exists("properties", $output)) && $output) {
-    // condition 2 of geojson processing
-    $properties = array("NAME" => $name, "FROMAGE" => null, "TOAGE" => null);
-    $appendProp["properties"] = $properties;
-    array_splice($output, 1, 0, $appendProp); // adding the properties array in with the geojson
-    $output["properties"] = $output[0]; // properties array in json is indexed with number rather than phrase "properties"
-    unset($output[0]); // renaming the key 0 to be properties instead
-    krsort($output); // reverse sorting so that properties is in right place and pygplates can partition correctly
-    $output = json_encode($output, JSON_PRETTY_PRINT);
-  } else if ($output["type"] == "FeatureCollection") {
-    // condition 3 of geojson processing
-    // format with properties tag but each formation is feature collection
-    $output["features"][0]["properties"]["NAME"] = $name;
-    $output["features"][0]["properties"]["FROMAGE"] = null;
-    $output["features"][0]["properties"]["TOAGE"] = null;
-    $output = json_encode($output["features"][0], JSON_PRETTY_PRINT);
+  // Check the type of GeoJSON and handle accordingly
+  if (isset($geojsonData['type']) && $geojsonData['type'] === 'Feature') {
+      // It's a single Feature
+      $geojsonData['properties'] = $properties;
+  } elseif (isset($geojsonData['type']) && $geojsonData['type'] === 'FeatureCollection') {
+      // It's a collection of Features
+      foreach ($geojsonData['features'] as &$feature) {
+          $feature['properties'] = $properties;
+      }
   } else {
-    // condition 4 of geojson processing
-    $output = json_encode($output, JSON_PRETTY_PRINT);
+      //no geojson, do nothing
   }
 
   if (strlen($name) < 1) {
@@ -165,7 +154,7 @@ while ($row = mysqli_fetch_array($result)) {
     "endAge" => $endAge,
     "begAge" => $begAge,
     "province" => $province,
-    "geojson" => json_decode($output),
+    "geojson" => $geojsonData,
     "period" => $period,
     "stage" => $stage,
     "lithology_pattern" => $lithoPattern,

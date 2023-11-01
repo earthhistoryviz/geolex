@@ -4,8 +4,8 @@ include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 $arr = array();
 $sql2 = "SELECT province FROM formation";
-$result = mysqli_query($conn, $sql2);
-$province_list = array_unique($result);
+// $result = mysqli_query($conn, $sql2);
+// $province_list = array_unique($result);
 
 //Collect
 //Within the single quotation marks is the name of the first field within the form
@@ -41,7 +41,7 @@ if (isset($_REQUEST['search'])) {
     "’",
     "’",
   );
-  $allapostrophes = join($apostrophes, '');
+  $allapostrophes = join('', $apostrophes);
   $regex = "/[$allapostrophes]/";
   if (preg_match($regex, $searchquery)) {
     foreach ($apostrophes as $apos) {

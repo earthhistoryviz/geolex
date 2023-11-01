@@ -1,9 +1,11 @@
 <?php
 global $conn;
+
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 // Sets up the reconstruction variables: $recongeojson, etc.:
 include_once("./makeReconstruction.php");
+//include_once("./searchAPI.php"); 
 
 if ($_REQUEST["filterperiod"]) {
   $did_search = true;
@@ -15,11 +17,13 @@ if ($_REQUEST["filterperiod"]) {
     ."&agefilterstart=".$_REQUEST["agefilterstart"]
     ."&agefilterend=".$_REQUEST["agefilterend"]
     ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"]);
-
+    
+  //echo $url;
   if ($_REQUEST["generateImage"]) {
     $url .= "&generateImage=1";
   }
   $raw = file_get_contents($url);
+  //var_dump($raw);
   $response = json_decode($raw);
   $allFormations = array();
 
@@ -60,7 +64,7 @@ if ($_REQUEST["filterperiod"]) {
   $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
 
   // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
-  $midAge = ($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"]) / 2;
+  $midAge = ((float)$_REQUEST["agefilterstart"] + (float)$_REQUEST["agefilterend"]) / 2;
   if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
     $filteredformations = array();
     foreach ($allFormations as $f) {
@@ -70,10 +74,11 @@ if ($_REQUEST["filterperiod"]) {
     }
     $allFormations = $filteredformations;
   }
-
+  session_start();
+  $pageKey = session_id() . '_' . uniqid();
   // Generate the merged geojson:
   $recongeojson = createGeoJSONForFormations($allFormations);
-
+  $_SESSION[$pageKey] = $recongeojson;
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
     $model = $_REQUEST["selectModel"] || "Default";
@@ -162,7 +167,7 @@ include("navBar.php"); ?>
 $formaction = "index.php";
 $isFixedRegion = true; // For generalSearchBar.php to determine if we should display a region filter
 include("generalSearchBar.php");
-
+//var_dump($allFormations);
 if ($did_search) {
   if (count($allFormations) == 0) { ?>
     <div class="no-results-message" style="text-align: center; padding-bottom: 20px; font-size: 20px">
@@ -180,9 +185,45 @@ if ($did_search) {
     if ($_REQUEST['agefilterstart'] != "" || $_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "") { ?>
       <div class="reconstruction"> <?php
         include_once("./makeButtons.php"); ?>
-      </div> <?php
+      </div> 
+      <div class="buttonContainer">
+        <button id="generateAllImagesBtn">Generate All Models</button>
+      </div>
+      <?php
     } ?>
-
+    <style>
+      .buttonContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #generateAllImagesBtn {
+        padding: 10px 20px;
+        background-color: #e67603;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+        generateAllImagesBtn.addEventListener('click', function() {
+          // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
+          var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
+          var formation = <?php echo json_encode($midAge); ?>;
+          var pageKey = <?php echo json_encode($pageKey); ?>;
+          // Construct the URL with query parameters
+          var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
+          encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
+          
+          // Open the new tab with the constructed URL
+          window.open(url, '_blank');
+        });
+      });
+  </script>
     <div class="toggle-order-button" style="padding-bottom: 20px; width: 100%">
       <form method="post">
         <input
@@ -193,7 +234,7 @@ if ($did_search) {
         />
       </form>
     </div>
-    
+    <link rel="stylesheet" href="style.css"/>
     <div class="formation-container"> <?php
       foreach ($allFormations as $formation) { ?>
         <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);"> <?php

@@ -1,8 +1,12 @@
 <?php
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 include_once("navBar.php");
 include_once("SearchBar.php");
 include_once("SqlConnection.php");
 include_once("./makeReconstruction.php"); // has createGeoJSONForFormations
+include("SimpleXLSX.php");
 // include_once("formationInfo.php");
 // $recongeoJSON = fopen("reconstruct.txt", "w"); // output file to write all geojson information to
 $formation = $_REQUEST;
@@ -16,9 +20,7 @@ if ($formation["formation"] == "") {?>
 }
 
 $imagedisplaycount = 0; ?>
-
-<title><?=$formation[formation]?></title> <?php
-
+<title><?=$formation["formation"]?></title> <?php
 // Get all the formation names to build the regexp searches in the text for automatic link creation
 $sql = "SELECT name FROM formation";
 $result = mysqli_query($conn, $sql);
@@ -67,14 +69,12 @@ while ($row = mysqli_fetch_array($result)) {
 //-----------------------------------------------------------
 
 /* ---------- DEBUGGING ---------- */
-// echo "<pre>";
-// print_r($fmdata);
-// echo "</pre>";
+
 /* ---------- DEBUGGING ---------- */
 
 if (!$found) { ?>
   <title>No Match</title>
-  <h3>Nothing found for "<?=$formation[formation]?>". Please search again.</h3> <?php
+  <h3>Nothing found for "<?=$formation["formation"]?>". Please search again.</h3> <?php
   include("footer.php");
   exit(0);
 }
@@ -109,6 +109,9 @@ if ($dirs) {
   }
 }
 
+session_start();
+$pageKey = session_id() . '_' . uniqid();
+//var_dump($fmdata);
 $geojson = createGeoJSONForFormations(array(
   array(
     "geojson" => strip_tags($fmdata["geojson"]["display"]),
@@ -116,6 +119,8 @@ $geojson = createGeoJSONForFormations(array(
     "lithology_pattern" => strip_tags($fmdata["lithology_pattern"]["display"])
   )
 ));
+//var_dump($geojson);
+$_SESSION[$pageKey] = $geojson;
 
 // create output directory for json file to be processed by pygplates
 // (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
@@ -129,8 +134,7 @@ if ($_REQUEST["generateImage"]) {
     $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
   }
   $toBeHashed .= $_REQUEST["formation"]; // adds the formation name to the hash
-  $outdirhash = md5($toBeHashed)."newest"; // md5 hashing for the output directory name
-
+  $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name
   switch ($_REQUEST["selectModel"]) {
     case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
     case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
@@ -150,21 +154,63 @@ if ($_REQUEST["generateImage"]) {
   $reconfilename = "$outdirname_php/recon.geojson";
   if (!file_exists($reconfilename)) {
     file_put_contents($reconfilename, $geojson);
-  }
+  };
 } ?>
 
 <div class="reconstruction"> <?php
   // only want to make the buttons if there is valid geojson for the formation
   if (json_decode($fmdata["geojson"]["display"])) {
     include("./makeButtons.php");
-  } ?>
+  ?>
+  <div class="buttonContainer">
+    <button id="generateAllImagesBtn">Generate All Models</button>
+  </div>
+  <?php
+  } 
+  ?>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+    var geojson = <?=json_encode($geojson)?>;
+    generateAllImagesBtn.addEventListener('click', function() {
+      // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
+      var begDateDisplay = <?php echo json_encode($fmdata["beg_date"]["display"]); ?>;
+      var formation = <?php echo json_encode($_REQUEST["formation"]); ?>;
+      var pageKey = <?php echo json_encode($pageKey); ?>;
+      var region = <?php echo json_encode($_REQUEST["region"]); ?>;
+      //location.reload();
+      // Construct the URL with query parameters
+      var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
+      encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey);
+      window.open(url, '_blank');
+    });
+  });
+</script>
 
 <?php // display information below ?>
 <style>
   [contenteditable="true"] {
     font-family: "Rajdhani";
     color: #C00;
+  }
+  button:hover {
+    background-color: #e67603;
+  }
+  .buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #generateAllImagesBtn {
+    padding: 10px 20px;
+    background-color: #e67603;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
   }
   #Save {
     height: 40px;
@@ -383,7 +429,35 @@ if ($auth) { ?>
   <div id="fossils">
     <h3><b>Fossils</b></h3>
     <div id="fossils_value" class="minwidth">
-      <?=$fmdata["fossils"]["display"] ?>
+      <?php
+        $fossilString = $fmdata["fossils"]["display"];
+        $xlsx = SimpleXLSX::parse("Treatise_FossilGenera-URL_lookup.xlsx");
+        if (!$xlsx)
+          echo $fossilString;
+        $rows = $xlsx->rows(0);
+        $links = [];
+        foreach ($rows as $row) {
+          if (isset($row[0]) && isset($row[1])) {
+            $name = trim($row[0]);
+            $link = trim($row[1]);
+            if (!empty($name)) {
+                $links[$name] = $link;
+            }
+          }
+        }
+        preg_match_all('/<em>(.*?)<\/em>/', $fossilString, $matches);
+        $italicizedWords = $matches[1];
+        foreach ($italicizedWords as $italicizedWord) {
+          $charactersToRemove = array('.', ',');
+          $italicizedWord = str_replace($charactersToRemove, '', $italicizedWord);
+          $italicizedWordFirst = explode(' ', $italicizedWord)[0];
+          if (isset($links[$italicizedWordFirst])) {
+            $link = '<em> <a href="' . htmlspecialchars($links[$italicizedWordFirst]) . '" target="_blank">' . htmlspecialchars($italicizedWord) . '</a> </em>';
+            $fossilString = str_replace('<em>' . $italicizedWord . '</em>', $link, $fossilString);
+          }
+        }
+        echo $fossilString;
+      ?>
     </div>
     <br> <?php
     if ($auth) { ?>

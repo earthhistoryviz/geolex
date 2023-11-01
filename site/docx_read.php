@@ -162,14 +162,18 @@ function docx_read($filename)
 
     $sql20 = "ON DUPLICATE KEY UPDATE ";
     $exists = array();
-    //$sql0 = "SHOW COLUMNS FROM formation LIKE";
+    $sql0 = "SHOW COLUMNS FROM formation LIKE";
     $namecounter = 0;
     for($i=0; $i<count($vars); $i++){
       $v = $vars[$i];
       $sql2 = $sql0.$v["name"];
       if($v["name"]=='name'){
         $result = $conn->query($sql2);
-        $exist = (mysqli_num_rows($result))?TRUE:FALSE;
+        if ($result !== false && $result->num_rows > 0) {
+          $exist = true;
+        } else {
+          $exist = false;
+        }
         array_push($exists,$exist);
         $namecounter++;
       }

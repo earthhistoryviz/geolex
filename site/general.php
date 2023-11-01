@@ -76,7 +76,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   //--------------------------------
   // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
-  $midAge = ($_REQUEST["agefilterstart"] + $_REQUEST["agefilterend"]) / 2;
+  $midAge = ((float)$_REQUEST["agefilterstart"] + (float)$_REQUEST["agefilterend"]) / 2;
   if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
     $filteredformations = array();
     foreach ($allformations as $f) {
@@ -107,8 +107,10 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
   //----------------------------------------------
   // Generate the merged geojson:
+  session_start();
+  $pageKey = session_id() . '_' . uniqid();
   $recongeojson = createGeoJSONForFormations($allformations);
-
+  $_SESSION[$pageKey] = $recongeojson;
   //----------------------------------------------
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
@@ -206,7 +208,44 @@ include("generalSearchBar.php"); ?>
       if ($_REQUEST['agefilterstart'] != "" || $_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "") { ?>
         <div class="reconstruction"> <?php
           include_once("./makeButtons.php"); ?>
-        </div> <?php
+          <div class="buttonContainer">
+            <button id="generateAllImagesBtn">Generate All Models</button>
+          </div>
+        </div>
+        <style>
+        .buttonContainer {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        #generateAllImagesBtn {
+          padding: 10px 20px;
+          background-color: #e67603;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 16px;
+        }
+      </style>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+          generateAllImagesBtn.addEventListener('click', function() {
+            // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
+            var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
+            var formation = <?php echo json_encode($_REQUEST["agefilterend"]); ?>;
+            var pageKey = <?php echo json_encode($pageKey); ?>;
+            // Construct the URL with query parameters
+            var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
+            encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
+            
+            // Open the new tab with the constructed URL
+            window.open(url, '_blank');
+          });
+        }); 
+      </script>
+      <?php
       }
 
       /*
