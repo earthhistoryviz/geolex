@@ -162,32 +162,31 @@ if ($_REQUEST["generateImage"]) {
   if (json_decode($fmdata["geojson"]["display"])) {
     include("./makeButtons.php");
   ?>
-  <div class="buttonContainer">
+  <!-- <div class="buttonContainer">
     <button id="generateAllImagesBtn">Generate All Models</button>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+      var geojson = </?=json_encode($geojson)?>;
+      generateAllImagesBtn.addEventListener('click', function() {
+        // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
+        var begDateDisplay = </?php echo json_encode($fmdata["beg_date"]["display"]); ?>;
+        var formation = </?php echo json_encode($_REQUEST["formation"]); ?>;
+        var pageKey = </?php echo json_encode($pageKey); ?>;
+        var region = </?php echo json_encode($_REQUEST["region"]); ?>;
+        //location.reload();
+        // Construct the URL with query parameters
+        var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
+        encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey);
+        window.open(url, '_blank');
+      });
+    });
+  </script> -->
   <?php
   } 
   ?>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
-    var geojson = <?=json_encode($geojson)?>;
-    generateAllImagesBtn.addEventListener('click', function() {
-      // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
-      var begDateDisplay = <?php echo json_encode($fmdata["beg_date"]["display"]); ?>;
-      var formation = <?php echo json_encode($_REQUEST["formation"]); ?>;
-      var pageKey = <?php echo json_encode($pageKey); ?>;
-      var region = <?php echo json_encode($_REQUEST["region"]); ?>;
-      //location.reload();
-      // Construct the URL with query parameters
-      var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
-      encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey);
-      window.open(url, '_blank');
-    });
-  });
-</script>
 
 <?php // display information below ?>
 <style>
@@ -432,31 +431,34 @@ if ($auth) { ?>
       <?php
         $fossilString = $fmdata["fossils"]["display"];
         $xlsx = SimpleXLSX::parse("Treatise_FossilGenera-URL_lookup.xlsx");
-        if (!$xlsx)
+        if ($xlsx === false) {
           echo $fossilString;
-        $rows = $xlsx->rows(0);
-        $links = [];
-        foreach ($rows as $row) {
-          if (isset($row[0]) && isset($row[1])) {
-            $name = trim($row[0]);
-            $link = trim($row[1]);
-            if (!empty($name)) {
-                $links[$name] = $link;
+        }
+        else {
+          $rows = $xlsx->rows(0);
+          $links = [];
+          foreach ($rows as $row) {
+            if (isset($row[0]) && isset($row[1])) {
+              $name = trim($row[0]);
+              $link = trim($row[1]);
+              if (!empty($name)) {
+                  $links[$name] = $link;
+              }
             }
           }
-        }
-        preg_match_all('/<em>(.*?)<\/em>/', $fossilString, $matches);
-        $italicizedWords = $matches[1];
-        foreach ($italicizedWords as $italicizedWord) {
-          $charactersToRemove = array('.', ',');
-          $italicizedWord = str_replace($charactersToRemove, '', $italicizedWord);
-          $italicizedWordFirst = explode(' ', $italicizedWord)[0];
-          if (isset($links[$italicizedWordFirst])) {
-            $link = '<em> <a href="' . htmlspecialchars($links[$italicizedWordFirst]) . '" target="_blank">' . htmlspecialchars($italicizedWord) . '</a> </em>';
-            $fossilString = str_replace('<em>' . $italicizedWord . '</em>', $link, $fossilString);
+          preg_match_all('/<em>(.*?)<\/em>/', $fossilString, $matches);
+          $italicizedWords = $matches[1];
+          foreach ($italicizedWords as $italicizedWord) {
+            $charactersToRemove = array('.', ',');
+            $italicizedWord = str_replace($charactersToRemove, '', $italicizedWord);
+            $italicizedWordFirst = explode(' ', $italicizedWord)[0];
+            if (isset($links[$italicizedWordFirst])) {
+              $link = '<em> <a href="' . htmlspecialchars($links[$italicizedWordFirst]) . '" target="_blank">' . htmlspecialchars($italicizedWord) . '</a> </em>';
+              $fossilString = str_replace('<em>' . $italicizedWord . '</em>', $link, $fossilString);
+            }
           }
+          echo $fossilString;
         }
-        echo $fossilString;
       ?>
     </div>
     <br> <?php
