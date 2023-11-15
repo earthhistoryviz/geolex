@@ -7,6 +7,7 @@ $provincefilter = addslashes($_REQUEST['provincefilter']);
 $agefilterstart = addslashes($_REQUEST['agefilterstart']);
 $agefilterend = addslashes($_REQUEST['agefilterend']);
 $lithofilter = addslashes($_REQUEST['lithoSearch']);
+$fossilfilter = addslashes($_REQUEST['fossilSearch']);
 
 if (!$searchquery) {
   $searchquery = "";
@@ -70,6 +71,35 @@ if (strcmp($lithofilter, "") === 0) {
 }
 $sql .= $litho;
 
+$fossil = "";
+if (strcmp($fossilfilter, "") === 0) {
+  $fossil .= "AND fossils LIKE '%$fossilfilter%' ";
+} else {
+  $fossilfilter_lower = strtolower($fossilfilter);
+
+  if (strpos($fossilfilter_lower, ' and ') !== false) { // if the user wants to search with 'and'
+    $fossilfilter_array = explode(' and ', $fossilfilter_lower);
+    foreach ($fossilfilter_array as $value) {
+      $fossil .= "AND fossils LIKE '%$value%' ";
+    }
+  } else if (strpos($fossilfilter_lower, ' or ') !== false) { // if the user wants to search with 'or'
+    $fossilfilter_array = explode(' or ', $fossilfilter_lower);
+    $index = 0;
+    foreach ($fossilfilter_array as $value) {
+      if ($index === 0) {
+        $fossil .= "AND fossils LIKE '%$value%' ";
+      } else {
+        $fossil .= "OR fossils LIKE '%$value%' ";
+      }
+      $index++;
+    }
+  } else { // user does not want to search and/or
+    $fossil .= "AND fossils LIKE '%$fossilfilter%' ";
+  }
+}
+$sql .= $fossil;
+//echo $sql;
+
 preg_replace("/\+/", "%", $searchquery);
 
 // In case of Date/Date Range search
@@ -95,7 +125,8 @@ if (mysqli_num_rows($result) == 0) {
     ."WHERE type_locality LIKE '%$searchquery%' "
     ."AND period LIKE '%$periodfilter%' "
     ."AND province LIKE '%$provincefilter%' "
-    .$litho;
+    .$litho
+    .$fossil;
   if ($agefilterstart != "") {
     $sql .= "AND NOT (beg_date < $agefilterend "
       ."OR end_date > $agefilterstart) "
@@ -119,8 +150,11 @@ while ($row = mysqli_fetch_array($result)) {
   $province = removeHTML($row['province']);
   $period = removeHTML($row['period']);
   $stage = removeHTML($row['beginning_stage']);
-  $begAge = removeHTML($row['beg_date']);
-  $endAge = removeHTML($row['end_date']);
+  // $begAge = removeHTML($row['beg_date']);
+  // $endAge = removeHTML($row['end_date']);
+  //No idea why, but these need to be set null
+  $begAge = null;
+  $endAge = null;
   $lithoPattern = removeHTML($row['lithology_pattern']);
   // geojson processing before writing to output file
   // format without properties tag
