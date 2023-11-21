@@ -11,11 +11,13 @@ function createGeoJSONForFormations($formations) {
     if (!is_array($f)) {
       $f = (array)$f;
     }
+    if ($f["geojson"] === null) {
+      continue;
+    }
     if (!$first) {
       $geojson .= ",\n";
     }
     $first = false;
-
     $parse = $f["geojson"];
     if (is_string($parse)) {
       $parse = json_decode($parse);
@@ -25,10 +27,13 @@ function createGeoJSONForFormations($formations) {
         $parse->properties = new stdClass();
       }
       $parse->properties->name = $f["name"];
-      $parse->properties->pattern = $f["lithology_pattern"]; 
+      $parse->properties->pattern = $f["lithology_pattern"];
+      //These need to be set null in order for the Scotese model to work
+      $parse->properties->FROMAGE = null;
+      $parse->properties->TOAGE = null;
+      $geojson .= json_encode($parse); 
     }
     //var_dump($parse);
-    $geojson .= json_encode($parse);
   }
   $geojson .= "]}";
   return $geojson;

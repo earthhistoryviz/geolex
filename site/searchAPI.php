@@ -150,11 +150,8 @@ while ($row = mysqli_fetch_array($result)) {
   $province = removeHTML($row['province']);
   $period = removeHTML($row['period']);
   $stage = removeHTML($row['beginning_stage']);
-  // $begAge = removeHTML($row['beg_date']);
-  // $endAge = removeHTML($row['end_date']);
-  //No idea why, but these need to be set null
-  $begAge = null;
-  $endAge = null;
+  $begAge = removeHTML($row['beg_date']);
+  $endAge = removeHTML($row['end_date']);
   $lithoPattern = removeHTML($row['lithology_pattern']);
   // geojson processing before writing to output file
   // format without properties tag
