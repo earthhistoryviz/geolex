@@ -89,27 +89,49 @@ if __name__ == '__main__':
     if abs(edge_coor[2]) > 35 or abs(edge_coor[3]) > 35: # if the boundary of map reaches beyond 55 degrees (35 after some conversions) north or south in latitude.
         if abs(edge_coor[2] - edge_coor[3]) < 65: # And, if all polygons are in the same hemisphere, plot polar projection.
             projection = 'G' + str(central_lon) + '/' + str(central_lat) + '/60/7.5c'
-            fig.coast(region='d', projection=projection, frame='a30g30', land='skyblue', water='skyblue')
+            fig.coast(region='d', projection=projection, frame=['a30g30', 'NE'], land='skyblue', water='skyblue')
 
             plot_coast_and_land(outdirname, fig)
-            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='a30g30')
+            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='fg')
+
+            file_path = outdirname + "/region_and_projection.txt"
+            with open(file_path, 'w') as file:
+                file.write("Projection: " + projection + "\n")
+                file.write("Region: d" + "\n")
+                file.write("Age: " + age_label + "\n")
+                file.write("Map Type: Polar")
 
         else: # if the boundary of map is beyongd 55 degrees north or south in latitude (near poles), but all polygons are NOT in the same hemisphere, plot global projection.
             projection = 'W' + str(central_lon) + '/15c'
-            fig.coast(region='d', projection=projection, frame='a30g30', land='skyblue', water='skyblue')
+            fig.coast(region='d', projection=projection, frame=['a30g30', 'NE'], land='skyblue', water='skyblue')
 
             plot_coast_and_land(outdirname, fig)
-            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='a30g30')
+            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='fg')
+
+            file_path = outdirname + "/region_and_projection.txt"
+            with open(file_path, 'w') as file:
+                file.write("Projection: " + projection + "\n")
+                file.write("Region: d" + "\n")
+                file.write("Age: "+ age_label + "\n")
+                file.write("Map Type: Mollweide")
 
         # Add a reconstruction age stamp to the projection
         fig.text(text=age_label, x=180, y=-90, N=True, D='5/0c', font='12p,Helvetica-Bold,black')
 
     else: # when the boundary of map is within 55 degrees north and south in latitude, or say close to the equator, plot regional map projection (rectangle).
-        fig.coast(region=edge_label, projection='M15c', frame='afg30', land='skyblue', water='skyblue')
+        #fig.coast(region=edge_label, projection='M15c', land='skyblue', water='skyblue')
+        fig.coast(region=edge_label, projection='M15c', frame=['a30g30', 'NE'], land='skyblue', water='skyblue')
 
         plot_coast_and_land(outdirname, fig)
-        plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='a30g30')
+        plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='fg')
         plot_inset(central_lon)
+
+        file_path = outdirname + "/region_and_projection.txt"
+        with open(file_path, 'w') as file:
+            file.write("Projection: M15c" + "\n")
+            file.write("Region: " + edge_label + "\n")
+            file.write("Age: " + age_label + "\n")
+            file.write("Map Type: Rectangular")
 
     if len(pattern_list) <= 1:
         label_shapes_with_names(name_list, coor_list, fig)

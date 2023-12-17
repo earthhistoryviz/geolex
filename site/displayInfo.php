@@ -1,7 +1,7 @@
 <?php
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+// error_reporting(E_ERROR);
 include_once("navBar.php");
 include_once("SearchBar.php");
 include_once("SqlConnection.php");
@@ -162,19 +162,19 @@ if ($_REQUEST["generateImage"]) {
   if (json_decode($fmdata["geojson"]["display"])) {
     include("./makeButtons.php");
   ?>
-  <!-- <div class="buttonContainer">
+  <div class="buttonContainer">
     <button id="generateAllImagesBtn">Generate All Models</button>
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
-      var geojson = </?=json_encode($geojson)?>;
+      var geojson = <?=json_encode($geojson)?>;
       generateAllImagesBtn.addEventListener('click', function() {
         // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
-        var begDateDisplay = </?php echo json_encode($fmdata["beg_date"]["display"]); ?>;
-        var formation = </?php echo json_encode($_REQUEST["formation"]); ?>;
-        var pageKey = </?php echo json_encode($pageKey); ?>;
-        var region = </?php echo json_encode($_REQUEST["region"]); ?>;
+        var begDateDisplay = <?php echo json_encode($fmdata["beg_date"]["display"]); ?>;
+        var formation = <?php echo json_encode($_REQUEST["formation"]); ?>;
+        var pageKey = <?php echo json_encode($pageKey); ?>;
+        var region = <?php echo json_encode($_REQUEST["region"]); ?>;
         //location.reload();
         // Construct the URL with query parameters
         var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
@@ -182,7 +182,7 @@ if ($_REQUEST["generateImage"]) {
         window.open(url, '_blank');
       });
     });
-  </script> -->
+  </script>
   <?php
   } 
   ?>
@@ -728,6 +728,12 @@ if ($auth) { ?>
       form.method = "POST";
       form.action = "saveData.php";
       var length = Object.keys(savedata).length;
+      
+      // var originalNameInput = document.createElement("input");
+      // originalNameInput.type = "hidden";
+      // originalNameInput.name = "originalName";
+      // originalNameInput.value = new URLSearchParams(window.location.search).get('formation');
+      //form.appendChild(originalNameInput);
       for (var data in savedata) {
         var input = document.createElement("input");
         input.type = "hidden";

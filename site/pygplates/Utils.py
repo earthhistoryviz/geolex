@@ -71,10 +71,7 @@ def parse_GMT_file(outdirname):
             prev_name = info[3]
             name_list.append(prev_name)
 
-            if len(info) >= 5:
-                prev_pattern = info[4].lower()
-            else:
-                prev_pattern = 'unknown'
+            prev_pattern = info[-1].lower()
             pattern_list.append(prev_pattern)
         else:
             data_line_begin = 2
@@ -93,7 +90,7 @@ def parse_GMT_file(outdirname):
     return pattern_list, name_list, coor_list
 
 
-def plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='afg30'):
+def plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='fg'):
     """
     This function draws the shape of each reconstruction and fills the shape with the correct color according to its lithology pattern.
     """

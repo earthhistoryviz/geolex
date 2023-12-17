@@ -28,7 +28,8 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
       ."&periodfilter=".$_REQUEST["filterperiod"]
       ."&agefilterstart=".$_REQUEST["agefilterstart"]
       ."&agefilterend=".$_REQUEST["agefilterend"]
-      ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"]);
+      ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"])
+      ."&fossilSearch=".urlencode($_REQUEST["fossilSearch"]);
 
     if ($_REQUEST["generateImage"]) {
       $url .= "&generateImage=1";
@@ -205,12 +206,30 @@ include("generalSearchBar.php"); ?>
             a. no End Date
             b. Start Date == End Date
        */
-      if ($_REQUEST['agefilterstart'] != "" || $_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "") { ?>
+      $geojson = json_decode($recongeojson);
+      if ($_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "" && !empty($geojson->features)) { ?>  
         <div class="reconstruction"> <?php
           include_once("./makeButtons.php"); ?>
           <div class="buttonContainer">
             <button id="generateAllImagesBtn">Generate All Models</button>
           </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+              var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+              generateAllImagesBtn.addEventListener('click', function() {
+                // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
+                var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
+                var formation = <?php echo json_encode($_REQUEST["agefilterend"]); ?>;
+                var pageKey = <?php echo json_encode($pageKey); ?>;
+                // Construct the URL with query parameters
+                var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
+                encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
+                
+                // Open the new tab with the constructed URL
+                window.open(url, '_blank');
+              });
+            }); 
+          </script>
         </div>
         <style>
         .buttonContainer {
@@ -228,23 +247,6 @@ include("generalSearchBar.php"); ?>
           font-size: 16px;
         }
       </style>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
-          generateAllImagesBtn.addEventListener('click', function() {
-            // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
-            var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
-            var formation = <?php echo json_encode($_REQUEST["agefilterend"]); ?>;
-            var pageKey = <?php echo json_encode($pageKey); ?>;
-            // Construct the URL with query parameters
-            var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
-            encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
-            
-            // Open the new tab with the constructed URL
-            window.open(url, '_blank');
-          });
-        }); 
-      </script>
       <?php
       }
 

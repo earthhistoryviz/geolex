@@ -5,6 +5,7 @@ import sys
 sys.path.insert(1, '/usr/lib/pygplates/revision28')
 import pygplates
 import pygmt
+import subprocess
 from Utils import (
     prepare_params,
     create_litho_dict,
@@ -30,13 +31,10 @@ def pygplate_reconstructions(outdirname):
 
     # static polygons are the 'partitioning features'
     static_polygons = pygplates.FeatureCollection(DEFAULT_STATIC_POLYGON_FILE)
-
     coastlines = pygplates.FeatureCollection(DEFAULT_COASTLINE_FILE)
-
     # The partition_into_plates function requires a rotation model, since sometimes this would be
     # necessary even at present day (for example to resolve topological polygons)
     rotation_model = pygplates.RotationModel(DEFAULT_ROT_MODEL_FILE)
-
     # partition features
     partitioned_geometries = pygplates.partition_into_plates(static_polygons, rotation_model, input_geometries, partition_method=pygplates.PartitionMethod.most_overlapping_plate)
 
@@ -78,25 +76,49 @@ if __name__ == '__main__':
     if abs(edge_coor[2]) > 35 or abs(edge_coor[3]) > 35: # if the boundary of map reaches beyond 55 degrees (35 after some conversions) north or south in latitude.
         if abs(edge_coor[2] - edge_coor[3]) < 65: # And, if all polygons are in the same hemisphere, plot polar projection.
             projection = 'G' + str(central_lon) + '/' + str(central_lat) + '/60/7.5c'
-            fig.coast(region='d', projection=projection, frame='a30g30', land='skyblue', water='skyblue')
+            fig.coast(region='d', projection=projection, frame=['a30g30', 'NE'], land='skyblue', water='skyblue')
             fig.plot(data=outdirname + DEFAULT_COASTLINE_OUTPUT, G='seashell', pen='0.1p,black')
             plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig)
+            
+            file_path = outdirname + "/region_and_projection.txt"
+            with open(file_path, 'w') as file:
+                file.write("Projection: " + projection + "\n")
+                file.write("Region: d" + "\n")
+                file.write("Age: " + age_label + "\n")
+                file.write("Map Type: Polar")
+            
 
         else: # if the boundary of map is beyongd 55 degrees north or south in latitude (near poles), but all polygons are NOT in the same hemisphere, plot global projection.
             projection = 'W' + str(central_lon) + '/15c'
-            fig.coast(region='d', projection=projection, frame='a30g30', land='skyblue', water='skyblue')
+            fig.coast(region='d', projection=projection, frame=['a30g30', 'NE'], land='skyblue', water='skyblue')
             fig.plot(data=outdirname + DEFAULT_COASTLINE_OUTPUT, G='seashell', pen='0.1p,black')
             plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig)
-
+            
+            file_path = outdirname + "/region_and_projection.txt"
+            with open(file_path, 'w') as file:
+                file.write("Projection: " + projection + "\n")
+                file.write("Region: d" + "\n")
+                file.write("Age: "+ age_label + "\n")
+                file.write("Map Type: Mollweide")
+        
         fig.text(text=age_label, x=180, y=-90, N=True, D='5/0c', font='12p,Helvetica-Bold,black') # A reconstruction age stamp to the projection
 
     else: # when the boundary of map is within 55 degrees north and south in latitude, or say close to the equator, plot regional map projection (rectangle).
-        fig.coast(region=edge_label, projection='M15c', frame='afg30', land='skyblue', water='skyblue')
+        #fig.coast(region=edge_label, projection='M15c', land='skyblue', water='skyblue')
+        fig.coast(region=edge_label, projection='M15c', frame=['afg30', 'NE'], land='skyblue', water='skyblue')
         fig.plot(data=outdirname + DEFAULT_COASTLINE_OUTPUT, G='seashell', pen='0.1p,black')
         plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig)
         plotting_inset(central_lon, outdirname, fig)
+        
+        file_path = outdirname + "/region_and_projection.txt"
+        with open(file_path, 'w') as file:
+            file.write("Projection: M15c" + "\n")
+            file.write("Region: " + edge_label + "\n")
+            file.write("Age: " + age_label + "\n")
+            file.write("Map Type: Rectangular")
+        
 
     if len(pattern_list) <= 1:
         label_shapes_with_names(name_list, coor_list, fig)
 
-    fig.savefig(outdirname + '/final_image.png', dpi='300')
+    fig.savefig(outdirname + "/final_image.png", dpi="300")

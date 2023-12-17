@@ -16,7 +16,8 @@ if ($_REQUEST["filterperiod"]) {
     ."&provincefilter=".urlencode($_REQUEST["filterprovince"])
     ."&agefilterstart=".$_REQUEST["agefilterstart"]
     ."&agefilterend=".$_REQUEST["agefilterend"]
-    ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"]);
+    ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"])
+    ."&fossilSearch=".urlencode($_REQUEST["fossilSearch"]);
     
   //echo $url;
   if ($_REQUEST["generateImage"]) {
@@ -189,6 +190,23 @@ if ($did_search) {
       <div class="buttonContainer">
         <button id="generateAllImagesBtn">Generate All Models</button>
       </div>
+      <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+        generateAllImagesBtn.addEventListener('click', function() {
+          // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
+          var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
+          var formation = <?php echo json_encode($midAge); ?>;
+          var pageKey = <?php echo json_encode($pageKey); ?>;
+          // Construct the URL with query parameters
+          var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
+          encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
+          
+          // Open the new tab with the constructed URL
+          window.open(url, '_blank');
+        });
+      });
+  </script>
       <?php
     } ?>
     <style>
@@ -207,23 +225,6 @@ if ($did_search) {
         font-size: 16px;
       }
     </style>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
-        generateAllImagesBtn.addEventListener('click', function() {
-          // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
-          var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
-          var formation = <?php echo json_encode($midAge); ?>;
-          var pageKey = <?php echo json_encode($pageKey); ?>;
-          // Construct the URL with query parameters
-          var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
-          encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
-          
-          // Open the new tab with the constructed URL
-          window.open(url, '_blank');
-        });
-      });
-  </script>
     <div class="toggle-order-button" style="padding-bottom: 20px; width: 100%">
       <form method="post">
         <input

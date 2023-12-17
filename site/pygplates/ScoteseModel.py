@@ -104,32 +104,55 @@ if __name__ == '__main__':
     if abs(edge_coor[2]) > 35 or abs(edge_coor[3]) > 35: # if the boundary of map reaches beyond 55 degress north or south in latitude.
         if abs(edge_coor[2] - edge_coor[3]) < 65: # And, if all polygons are in the same hemisphere, plot polar projection. 
             # Plot base grid map (Scotese's DEM). The eye view is centered based on the center of all polygons. '60' is a horizon parameter.
-            fig.grdimage(grid=gridfile, region='d', projection='G' + str(central_lon) + '/' + str(central_lat) + '/60/7.5c', shading='+d')
+            projection = 'G' + str(central_lon) + '/' + str(central_lat) + '/60/7.5c'
+            fig.grdimage(grid=gridfile, region='d', projection= projection, shading='+d', frame=['a30g30', 'NE'])
 
-            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='g30')
+            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig)
+
+            file_path = outdirname + "/region_and_projection.txt"
+            with open(file_path, 'w') as file:
+                file.write("Projection: " + projection + "\n")
+                file.write("Region: d" + "\n")
+                file.write("Age: " + age_label + "\n")
+                file.write("Map Type: Polar")
             fig.colorbar(frame=['xa4000f1000+lElevation', 'y+lm']) # Set the bottom Color-Elevation bar to either plot.
 
         else: # If the boundary of map is beyongd 55 degress north or south in latitude (near poles), but all polygons are NOT in the same hemisphere, plot global projection.
             projection = 'W' + str(central_lon) + '/15c'
-            fig.grdimage(grid=gridfile, region='d', projection=projection, shading='+d') 
+            fig.grdimage(grid=gridfile, region='d', projection=projection, shading='+d', frame=['a30g30', 'NE']) 
 
-            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='a30g30')
+            plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig)
+
+            file_path = outdirname + "/region_and_projection.txt"
+            with open(file_path, 'w') as file:
+                file.write("Projection: " + projection + "\n")
+                file.write("Region: d" + "\n")
+                file.write("Age: " + age_label + "\n")
+                file.write("Map Type: Mollweide")
             fig.colorbar(frame=['xa2000f500+lElevation', 'y+lm']) # set the bottom Color-Elevation bar to either plot.
 
         fig.text(text=age_label, x=180, y=-90, N=True, D='5/0c', font='12p,Helvetica-Bold,black') # A reconstruction age stamp to the projection
     
     else: # When the boundary of map is within 55 degress north and south in latitude, or say close to the equator, plot regional map projection.
-        fig.grdimage(grid=gridfile, region=edge_label, projection='M15c', shading='+d') #plot base grid map (Scotese' DEM).
-        plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig, frame_text='a30g30')
+        fig.grdimage(grid=gridfile, region=edge_label, projection='M15c', shading='+d', frame=['afg30', 'NE']) #plot base grid map (Scotese' DEM).
+        plot_shapes_and_litho_patterns(pattern_list, litho_dict, coor_list, fig)
         with fig.inset(position='jTR+w4c', box='+pblack+gwhite'): # create a corner figure inside the inset
             fig.grdimage(grid=gridfile, region='g', projection='R' + str(central_lon) + '/?')
-            # Plot reconstructed polygons and coastlines onto the inset map
+            #Plot reconstructed polygons and coastlines onto the inset map
+            fig.plot(data=outdirname + GEOM_FILE, color='red')
             fig.plot(data=outdirname + GEOM_FILE, color='red', frame='g30')
 
             # Place reconstruction age in the inset map : fig.text(text='TEST', position='TC', font='22p,Helvetica-Bold,black')
             #   somehow, position='TC' means that it is in the Top central of the plotted earth (inset), we must drift 0/0.5c outside of the globe as this is an ideal position to place the text.
             fig.text(text=age_label, position='TC', D='0/0.5c', N=True, font='12p,Helvetica-Bold,black')  
             fig.colorbar(frame=['xa2000f500+lElevation', 'y+lm']) # set the bottom Color-Elevation bar to either plot.
+
+        file_path = outdirname + "/region_and_projection.txt"
+        with open(file_path, 'w') as file:
+            file.write("Projection: M15c" + "\n")
+            file.write("Region: " + edge_label + "\n")
+            file.write("Age: " + age_label + "\n")
+            file.write("Map Type: Rectangular")
 
     if len(pattern_list) <= 1:
         label_shapes_with_names(name_list, coor_list, fig)
