@@ -14,7 +14,7 @@ if(isset($_REQUEST['submit_btn']))
 {
 $uname = $_REQUEST['username'];
 $admin = $_REQUEST['level'];
-$alevel = fasle;
+$alevel = False;
 $pass = $_REQUEST['password'];
 $rpass = $_REQUEST['rpassword'];
 if( $pass == $rpass) {
