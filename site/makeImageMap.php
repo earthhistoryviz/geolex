@@ -107,8 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $y -= 22;
                         }
                         //Rectangular models do not include colorbar at bottom, may be an error
-                        if ($selectedModel == 'Scotese' && $mapType != 'Rectangular') {
-                            $y -= 320;
+                        if ($selectedModel == 'Scotese') {
+                            if ($mapType == 'Mollweide') {
+                                $y -= 315;
+                            } else if ($mapType == "Polar") {
+                                $y -= 295;
+                            }
                         }
                         $coordinates[] = ['x' => $x, 'y' => $y];
                     }
