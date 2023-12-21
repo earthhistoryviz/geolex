@@ -9,9 +9,12 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" style="height: 100%;">
     <!-- aside left -->
     <div class="left-menu">
+        <div class="item <?php if (preg_match("/index.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+          <a class="menu-link" href="index.php">Homepage</a>
+        </div>
         <div class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="displayInfo.php">Manage Database</a>
         </div>

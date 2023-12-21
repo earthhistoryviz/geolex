@@ -1,5 +1,7 @@
 <?php 
+$validGeoJSONFound = false;
 function createGeoJSONForFormations($formations) {
+  global $validGeoJSONFound;
   $geojson = '{
     "type": "FeatureCollection",
     "name": "Triassic strata_10Feb2021",
@@ -26,6 +28,7 @@ function createGeoJSONForFormations($formations) {
       if (!isset($parse->properties)) {
         $parse->properties = new stdClass();
       }
+      $validGeoJSONFound = true;
       $parse->properties->name = $f["name"];
       $parse->properties->pattern = $f["lithology_pattern"];
       //These need to be set null in order for the Scotese model to work

@@ -206,8 +206,9 @@ include("generalSearchBar.php"); ?>
             a. no End Date
             b. Start Date == End Date
        */
-      $geojson = json_decode($recongeojson);
-      if ($_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "" && !empty($geojson->features)) { ?>  
+      //validGeoJSONFound comes from makeReconstruction.php
+      if ($validGeoJSONFound && !empty($_REQUEST['agefilterstart'])) { 
+        var_dump($recongeojson);?>  
         <div class="reconstruction"> <?php
           include_once("./makeButtons.php"); ?>
           <div class="buttonContainer">

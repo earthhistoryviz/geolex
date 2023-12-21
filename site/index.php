@@ -183,7 +183,8 @@ if ($did_search) {
         </h3>
       </div> <?php
     }
-    if ($_REQUEST['agefilterstart'] != "" || $_REQUEST['agefilterstart'] != "" && $_REQUEST['agefilterend'] == "") { ?>
+    //validGeoJSONFound comes from makeReconstruction.php
+    if ($validGeoJSONFound && !empty($_REQUEST['agefilterstart'])) { ?>
       <div class="reconstruction"> <?php
         include_once("./makeButtons.php"); ?>
       </div> 
@@ -248,7 +249,23 @@ if ($did_search) {
     </div> <?php
   }
 } else {
-  global $period;
+  global $period; 
+  if ($_SESSION["loggedIn"]) { ?>
+    <div style="display: flex; flex-direction: row;">
+    <div style="width: 120px; padding: 5px; display: flex; flex-direction: column;"> <?php
+      global $period;
+      if (isset($_GET["period"])) {
+        $period = $_GET["period"];
+      } else {
+        $period = "Devonian";
+      }
+      foreach ($mapperiods as $p) { ?>
+        <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
+          <a href="/index.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
+        </div> <?php
+      } ?>
+    </div> <?php
+  }
   if ($period) { ?>
     <p><?=$mapMessage ?></p> <?php
     include mapForPeriod($period);
