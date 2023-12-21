@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         //Need to adjust due to inset, boundaries, etc...
                         if ($mapType == 'Polar') {
                             $x += 2.5;
-                            $y -= 2.5;
+                            $y -= 25;
                         } else if ($mapType == 'Mollweide') {
                             $x += 10;
                             $y -= 35;

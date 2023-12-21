@@ -200,13 +200,13 @@ if ($_REQUEST["generateImage"] == "1") {
               //Need to adjust due to inset, boundaries, etc...
               if ($mapType == 'Polar') {
                 $x += 2.5;
-                $y -= 2.5;
+                $y -= 25;
               } else if ($mapType == 'Mollweide') {
                 $x += 10;
                 $y -= 35;
               } else {
-                $x += 23;
-                $y -= 23;
+                $x += 20;
+                $y -= 22;
               }
               //Rectangular models do not include colorbar at bottom, may be an error
               if ($_REQUEST["selectModel"] == 'Scotese' && $mapType != 'Rectangular') {
