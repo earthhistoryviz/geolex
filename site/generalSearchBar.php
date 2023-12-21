@@ -59,7 +59,7 @@ include_once("constants.php"); // gets us $periods and $regions
         
         <div id="selected-filter" style="padding: 5px; white-space: nowrap;"></div>
         <div style="padding: 5px;">
-          Lithology includes:
+          <span>Lithology includes:</span>
           <input
             id="lithoSearch"
             type="text"
@@ -242,7 +242,7 @@ include_once("constants.php"); // gets us $periods and $regions
       var epochDate = <?php echo json_encode($epochDate); ?>;
 
       /* If user selected option All for stage, we use the begDate and endDate of the period selected */
-      if (input === "All" && lithoChosen === "") {
+      if (input === "All") {
         var begDate = document.getElementById("begDate");
         begDate.value = periodsDate[periodChosen]["begDate"];
         var endDate = document.getElementById("endDate");
