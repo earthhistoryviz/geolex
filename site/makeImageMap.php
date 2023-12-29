@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         //Need to adjust due to inset, boundaries, etc...
                         if ($mapType == 'Polar') {
                             $x += 2.5;
-                            $y -= 25;
+                            $y -= 3;
                         } else if ($mapType == 'Mollweide') {
                             $x += 10;
                             $y -= 35;
@@ -108,10 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                         //Rectangular models do not include colorbar at bottom, may be an error
                         if ($selectedModel == 'Scotese') {
-                            if ($mapType == 'Mollweide') {
+                            if ($mapType != 'Rectangular') {
                                 $y -= 315;
-                            } else if ($mapType == "Polar") {
-                                $y -= 295;
                             }
                         }
                         $coordinates[] = ['x' => $x, 'y' => $y];

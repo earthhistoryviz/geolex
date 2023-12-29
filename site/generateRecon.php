@@ -199,23 +199,21 @@ if ($_REQUEST["generateImage"] == "1") {
               $y = $imageSize[1] - intval($coords[1]);
               //Need to adjust due to inset, boundaries, etc...
               if ($mapType == 'Polar') {
-                $x += 2.5;
-                $y -= 25;
+                  $x += 2.5;
+                  $y -= 3;
               } else if ($mapType == 'Mollweide') {
-                $x += 10;
-                $y -= 35;
+                  $x += 10;
+                  $y -= 35;
               } else {
-                $x += 20;
-                $y -= 22;
+                  $x += 20;
+                  $y -= 22;
               }
               //Rectangular models do not include colorbar at bottom, may be an error
               if ($selectedModel == 'Scotese') {
-                if ($mapType == 'Mollweide') {
-                    $y -= 315;
-                } else if ($mapType == "Polar") {
-                    $y -= 295;
-                }
-            }
+                  if ($mapType != 'Rectangular') {
+                      $y -= 315;
+                  }
+              }
               $coordinates[] = ['x' => $x, 'y' => $y];
             }
           }
