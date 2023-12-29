@@ -49,28 +49,49 @@ $periodsOrdered = array(
   8 => "DEVONIAN",
   9 => "SILURIAN",
   10 => "ORDOVICIAN",
-	11 => "CAMBRIAN",
+  11 => "CAMBRIAN",
   12 => "EDIACARAN"
-);	
+);
 
 $regions = array(
-    array( "name" => "China", "searchurl" => "http://chinalex.geolex.org/searchAPI.php", "linkurl" => "http://chinalex.geolex.org/displayInfo.php"),
-    array( "name" => "Indian Plate", "searchurl" => "http://indplex.geolex.org/searchAPI.php", "linkurl" => "http://indplex.geolex.org/displayInfo.php"),
-    array( "name" => "Thailand", "searchurl" => "http://thailex.geolex.org/searchAPI.php", "linkurl" => "http://thailex.geolex.org/displayInfo.php"),
-    array( "name" => "Vietnam", "searchurl" => "http://vietlex.geolex.org/searchAPI.php", "linkurl" => "http://vietlex.geolex.org/displayInfo.php"),
-    array( "name" => "Niger", "searchurl" => "http://nigerlex.geolex.org/searchAPI.php", "linkurl" => "http://nigerlex.geolex.org/displayInfo.php"),
-    array( "name" => "Malaysia", "searchurl" => "http://malaylex.geolex.org/searchAPI.php", "linkurl" => "http://malaylex.geolex.org/displayInfo.php"),
-    array( "name" => "Africa", "searchurl" => "http://africalex.geolex.org/searchAPI.php", "linkurl" => "http://africalex.geolex.org/displayInfo.php"),
-    array( "name" => "Belgium", "searchurl" => "http://belgiumlex.geolex.org/searchAPI.php", "linkurl" => "http://belgiumlex.geolex.org/displayInfo.php"),
-    array( "name" => "Middle East", "searchurl" => "http://mideastlex.geolex.org/searchAPI.php", "linkurl" => "http://mideastlex.geolex.org/displayInfo.php"),
-    array( "name" => "Panama", "searchurl" => "http://panamalex.geolex.org/searchAPI.php", "linkurl" => "http://panamalex.geolex.org/displayInfo.php"),
-    array( "name" => "Qatar", "searchurl" => "http://qatarlex.geolex.org/searchAPI.php", "linkurl" => "http://qatarlex.geolex.org/displayInfo.php"),
-    array( "name" => "South America", "searchurl" => "http://southamerlex.geolex.org/searchAPI.php", "linkurl" => "http://southamerlex.geolex.org/displayInfo.php")
+  array("name" => "China", "searchurl" => "http://chinalex.geolex.org/searchAPI.php", "linkurl" => "http://chinalex.geolex.org/displayInfo.php"),
+  array("name" => "Indian Plate", "searchurl" => "http://indplex.geolex.org/searchAPI.php", "linkurl" => "http://indplex.geolex.org/displayInfo.php"),
+  array("name" => "Thailand", "searchurl" => "http://thailex.geolex.org/searchAPI.php", "linkurl" => "http://thailex.geolex.org/displayInfo.php"),
+  array("name" => "Vietnam", "searchurl" => "http://vietlex.geolex.org/searchAPI.php", "linkurl" => "http://vietlex.geolex.org/displayInfo.php"),
+  array("name" => "Niger", "searchurl" => "http://nigerlex.geolex.org/searchAPI.php", "linkurl" => "http://nigerlex.geolex.org/displayInfo.php"),
+  array("name" => "Malaysia", "searchurl" => "http://malaylex.geolex.org/searchAPI.php", "linkurl" => "http://malaylex.geolex.org/displayInfo.php"),
+  array("name" => "Africa", "searchurl" => "http://africalex.geolex.org/searchAPI.php", "linkurl" => "http://africalex.geolex.org/displayInfo.php"),
+  array("name" => "Belgium", "searchurl" => "http://belgiumlex.geolex.org/searchAPI.php", "linkurl" => "http://belgiumlex.geolex.org/displayInfo.php"),
+  array("name" => "Middle East", "searchurl" => "http://mideastlex.geolex.org/searchAPI.php", "linkurl" => "http://mideastlex.geolex.org/displayInfo.php"),
+  array("name" => "Panama", "searchurl" => "http://panamalex.geolex.org/searchAPI.php", "linkurl" => "http://panamalex.geolex.org/displayInfo.php"),
+  array("name" => "Qatar", "searchurl" => "http://qatarlex.geolex.org/searchAPI.php", "linkurl" => "http://qatarlex.geolex.org/displayInfo.php"),
+  array("name" => "South America", "searchurl" => "http://southamerlex.geolex.org/searchAPI.php", "linkurl" => "http://southamerlex.geolex.org/displayInfo.php")
 );
+
+$linksToRegions = array(
+  "dev" => "Dev",
+  "chinalex" => "China",
+  "thailex" => "Thailand",
+  "vietlex" => "Vietnam",
+  "nigerlex" => "Niger",
+  "malaylex" => "Malaysia",
+  "africalex" => "Africa",
+  "belgiumlex" => "Belgium",
+  "mideastlex" => "Middle East",
+  "panamalex" => "Panama",
+  "qatarlex" => "Qatar",
+  "southamerlex" => "South America",
+  "indplex" => "Indian Plate"
+);
+$regionName = $linksToRegions[$_SERVER['HTTP_HOST']];
+
 if ($_SERVER["SERVER_NAME"] == "dev") {
   array_push($regions, array(
-    "name" => "Dev", "searchurl" => "http://dev.geolex.org/searchAPI.php", "linkurl" => "http://dev.geolex.org/displayInfo.php"
-  ));
+    "name" => "Dev",
+    "searchurl" => "http://dev.geolex.org/searchAPI.php",
+    "linkurl" => "http://dev.geolex.org/displayInfo.php"
+  )
+  );
 }
 
 $macrostratLithoNames = array(
@@ -79,15 +100,15 @@ $macrostratLithoNames = array(
   "sandstone" => "Sandstone",
   "quartz arenite" => "Sandstone",
   "litharenite" => "Coarse-grained sandstone",
-  "sand"=> "Sandstone",
+  "sand" => "Sandstone",
   "siltstone" => "Siltstone",
   "silt" => "Siltstone",
-  "dolomitic siltstone" => "Dolomite", 
+  "dolomitic siltstone" => "Dolomite",
   "shale" => "Claystone",
   "limestone" => "Limestone",
   "dolomite" => "Dolomite",
   "conglomerate" => "Aus conglomerate",
-  "carbonate"=> "Limestone",
+  "carbonate" => "Limestone",
   "dolomite-mudstone" => "Dolomite",
   "dolostone" => "Dolomite",
   "mudstone" => "Sandy_claystone",
@@ -95,18 +116,21 @@ $macrostratLithoNames = array(
   "quartzite" => "Sandstone",
   "halite" => "Halite",
   "basalt" => "Lava",
-  "rhyolite"=> "Lava",
-  "andesite" => "Lava", // lava
+  "rhyolite" => "Lava",
+  "andesite" => "Lava",
+  // lava
   "till" => "Glacial till",
   "loess" => "Siltstone",
   "calcareous ooze" => "Chalk",
   "chalk" => "Chalk",
-  "gravel" => "Aus conglomerate", // doesn't have a direct translation in lookup table in dropbox (temporary translation)
+  "gravel" => "Aus conglomerate",
+  // doesn't have a direct translation in lookup table in dropbox (temporary translation)
   "plutonic" => "Granitic",
   "granite" => "Granitic",
   "clay" => "Claystone",
   "syenite" => "Volcanics",
-  "tuff" => "Volcanic_ash", // doesn't have a direct translation in lookup table in dropbox (temporary translation)
+  "tuff" => "Volcanic_ash",
+  // doesn't have a direct translation in lookup table in dropbox (temporary translation)
   "volcanic" => "Volcanics",
   "metamorphic" => "Gneiss",
   "volcaniclastic" => "Volcanic_ash",
@@ -114,7 +138,8 @@ $macrostratLithoNames = array(
   "gneiss" => "Gneiss",
   "tonalite" => "Granitic",
   "granodiorite" => "Granitic",
-  "monzonite" => "Granitic", // doesn't have a direct translation in lookup table in dropbox (temporary translation)
+  "monzonite" => "Granitic",
+  // doesn't have a direct translation in lookup table in dropbox (temporary translation)
   "argillite" => "Claystone"
 );
 

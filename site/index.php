@@ -6,7 +6,6 @@ include_once("TimescaleLib.php");
 // Sets up the reconstruction variables: $recongeojson, etc.:
 include_once("./makeReconstruction.php");
 //include_once("./searchAPI.php"); 
-
 if ($_REQUEST["filterperiod"]) {
   $did_search = true;
 
@@ -138,17 +137,17 @@ function sortByAge($a, $b) {
 
 <!DOCTYPE html>
 <html>
-
-<link rel="stylesheet" href="style.css"/>
-
-<title>Home</title>
-
+<head>
+  <?php
+  include_once("constants.php");
+  ?>
+  <title>Home - <?=$regionName ?> Lexicon</title>
 <?php
 include_once("allowCustomOverride.php");
 $override_fullpath = allowCustomOverride(__FILE__);
 if (empty($override_fullpath)) {
   $titleMessage = "Welcome to the International Geology Website and Database!";
-  $mapMessage = "Click on any provinces to view detailed information";
+  $mapMessage = "Click on any provinces below to view detailed information";
 } else {
   include_once($override_fullpath); // Override file will set the title message and map Message.
 }
@@ -243,7 +242,7 @@ if ($did_search) {
           if ($formation->geojson) { ?>
             <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
           } ?>
-          <a href="displayInfo.php?formation=<?=$formation->name?>" target="_blank"><?=$formation->name ?></a>
+          <a href="formations/<?=$formation->name?>" target="_blank"><?=$formation->name ?></a>
         </div> <?php
       } ?>
     </div> <?php
@@ -267,9 +266,15 @@ if ($did_search) {
     </div> <?php
   }
   if ($period) { ?>
-    <p><?=$mapMessage ?></p> <?php
-    include mapForPeriod($period);
+    <br><br>
+    <div class="map-container" style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
+      <p style="font-size: 20px; font-weight: bold;"><?=$mapMessage ?></p> <?php
+      $filePath = mapForPeriod($period);
+      include $filePath; ?>
+    </div> <?php
   }
-} ?>
 
+}
+include_once("footer.php"); ?>
+</body>
 </html>

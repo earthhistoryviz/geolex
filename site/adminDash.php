@@ -2,7 +2,10 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>index</title>
+    <?php
+    include_once("constants.php");
+    ?>
+    <title>Admin Suite - <?=$regionName ?> Lexicon</title>
 
     <link rel="stylesheet" type="text/css" href="style.css"/>
 
@@ -15,7 +18,7 @@
         <div class="item <?php if (preg_match("/index.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="index.php">Homepage</a>
         </div>
-        <div class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+        <div class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"]) || preg_match("/searchFm.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="displayInfo.php">Manage Database</a>
         </div>
         <div class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >

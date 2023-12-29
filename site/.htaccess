@@ -1,2 +1,11 @@
 php_value upload_max_filesize 5M
 php_value post_max_size 5M
+
+RewriteEngine On
+RewriteBase /
+
+# Rewrite "formations/name" to "displayInfo.php?formation=name"
+RewriteRule ^formations/([^/]+)/?$ displayInfo.php?formation=$1 [L,QSA]
+
+# Rewrite "formations-search" to the original search URL
+RewriteRule ^formations-search$ /searchFm.php?search=&periodfilter=&provincefilter=&agefilterstart=&agefilterend=&lithoSearch=&fossilSearch= [L,QSA]

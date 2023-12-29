@@ -159,11 +159,17 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
 /* This is necessary to get generalSearchBar to send things back to us */
 $formaction = "general.php"; ?>
-<link rel="stylesheet" href="generalStyling.css">
-<title>Multi-Country Search</title>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <?php
+  include_once("constants.php");
+  ?>
+  <title>Multi-Country Search - <?=$regionName ?> Lexicon</title>
 <?php include("navBar.php"); /* navBar will set $period for us */ ?>
-
+<link rel="stylesheet" href="generalStyling.css">
 <h2 style="text-align: center; color: blue;">
   Welcome to the International Geology Website and Database!<br>
   Please enter a formation name or group to retrieve more information.
@@ -323,3 +329,8 @@ include("generalSearchBar.php"); ?>
     }
   } /* end did search if */ ?>
 </div>
+<?php
+include_once("footer.php");
+?>
+</body>
+</html?

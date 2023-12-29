@@ -25,30 +25,51 @@ $imagedisplaycount = 0; ?>
 $sql = "SELECT name FROM formation";
 $result = mysqli_query($conn, $sql);
 $nameregexes = array();
+function insertSorted(&$array, $element, $compareFunc) {
+  $low = 0;
+  $high = count($array);
+
+  while ($low < $high) {
+    $mid = floor(($low + $high) / 2);
+      if ($compareFunc($element, $array[$mid]) < 0) {
+        $high = $mid;
+      } else {
+        $low = $mid + 1;
+      }
+  }
+
+  array_splice($array, $low, 0, [$element]);
+}
+
+// Comparison function for sorting by string length (descending)
+function compareByNameLength($a, $b) {
+  return strlen($b['name']) - strlen($a['name']);
+}
+
 while ($row = mysqli_fetch_array($result)) {
   $rname = $row["name"];
+  $rnameRegex = preg_replace('/\s+/', '\s*', $rname);
   // turn name into regular expression allowing arbitrary number of spaces between words
-  preg_replace("/ /g", " \*", $rname);
-  array_push($nameregexes, array(
+  $newElement = array(
     "name" => $rname,
-    "regex" => "/\b($rname)/i",
-    "superceeded_by" => array(), // nameregex that should supercede this name if it also matches (Bao Loc Fm -> Deo Bao Loc Fm: if Deo matches, then use it instead)
-  ));
+    "regex" => "/\b($rnameRegex)\b/i"
+    //"superceeded_by" => array(), // nameregex that should supercede this name if it also matches (Bao Loc Fm -> Deo Bao Loc Fm: if Deo matches, then use it instead)
+  );
+  insertSorted($nameregexes, $newElement, 'compareByNameLength');
 }
-
+//var_dump($nameregexes);
 // Check if any given name would also be matched in another name
-for ($i = 0; $i < count($nameregexes); $i++) {
-  $n1 = $nameregexes[$i];
-  foreach ($nameregexes as $n2) {
-    if ($n1["name"] == $n2["name"]) {
-      continue; // comparing to ourselves
-    }
-    if (preg_match($n1["regex"], " ".$n2["name"]." ")) { // Bao Loc regex also matches Deo Bao Loc name (regexp requires word break on front of name)
-      $nameregexes[$i]["superceeded_by"][] = $n2;
-    }
-  }
-}
-
+// for ($i = 0; $i < count($nameregexes); $i++) {
+//   $n1 = $nameregexes[$i];
+//   foreach ($nameregexes as $n2) {
+//     if ($n1["name"] == $n2["name"]) {
+//       continue; // comparing to ourselves
+//     }
+//     if (preg_match($n1["regex"], " ".$n2["name"]." ")) { // Bao Loc regex also matches Deo Bao Loc name (regexp requires word break on front of name)
+//       $nameregexes[$i]["superceeded_by"][] = $n2;
+//     }
+//   }
+// }
 include_once("formationInfo.php");
 $found = false;
 while ($row = mysqli_fetch_array($result)) {
@@ -63,7 +84,6 @@ while ($row = mysqli_fetch_array($result)) {
     }
   }
 }
-
 //-----------------------------------------------------------
 // Start outputting the page
 //-----------------------------------------------------------
@@ -780,25 +800,57 @@ function eliminateParagraphs($str) {
   return $str;
 }
 
+
+// This function finds formations in a string and replaces them with hyperlinked versions.
+// It ensures that each formation is linked only once and prioritizes longer formations over shorter overlapping ones.
 function findAndMakeFormationLinks($str, $nameregexes) {
-  $orig = $str;
-  // $str = preg_replace('/[’’]/g', '\'', $str); // replace the fancy apostrophes to make sure they all match a regular apostrophe
-  for ($i = 0; $i < count($nameregexes); $i++) {
-    $n = $nameregexes[$i];
-    if (preg_match($n["regex"], $str)) { // check if we are superceded
-      $superceeded = false;
-      foreach ($n["superceeded_by"] as $s) {
-        if (preg_match($s["regex"], $str)) {
-          $superceeded = true;
-          break;
-        }
-      }
-      if (!$superceeded) {
-        $str = preg_replace($n["regex"], "<a href=\"displayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>", $str);
+  // This could potentially be optimized but the page loads fast enough
+  // This code collects all regex matches and figures out the end positions of the matches. It then sorts them by the end and only considers the first instance since any
+  // other instance represents a shorter string match (since the array $nameregex is sorted from longest to smallest).
+  // An example is Deo Bao Loc Fm and Bao Loc Fm. The regex for Bao Loc Fm will match both formations, but the end position is the same. Since $nameregexes is sorted
+  // from longest to smallest, we will match Deo Bao Loc Fm first. When we later filter Bao Loc Fm will be dropped since the last position is the same and it comes later
+  // Then we use the filtered matches to replace links starting from the end of the string
+  $allMatches = [];
+
+  // Collect all matches with their start and end positions
+  foreach ($nameregexes as $n) {
+    if (preg_match_all($n["regex"], $str, $matches, PREG_OFFSET_CAPTURE)) {
+      foreach ($matches[0] as $match) {
+        $allMatches[] = [
+          'start' => $match[1],
+          'end' => $match[1] + strlen($match[0]),
+          'replacement' => "<a href=\"displayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>"
+        ];
       }
     }
   }
-  return trim($str);
+
+  // Sort matches by end position in descending order
+  usort($allMatches, function($a, $b) {
+    return $b['end'] - $a['end'];
+  });
+
+  // Keep only the first instance of each end position
+  $uniqueEnds = [];
+  $filteredMatches = [];
+  foreach ($allMatches as $match) {
+    $endPos = $match['end'];
+    if (!isset($uniqueEnds[$endPos])) {
+      $uniqueEnds[$endPos] = true;
+      $filteredMatches[] = $match;
+    }
+  }
+
+  // Replace matches in the string
+  foreach ($filteredMatches as $match) {
+    $str = substr_replace($str, $match['replacement'], $match['start'], $match['end'] - $match['start']);
+  }
+
+  return $str;
 }
+
+
+
+
 
 ?>

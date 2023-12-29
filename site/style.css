@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Libre+Baskerville&family=Montserrat&display=swap');
+
 .mainBody {
   padding-left: 10px;
 }
@@ -6,6 +8,12 @@ body {
   background-color: #fff;
   color: #333;
   font-family: arial;
+  display: flex;
+  flex-direction: column;
+  margin: 0px;
+  padding: 0px;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -15,13 +23,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .container {
   overflow: auto;
-  height: 100%;
   display: flex;
   flex-direction: row;
+  flex: 1;
 }
 
 .left-menu {
-  height: 100%;
+  height: 100vh;
   width: 20%;
   background-color: #313540;
   color: #FFFFFF;
@@ -35,7 +43,7 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
 }
 
-html, body, .aside-left {
+html, .aside-left {
   height: 100%;
 }
 
@@ -91,7 +99,8 @@ html, body, .aside-left {
   text-decoration: none;
   display: block;
 }
-.aside-left ul .active a {
+
+.aside-left ul a {
   color: #fff;
   background-color: #272a33;
 }
@@ -137,9 +146,14 @@ html, body, .aside-left {
 
 .item {
   color: #ffffff !important;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 5px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.active {
+  background-color: orange !important;
 }
 
 .menu-link {
@@ -148,4 +162,26 @@ html, body, .aside-left {
 
 .error {
   color: #CC0000;
+}
+
+.footer-container {
+  width: 100%;
+  background-color: #333333;
+  height: 20px;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.footer-container > a {
+  font-size: 18px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-container > a:hover {
+  color: orange;
+  font-weight: bold;
 }

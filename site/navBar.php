@@ -12,31 +12,36 @@
   global $maps, $mapperiods;
   include("getmaps.php");
 ?>
-
-<!DOCTYPE html>
-<html>
-<head> <?php
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/style.css"/>
+ <?php
   if ($_SESSION["loggedIn"]) {
     include("adminDash.php");
   } else { ?>
+  
     <style>
       .topnav {
         overflow: hidden;
-        background-color: #e9e9ee;
+        width: 100%;
+        max-height: 50px;
+        min-height: 45px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 14px;
+        background-color: #333333;
       }
-      .topnav a {
-        float: left;
-        display: block;
+      .topnav > * {
         color: black;
         text-align: center;
         text-decoration: none;
-        padding: 14px 16px;
         font-size: 17px;
+        padding: 1px;
+        height: 100%;
+        color: #ffffff;
       }
-      .topnav a:hover {
-        background-color: #ddd;
-        color: blue;
-      }
+
       h1 {
         margin-bottom: 0px;
       }
@@ -44,13 +49,35 @@
         margin-bottom: 0px;
       }
       h3 {
-        margin-bottom: 0px;
+        margin: 0px;
       }
       h4 {
         margin-bottom: 0px;
       }
       p {
         margin-top: 0px;
+      }
+
+      .country-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 100%;
+        padding-left: 10px;
+        color: orange;
+        padding-right: 10px;
+      }
+
+      .country-logo > img {
+        height: auto;
+        max-height: 45px;
+        margin-top: 0px;
+      }
+
+      .topnav > a:hover {
+        color: orange;
+        font-weight: bold;
       }
     </style>
 </head>
@@ -59,35 +86,44 @@
   <div class="topnav">
     <?php /* if currently in /site folder, use index.php directly;
              if currently in a lower level folder, use ../index.php */
-    if (strcmp(getcwd(), "/app") == 0) { ?>
-      <a href="index.php">Home</a>
-      <a href="general.php">Multi-Country Search</a> <?php
+    if (strcmp(getcwd(), "/app") == 0) { 
+      include_once("constants.php"); ?>
+      <div class="country-logo">
+        <img src="/noun_Earth_2199992.svg" alt="Logo">
+        <h3><?= $regionName ?></h3>
+      </div>
+      <a href="/index.php">Home</a>
+      <a href="/general.php">Multi-Country Search</a> 
+      <a href="/aboutPage.php">About</a> <?php
       // <a href="macrostratparse.php">Macrostrat Search</a>
     } else { ?>
       <a href="../index.php">Home</a>
-      <a href="../general.php">Multi-Country Search</a>  <?php
-      // <a href="../macrostratparse.php">Macrostrat Search</a>
+      <a href="../general.php">Multi-Country Search</a>
+      <a href="../aboutPage.php">About</a><?php
     } ?>
-    <a style="float: right;" href="login.php">Admin Login</a>
+    <a style="margin-left: auto; padding-right: 10px;" href="login.php">Admin Login</a>
   </div>
 
+  <?php
+  if ($_SERVER['REQUEST_URI'] != '/aboutPage.php') { ?>
+    <div style="display: flex; flex-direction: row; flex: 1;">
+      <div style="width: 120px; padding: 5px; display: flex; flex-direction: column;"> <?php
+        global $period;
+        if (isset($_GET["period"])) {
+          $period = $_GET["period"];
+        } else {
+          $period = "Devonian";
+        }
 
-  <div style="display: flex; flex-direction: row;">
-    <div style="width: 120px; padding: 5px; display: flex; flex-direction: column;"> <?php
-      global $period;
-      if (isset($_GET["period"])) {
-        $period = $_GET["period"];
-      } else {
-        $period = "Devonian";
-      }
+        foreach ($mapperiods as $p) { ?>
+          <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
+            <a href="/index.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
+          </div> <?php
+        } ?>
+      </div>
 
-      foreach ($mapperiods as $p) { ?>
-        <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
-          <a href="/index.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
-        </div> <?php
-      } ?>
-    </div>
-
-    <div class="mainBody" style=" width: 100%"> <?php
+      <div class="mainBody" style=" width: 100%;"> <?php
+      //someone thought that having divs across multiple files was a good idea. they didn't even leave a comment on where it gets closed (footer.php)
   }
+}
 ?>
