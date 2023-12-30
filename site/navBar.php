@@ -101,7 +101,7 @@
       <a href="../general.php">Multi-Country Search</a>
       <a href="../aboutPage.php">About</a><?php
     } ?>
-    <a style="margin-left: auto; padding-right: 10px;" href="login.php">Admin Login</a>
+    <a style="margin-left: auto; padding-right: 10px;" href="/login.php">Admin Login</a>
   </div>
 
   <?php
