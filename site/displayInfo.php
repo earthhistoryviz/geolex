@@ -752,7 +752,7 @@ if ($auth) { ?>
       form = document.createElement("form");
       document.body.appendChild(form);
       form.method = "POST";
-      form.action = "saveData.php";
+      form.action = "/saveData.php";
       var length = Object.keys(savedata).length;
       
       // var originalNameInput = document.createElement("input");
