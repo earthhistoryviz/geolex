@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
@@ -6,7 +11,7 @@ include_once("navBar.php");
 include_once("SearchBar.php");
 include_once("SqlConnection.php");
 include_once("./makeReconstruction.php"); // has createGeoJSONForFormations
-include("SimpleXLSX.php");
+include_once("SimpleXLSX.php");
 // include_once("formationInfo.php");
 // $recongeoJSON = fopen("reconstruct.txt", "w"); // output file to write all geojson information to
 $formation = $_REQUEST;
