@@ -86,8 +86,8 @@
   <div class="topnav">
     <?php /* if currently in /site folder, use index.php directly;
              if currently in a lower level folder, use ../index.php */
-    if (strcmp(getcwd(), "/app") == 0) { 
-      include_once("constants.php"); ?>
+    include_once("constants.php");
+    if (strcmp(getcwd(), "/app") == 0) { ?>
       <div class="country-logo">
         <img src="/noun_Earth_2199992.svg" alt="Logo">
         <h3><?= $regionName ?></h3>
@@ -97,6 +97,10 @@
       <a href="/aboutPage.php">About</a> <?php
       // <a href="macrostratparse.php">Macrostrat Search</a>
     } else { ?>
+      <div class="country-logo">
+        <img src="/noun_Earth_2199992.svg" alt="Logo">
+        <h3><?= $regionName ?></h3>
+      </div>
       <a href="../index.php">Home</a>
       <a href="../general.php">Multi-Country Search</a>
       <a href="../aboutPage.php">About</a><?php
@@ -111,8 +115,18 @@
         global $period;
         if (isset($_GET["period"])) {
           $period = $_GET["period"];
-        } else if ($mapperiods[0] > 0) {
-          $period = $mapperiods[1]["period"];
+        } else {
+          $found = false;
+          foreach ($mapperiods as $p) {
+            if ($p['period'] == 'Cenozoic') {
+              $found = true;
+            }
+          }
+          if ($found) {
+            $period = 'Cenozoic';
+          } else if ($mapperiods[0] > 0) {
+            $period = $mapperiods[1]["period"];
+          }
         }
 
         foreach ($mapperiods as $p) { ?>
