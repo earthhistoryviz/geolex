@@ -81,7 +81,8 @@ $linksToRegions = array(
   "panamalex" => "Panama",
   "qatarlex" => "Qatar",
   "southamerlex" => "South America",
-  "indplex" => "Indian Plate"
+  "indplex" => "Indian Plate",
+  "japanlex" => "Japan"
 );
 $regionName = $linksToRegions[$_SERVER['HTTP_HOST']];
 
