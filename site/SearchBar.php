@@ -74,6 +74,8 @@ function selectFilter($v) { // TODO: keep last selected option after submit
       <br>
       Lithology includes:
       <input id="lithoSearch" type="text" style="width: 75px" name="lithoSearch" value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>">
+      Fossil includes:
+      <input id="fossilSearch" type="text" style="width: 75px" name="fossilSearch" value="<?php if (isset($_REQUEST['fossilSearch'])) echo $_REQUEST['fossilSearch']; ?>">
       <button id="filterbtn" value="filter" type="button" onclick="submitFilter()">Apply Filter</button>
       <br>
 
@@ -86,10 +88,7 @@ function selectFilter($v) { // TODO: keep last selected option after submit
           }
         }
         function viewAll() {
-          document.getElementById('searchbar').value = '';
-          document.getElementById('periodfilter').value = '';
-          document.getElementById('provincefilter').value = '';
-          submitFilter();
+          window.location.href = '/formations-search';
         }
         function submitFilter() {
           document.getElementById('form').submit();
