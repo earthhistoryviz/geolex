@@ -9,7 +9,7 @@ RUN apt-get update && \
     python3 python3-pip gmt gmt-dcw gmt-gshhg ghostscript cmake \
     libnetcdf-dev libnetcdff-dev curl \
     libssl1.1 libssl-dev libmysqlclient-dev libpcre3=2:8.39-9ubuntu0.1 libxml2=2.9.4+dfsg1-6.1ubuntu1.9 \
-    libdap-dev libpcre3-dev libxerces-c-dev libxml2-dev gdal-bin libgdal20 libgdal-dev libgdal-java gdal-data python3-gdal \
+    libdap-dev libpcre3-dev libxerces-c-dev libxml2-dev \
     graphicsmagick python3-sphinx ffmpeg software-properties-common && \
     pip3 install mammoth && \
     apt-get clean && \
@@ -45,5 +45,8 @@ RUN wget -O pygplates-src.deb https://sourceforge.net/projects/gplates/files/pyg
 
 # Configure GMT permissions
 RUN mkdir /.gmt && chown -R www-data /.gmt
+
+# Enable .htaccess Overrides
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 CMD ["/run.sh"]
