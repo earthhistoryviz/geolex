@@ -109,7 +109,7 @@ function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
   > <!-- Rather than both buttons submitting form, each button will go to submitForm function and approratie instructions happen then --> 
     <div style="flex-grow: 0">
       <div>
-        <img src="noun_Earth_2199992.svg" width="50px" height="50px"/>
+        <img src="/noun_Earth_2199992.svg" width="50px" height="50px"/>
       </div>
     </div>
     <div id="<?=$id?>-text" style="margin-left: 5px; flex-grow: 0; color: #E67603; font-family: arial">

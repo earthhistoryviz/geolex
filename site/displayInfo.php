@@ -202,7 +202,7 @@ if ($_REQUEST["generateImage"]) {
         var region = <?php echo json_encode($_REQUEST["region"]); ?>;
         //location.reload();
         // Construct the URL with query parameters
-        var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
+        var url = '/generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
         encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey);
         window.open(url, '_blank');
       });
