@@ -116,7 +116,8 @@
         if (isset($_GET["period"])) {
           $period = $_GET["period"];
         } else if ($mapperiods[0] > 0) {
-            $period = $mapperiods[1]["period"];
+          $reindexed = array_values($mapperiods);
+          $period = $reindexed[1]["period"];
         }
 
         foreach ($mapperiods as $p) { ?>
