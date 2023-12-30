@@ -4,7 +4,6 @@
 <?php 
 error_reporting(E_ALL);
 include_once("navBar.php");
-include_once("SearchBar.php");
 include_once("SqlConnection.php");
 include_once("cleanupString.php");
 

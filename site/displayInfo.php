@@ -21,7 +21,7 @@ $auth = $_SESSION["loggedIn"];
 
 if ($formation["formation"] == "") {?>
   <title>Empty Search</title>
-  <h3 style="text-align: center;">Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</h3> <?php
+  <h3 style="text-align: center;">Please type in the search box and click "Submit" to search for Formations<br><?php
   include("footer.php");
   exit(0);
 }
