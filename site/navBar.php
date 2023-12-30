@@ -120,7 +120,7 @@
           }
           if ($found) {
             $period = 'Cenozoic';
-          } else if ($mapperiods[0] > 1) {
+          } else if ($mapperiods[0] > 0) {
             $period = $mapperiods[1]["period"];
           }
         }
