@@ -16,6 +16,7 @@ if (isset($_REQUEST['search'])) {
   $agefilterstart = addslashes($_REQUEST['agefilterstart']);
   $agefilterend = addslashes($_REQUEST['agefilterend']);
   $lithofilter = addslashes($_REQUEST['lithoSearch']);
+  $fossilfilter = addslashes($_REQUEST['fossilSearch']);
 
   if (!$searchquery) {
     $searchquery = "";
@@ -76,6 +77,34 @@ if (isset($_REQUEST['search'])) {
       $sql .= "AND lithology LIKE '%$lithofilter%' ";
     }
   }
+
+  $fossil = "";
+  if (strcmp($fossilfilter, "") === 0) {
+    $fossil .= "AND fossils LIKE '%$fossilfilter%' ";
+  } else {
+    $fossilfilter_lower = strtolower($fossilfilter);
+
+    if (strpos($fossilfilter_lower, ' and ') !== false) { // if the user wants to search with 'and'
+      $fossilfilter_array = explode(' and ', $fossilfilter_lower);
+      foreach ($fossilfilter_array as $value) {
+        $fossil .= "AND fossils LIKE '%$value%' ";
+      }
+    } else if (strpos($fossilfilter_lower, ' or ') !== false) { // if the user wants to search with 'or'
+      $fossilfilter_array = explode(' or ', $fossilfilter_lower);
+      $index = 0;
+      foreach ($fossilfilter_array as $value) {
+        if ($index === 0) {
+          $fossil .= "AND fossils LIKE '%$value%' ";
+        } else {
+          $fossil .= "OR fossils LIKE '%$value%' ";
+        }
+        $index++;
+      }
+    } else { // user does not want to search and/or
+      $fossil .= "AND fossils LIKE '%$fossilfilter%' ";
+    }
+  }
+  $sql .= $fossil;
 
   preg_replace("+", "%", $searchquery);
 
@@ -240,12 +269,14 @@ include("SearchBar.php");
         if ($newGeoArr[$geojsonIndex] !== "null") { ?>
           <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
         } ?>
-        <a href="displayInfo.php?formation=<?=$formation?>" target="_blank"><?=$formation ?></a>
+        <a href="/formations/<?=$formation?>" target="_blank"><?=$formation ?></a>
       </div> <?php
       $geojsonIndex++;
     }
   } ?>
 </div>
-
+<?php
+include_once("footer.php");
+?>
 </body>
 </html>
