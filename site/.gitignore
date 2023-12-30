@@ -4,6 +4,7 @@ Mapinfo/*
 wells/*
 !wells/TEMPLATE.php
 !wells/wells_pic
+!wells/wells-header.php
 wells/wells_pic/*
 OVERRIDE_*
 livedata/

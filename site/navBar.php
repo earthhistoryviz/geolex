@@ -115,18 +115,8 @@
         global $period;
         if (isset($_GET["period"])) {
           $period = $_GET["period"];
-        } else {
-          $found = false;
-          foreach ($mapperiods as $p) {
-            if ($p['period'] == 'Cenozoic') {
-              $found = true;
-            }
-          }
-          if ($found) {
-            $period = 'Cenozoic';
-          } else if ($mapperiods[0] > 0) {
+        } else if ($mapperiods[0] > 0) {
             $period = $mapperiods[1]["period"];
-          }
         }
 
         foreach ($mapperiods as $p) { ?>
