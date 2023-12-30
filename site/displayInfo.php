@@ -24,8 +24,9 @@ if ($formation["formation"] == "") {?>
   exit(0);
 }
 
+$formationName = str_replace('Fm', 'Formation', $formation["formation"]);
 $imagedisplaycount = 0; ?>
-<title><?=$formation["formation"]?></title> <?php
+<title><?=$formationName?></title> <?php
 // Get all the formation names to build the regexp searches in the text for automatic link creation
 $sql = "SELECT name FROM formation";
 $result = mysqli_query($conn, $sql);
