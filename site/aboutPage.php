@@ -69,7 +69,10 @@
                 echo $htmlContent;
                 ?>
             </div>
-        </div>
+        </div> 
+        <?php
+        include_once("footer.php");
+        ?>
     </div>
     <style>
         .card-img-top {

@@ -8,7 +8,9 @@
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ERROR);
 include_once("navBar.php");
-include_once("SearchBar.php");
+$formaction = "/index.php";
+$isFixedRegion = true;
+include_once("generalSearchBar.php");
 include_once("SqlConnection.php");
 include_once("./makeReconstruction.php"); // has createGeoJSONForFormations
 include_once("SimpleXLSX.php");

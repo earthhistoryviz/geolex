@@ -168,7 +168,7 @@ html, .aside-left {
   width: 100%;
   background-color: #333333;
   height: 20px;
-  padding: 10px 0;
+  padding: 10px 0px 0px 0px;
   display: flex;
   justify-content: center;
   align-items: center;

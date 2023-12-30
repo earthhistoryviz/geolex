@@ -158,7 +158,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 }
 
 /* This is necessary to get generalSearchBar to send things back to us */
-$formaction = "general.php"; ?>
+$formaction = "/general.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

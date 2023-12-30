@@ -8,4 +8,4 @@ RewriteBase /
 RewriteRule ^formations/([^/]+)/?$ displayInfo.php?formation=$1 [L,QSA]
 
 # Rewrite "formations-search" to the original search URL
-RewriteRule ^formations-search$ /searchFm.php?search=&periodfilter=&provincefilter=&agefilterstart=&agefilterend=&lithoSearch=&fossilSearch= [L,QSA]
+RewriteRule ^formations-search$ /fullSearch.php [L,QSA]

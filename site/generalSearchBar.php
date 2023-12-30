@@ -22,7 +22,7 @@ include_once("TimescaleLib.php");
 </style> <?php
 
 if (!$formaction) {
-  $formaction = "index.php";
+  $formaction = "/index.php";
 }
 
 /* For Stage filter conversion */
@@ -66,6 +66,16 @@ include_once("constants.php"); // gets us $periods and $regions
             style="resize: both; overflow: auto;"
             name="lithoSearch"
             value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>"
+            onkeypress="if (event.keyCode == 13) submitFilter()">
+        </div>
+        <div style="padding: 5px;">
+          <span>Fossil includes:</span>
+          <input
+            id="fossilSearch"
+            type="text"
+            style="resize: both; overflow: auto;"
+            name="fossilSearch"
+            value="<?php if (isset($_REQUEST['fossilSearch'])) echo $_REQUEST['fossilSearch']; ?>"
             onkeypress="if (event.keyCode == 13) submitFilter()">
         </div>
       </div> <?php
@@ -114,6 +124,7 @@ include_once("constants.php"); // gets us $periods and $regions
     function submitFilter() {
       document.getElementById('form').submit();
     }
+    
 
     /* Change visible selection box/text box(es) based on user selection on <searchtype-select> */
     function changeFilter() {
@@ -276,9 +287,11 @@ include_once("constants.php"); // gets us $periods and $regions
     function onLoad() {
       changeFilter();
       changePeriod();
+      <?php
+      if (isset($_GET['autosubmit']) && $_GET['autosubmit'] == 'true') { ?>
+        submitFilter(); <?php
+      } ?>
     }
 
     window.onload = onLoad();
   </script>
-</body>
-</html>
