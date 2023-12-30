@@ -256,7 +256,7 @@ if ($did_search) {
       if (isset($_GET["period"])) {
         $period = $_GET["period"];
       } else {
-        $period = "Devonian";
+        $period = "Cenozoic";
       }
       foreach ($mapperiods as $p) { ?>
         <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
