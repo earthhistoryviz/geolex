@@ -399,11 +399,11 @@ if ($auth) { ?>
     }
     displayImages($images, "Lithology-pattern"); ?>
   </div>
-
+  </strong>
   <div id="relationships_distribution">
     <h3><b>Relationships and Distribution</b></h3>
     <div id="lower_contact">
-      <h4><i>Lower contact</i></h4>
+      <h4 style="font-weight: bold"><i>Lower contact</i></h4>
       <div id="lower_contact_value" class="minwidth">
         <?=$fmdata["lower_contact"]["display"] ?>
       </div> <?php
@@ -415,7 +415,7 @@ if ($auth) { ?>
     </div>
 
     <div id="upper_contact">
-      <h4><i>Upper contact</i></h4>
+      <h4 style="font-weight: bold"><i>Upper contact</i></h4>
       <div id="upper_contact_value" class="minwidth">
         <?=$fmdata["upper_contact"]["display"] ?>
       </div> <?php
@@ -427,7 +427,7 @@ if ($auth) { ?>
     </div>
 
     <div id="regional_extent">
-      <h4><i>Regional extent</i></h4>
+      <h4 style="font-weight: bold"><i>Regional extent</i></h4>
       <div id="regional_extent_value" class="minwidth">
         <?=$fmdata["regional_extent"]["display"] ?>
       </div>
