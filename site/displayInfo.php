@@ -315,7 +315,7 @@ if ($auth) { ?>
   }
 </style>
 
-<div> <?php
+<div style="font-family: 'Times New Roman', Times, Arial, serif;"> <?php
   if ($auth) { ?>
     <input id="Edit" type ="button" value = "Edit">
     <input id="Save" type="button" value="Save" disabled>
