@@ -31,6 +31,7 @@
         justify-content: flex-start;
         gap: 14px;
         background-color: #333333;
+        font-family: 'Montserrat', sans-serif;
       }
       .topnav > * {
         color: black;
@@ -42,18 +43,14 @@
         color: #ffffff;
       }
 
-      h1 {
+      h1, h2, h3, h4{
         margin-bottom: 0px;
       }
-      h2 {
-        margin-bottom: 0px;
-      }
-      h3 {
+
+      .region-name {
         margin: 0px;
       }
-      h4 {
-        margin-bottom: 0px;
-      }
+
       p {
         margin-top: 0px;
       }
@@ -90,7 +87,7 @@
     if (strcmp(getcwd(), "/app") == 0) { ?>
       <div class="country-logo">
         <img src="/noun_Earth_2199992.svg" alt="Logo">
-        <h3><?= $regionName ?></h3>
+        <h3 class="region-name"><?= $regionName ?></h3>
       </div>
       <a href="/index.php">Home</a>
       <a href="/general.php">Multi-Country Search</a> 
@@ -111,7 +108,7 @@
   <?php
   if ($_SERVER['REQUEST_URI'] != '/aboutPage.php') { ?>
     <div style="display: flex; flex-direction: row; flex: 1;">
-      <div style="width: 120px; padding: 5px; display: flex; flex-direction: column;"> <?php
+      <div style="padding: 5px; display: flex; flex-direction: column;"> <?php
         global $period;
         if (isset($_GET["period"])) {
           $period = $_GET["period"];

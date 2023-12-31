@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Libre+Baskerville&family=Montserrat&display=swap');
+
 .mainBody {
   padding-left: 10px;
 }
@@ -11,12 +13,10 @@ body {
   margin: 0px;
   padding: 0px;
   min-height: 100vh;
-  font-family: 'Times New Roman', Times, Arial, serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
-  font-size: 24px;
 }
 
 .container {
@@ -34,6 +34,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .left-menu-ul {
@@ -171,6 +172,7 @@ html, .aside-left {
   justify-content: center;
   align-items: center;
   margin-bottom: 0px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .footer-container > a {
