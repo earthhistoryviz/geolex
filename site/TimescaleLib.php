@@ -1,6 +1,6 @@
 <?php
 include_once("cleanupString.php");
-include("SimpleXLSX.php");
+include_once("SimpleXLSX.php");
 
 // unformatted = true => don't include the commas in the result
 function computeAgeFromPercentUp($stage, $percent, $timescale, $unformatted=false) {
