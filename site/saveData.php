@@ -45,6 +45,17 @@ foreach ($vars as $vname => $vval) {
     $sql .= ", \n"; // only put the commas on before the stuff that isn't the first one
   }
   $firstone = false;
+  if ($vname == 'geojson') {
+    $position = strpos($vval, '{');
+    $lastPosition = strrpos($vval, '}');
+    if ($position !== false && $lastPosition !== false) {
+      $length = $lastPosition - $position + 1;
+      $vval = substr($vval, $position, $length);
+    } else {
+        // '{' not found, handle accordingly
+        $vval = $vval;
+    }
+  }
   $sql .= "$vname = '$vval'";
 }
 $sql .= " \nWHERE name = '".$vars["name"]."';";
