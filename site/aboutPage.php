@@ -79,6 +79,9 @@
             max-width: 100%;
             height: auto;  
         }
+        #people-container {
+            min-height: 100vh;
+        }
     </style>
 </body>
 </html>
