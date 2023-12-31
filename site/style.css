@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Libre+Baskerville&family=Montserrat&display=swap');
-
 .mainBody {
   padding-left: 10px;
 }
@@ -13,7 +11,7 @@ body {
   margin: 0px;
   padding: 0px;
   min-height: 100vh;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Times New Roman', Times, Arial, serif;
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -21,7 +21,7 @@ $auth = $_SESSION["loggedIn"];
 
 if ($formation["formation"] == "") {?>
   <title>Empty Search</title>
-  <h3 style="text-align: center;">Please type in the search box and click "Submit" to search for Formations<br><?php
+  <h3 style="text-align: center;">Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</h3> <?php
   include("footer.php");
   exit(0);
 }
@@ -787,7 +787,7 @@ function displayImages($images, $imtype) {
     $id = "image_".$imtype."_".$imagedisplaycount; ?>
     <div id="<?php echo $fmdata["name"]["display"]; ?>">
       <a href="<?php echo $i["full"]; ?>" target="_blank">
-        <img src="<?php echo $i["thumbnail"]; ?>" style="max-width: 200px; max-height: 200px;"/>
+        <img src="/<?php echo $i["thumbnail"]; ?>" style="max-width: 200px; max-height: 200px;"/>
       </a>
       <?php if ($_SESSION["loggedIn"]) { ?>
         <input
