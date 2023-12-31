@@ -4,6 +4,8 @@
 <?php 
 error_reporting(E_ALL);
 include_once("navBar.php");
+$isFixedRegion = true;
+include_once("generalSearchBar.php");
 include_once("SqlConnection.php");
 include_once("cleanupString.php");
 
