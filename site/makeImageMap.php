@@ -167,7 +167,7 @@ function extractFormationNames($fileContent)
 
 function generateModel($model, $geojson)
 {
-    $toBeHashed = $geojson . $_POST['beg_date'] . $model . $_POST['formation'];
+    $toBeHashed = $_POST['beg_date'] . $model . $_POST['formation'];
     $outdirhash = md5($toBeHashed);
 
     switch ($model) {

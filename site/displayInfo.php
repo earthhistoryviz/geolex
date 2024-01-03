@@ -161,7 +161,7 @@ if ($_REQUEST["generateImage"]) {
   } else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Scotese") {
     $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
   }
-  $toBeHashed .= $_REQUEST["formation"]; // adds the formation name to the hash
+  $toBeHashed = $fmdata["beg_date"]["display"]. $_REQUEST["selectModel"] . $_REQUEST["formation"];   
   $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name
   switch ($_REQUEST["selectModel"]) {
     case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
