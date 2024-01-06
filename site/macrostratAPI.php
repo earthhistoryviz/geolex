@@ -1,4 +1,9 @@
 <?php
+// ini_set('memory_limit', '256M'); // or a higher value
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ERROR);
 include_once("constants.php");
 
 $searchquery = addslashes($_REQUEST['searchquery']);
@@ -17,6 +22,8 @@ $url = "https://macrostrat.org/api/units?";
 
 if ($searchquery != "") {
   $url .= "strat_name=".$searchquery."&";
+} else {
+  $url .= "strat_name=%&";
 }
 
 if ($agefilterstart != "") {
@@ -64,10 +71,6 @@ echo json_encode($result);
 
 function getLithPattern($liths, $environ) {
   global $macrostratLithoNames;
-
-  usort($percentages, function($a, $b) {
-    return $b["prop"] <=> $a["prop"];
-  });
 
   $output = "";
   foreach ($liths as $lith) {
