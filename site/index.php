@@ -85,7 +85,7 @@ if ($_REQUEST["filterperiod"]) {
     if ($_REQUEST["recondate_description"] == "middle") {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$midAge.$_REQUEST["selectModel"];
     } else {
-      $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
+      $toBeHashed = $_REQUEST["agefilterstart"]. $recongeojson . "null";
     }
 
     $outdirhash = md5($toBeHashed);

@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         //Need to adjust due to inset, boundaries, etc...
                         if ($mapType == 'Polar') {
                             $x += 2.5;
-                            $y -= 3;
+                            $y -= 28;
                         } else if ($mapType == 'Mollweide') {
                             $x += 10;
                             $y -= 35;
@@ -110,6 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($selectedModel == 'Scotese') {
                             if ($mapType != 'Rectangular') {
                                 $y -= 315;
+                            }
+                            if ($mapType == 'Polar') {
+                                $y += 20;
                             }
                         }
                         $coordinates[] = ['x' => $x, 'y' => $y];
@@ -130,11 +133,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $areaTag .= $x . ',' . $y . ',';
                 }
                 $areaTag = rtrim($areaTag, ',');
-                $baseUrl = $urlLinks[$name] . "/displayInfo.php";
-                $nameEncoded = urlencode($name);
-                $url = "$baseUrl?formation=$nameEncoded";
-                $dataAttributes = "data-tooltip-title='" . htmlspecialchars($name) . "'";
-                $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" href="' . $url . '" alt="' . $name . '" target="_blank" title="' . $name . '" ' . $dataAttributes . '">';
+                if (isset($urlLinks[$name])) {
+                    $baseUrl = $urlLinks[$name] . "/displayInfo.php";
+                    $nameEncoded = urlencode($name);
+                    $url = "$baseUrl?formation=$nameEncoded";
+                    $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" href="' . $url . '" alt="' . $name . '" target="_blank" title="' . $name . '">';
+                } else {
+                    $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" alt="' . $name . '" target="_blank" title="' . $name . '">';
+                }
             }
             $imageHtml .= '<img src="' . $outdirname_php . '/final_image.png" usemap="#image-map-' . $selectedModel . '"/>';
             $imageHtml .= '<map name="image-map-' . $selectedModel . '" width=' . $imageSize[0] . ' height=' . $imageSize[1] . '>';
@@ -167,7 +173,7 @@ function extractFormationNames($fileContent)
 
 function generateModel($model, $geojson)
 {
-    $toBeHashed = $_POST['beg_date'] . $model . $_POST['formation'];
+    $toBeHashed = $_POST['beg_date'] . $geojson . $_POST['formation'];
     $outdirhash = md5($toBeHashed);
 
     switch ($model) {

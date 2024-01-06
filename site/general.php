@@ -97,7 +97,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
 
     $raw = file_get_contents($url);
     $response = json_decode($raw);
-
+    //var_dump($response);
     foreach ($response as $fname => $finfo) {
       $allformations = array_merge($allformations, array($finfo));
     }
@@ -119,7 +119,7 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     if ($_REQUEST["recondate_description"] == "middle") {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$midAge.$_REQUEST["selectModel"];
     } else {
-      $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$_REQUEST["selectModel"];
+      $toBeHashed = $_REQUEST["agefilterstart"]. $recongeojson . "null";
     }
 
     $outdirhash = md5($toBeHashed);

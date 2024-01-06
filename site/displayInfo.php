@@ -154,14 +154,7 @@ $_SESSION[$pageKey] = $geojson;
 // (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
 
 if ($_REQUEST["generateImage"]) {
-  if ($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Marcilly") {
-    $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
-  } else if ($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Default") {
-    $toBeHashed = $reconForm.$fmdata["beg_date"]["display"];
-  } else if($_REQUEST["generateImage"] == 1 && $_REQUEST["selectModel"] == "Scotese") {
-    $toBeHashed = $reconForm.$fmdata["beg_date"]["display"].$_REQUEST["selectModel"];
-  }
-  $toBeHashed = $fmdata["beg_date"]["display"]. $_REQUEST["selectModel"] . $_REQUEST["formation"];   
+  $toBeHashed = $fmdata["beg_date"]["display"]. $geojson. $_REQUEST["formation"];   
   $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name
   switch ($_REQUEST["selectModel"]) {
     case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
