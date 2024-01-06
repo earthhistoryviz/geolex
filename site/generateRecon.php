@@ -230,11 +230,14 @@ if ($_REQUEST["generateImage"] == "1") {
             $areaTag .= $x . ',' . $y . ',';
           }
           $areaTag = rtrim($areaTag, ',');
-          $baseUrl = $urlLinks[$name] . "/displayInfo.php";
-          $nameEncoded = urlencode($name);
-          $url = "$baseUrl?formation=$nameEncoded";
-          $dataAttributes = "data-tooltip-title='" . htmlspecialchars($name) . "'";
-          $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" href="' . $url . '" alt="' . $name . '" target="_blank" title="' . $name . '" ' . $dataAttributes . '">';
+          if (isset($urlLinks[$name])) {
+            $baseUrl = $urlLinks[$name] . "/displayInfo.php";
+            $nameEncoded = urlencode($name);
+            $url = "$baseUrl?formation=$nameEncoded";
+            $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" href="' . $url . '" alt="' . $name . '" target="_blank" title="' . $name . '">';
+          } else {
+            $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" alt="' . $name . '" target="_blank" title="' . $name . '">';
+          }
         }
         $imageHtml .= '<img src="/' . $outdirname_php . '/final_image.png" usemap="#image-map-' . $_REQUEST["selectModel"] . '"/>';
         $imageHtml .= '<map name="image-map-' . $_REQUEST["selectModel"] . '">';
