@@ -298,7 +298,7 @@ include("generalSearchBar.php"); ?>
                 <h4 class="province-title"><?=$province?></h4> <?php
                 foreach ($periodsDate as $p) {
                   foreach ($provinceinfo["groupbyperiod"] as $pname => $formations) {
-                    if ($pname !== $p["period"]) {
+                    if ($pname !== $p["period"] || $pname == '') {
                       continue;
                     } ?>
                     <div class="period-container" id="<?=$pname ?>-container">
