@@ -84,7 +84,7 @@ $linksToRegions = array(
   "indplex" => "Indian Plate",
   "japanlex" => "Japan"
 );
-$regionName = $linksToRegions[$_SERVER['HTTP_HOST']];
+$regionName = isset($linksToRegions[$_SERVER['HTTP_HOST']]) ? $linksToRegions[$_SERVER['HTTP_HOST']] : 'Unknown Region';
 
 if ($_SERVER["SERVER_NAME"] == "dev") {
   array_push($regions, array(
