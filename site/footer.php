@@ -7,6 +7,6 @@ include_once('constants.php');
 $auth = $_SESSION["loggedIn"];
 if (!$auth) { ?>
 	<footer class="footer-container">
-		<a href="/formations-search">View All Formations in <?=$regionName?></a>
+		<a href="/all-formations">View All Formations in <?=$regionName?></a>
 	</footer> <?php
 }

@@ -287,10 +287,6 @@ include_once("constants.php"); // gets us $periods and $regions
     function onLoad() {
       changeFilter();
       changePeriod();
-      <?php
-      if (isset($_GET['autosubmit']) && $_GET['autosubmit'] == 'true') { ?>
-        submitFilter(); <?php
-      } ?>
     }
 
     window.onload = onLoad();
