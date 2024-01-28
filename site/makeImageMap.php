@@ -44,7 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_SESSION[$_POST['pageKey']])) {
                 $urlLinks = $_SESSION[$_POST['pageKey']];
             } else {
+                set_time_limit(30);
                 $regions = [
+                    "https://macrostrat.org/api",
                     "https://chinalex.geolex.org",
                     "https://indplex.geolex.org",
                     "https://thailex.geolex.org",
@@ -58,27 +60,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     "https://qatarlex.geolex.org",
                     "https://southamerlex.geolex.org",
                 ];
+                if ($_SERVER['HTTP_HOST'] == "dev") {
+                    $regions[] = "https://dev.geolex.org";
+                }
                 foreach ($formationNames as $formationName) {
+                    // if (time() >= ini_get('max_execution_time')) {
+                    //     echo "Here";
+                    //     // Handle the situation when the script runs too long
+                    //     break;
+                    // }
                     foreach ($regions as $key => $region) {
                         // Construct the API URL for searching the formation
-                        $api_url = "{$region}/searchAPI.php?searchquery=" . urlencode($formationName);
+                        $api_url = "";
+                        if ($region == "https://macrostrat.org/api") {
+                            $api_url = "{$region}/units?strat_name=" . urlencode($formationName);
+                        } else {
+                            $api_url = "{$region}/searchAPI.php?searchquery=" . urlencode($formationName);
+                        }
                         $response_json = file_get_contents($api_url);
                         // Decode the JSON response
                         $response_data = json_decode($response_json, true);
                         // Check if the response contains data related to the formation
                         if (isset($response_data) && is_array($response_data) && count($response_data) > 0) {
-                            $urlLinks[$formationName] = $region;
-                            // Move the region to the beginning of the array, likely other formations from same region
-                            unset($regions[$key]);
-                            array_unshift($regions, $region);     
-                            break;
+                            if ($region == "https://macrostrat.org/api") {
+                                if (isset($response_data["success"])) {
+                                    unset($regions[$key]);
+                                    array_unshift($regions, $region);
+                                    break;
+                                }
+                            } else {
+                                $urlLinks[$formationName] = $region;
+                                // Move the region to the beginning of the array, likely other formations from same region
+                                unset($regions[$key]);
+                                array_unshift($regions, $region); 
+                                break;
+                            }    
                         }
                     }
                 }
                 //Store in session so that other two models don't need to process again
                 $_SESSION[$_POST['pageKey']] = $urlLinks;
             }
-            //var_dump($urlLinks);
             //Go through file and get pixels
             $fileContent = file_get_contents($outdirname_php . "/pixel_coordinates.txt");
             $coordinateSets = explode(">\n", trim($fileContent));
@@ -118,25 +140,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $coordinates[] = ['x' => $x, 'y' => $y];
                     }
                 }
-                $data[$formationNames[$formationIndex]] = $coordinates;
+                $data[] = array (
+                    "name" => $formationNames[$formationIndex],
+                    "coordinates" => $coordinates
+                );
                 $formationIndex++;
             }
+
             //Build html to be appended to sight
             $imageHtml .= '</h1>';
-
             $areaTags = [];
-            foreach ($data as $name => $coordinates) {
+            foreach ($data as $formation) {
                 $areaTag = '';
+                $coordinates = $formation["coordinates"];
                 foreach ($coordinates as $coords) {
                     $x = $coords['x'];
                     $y = $coords['y'];
                     $areaTag .= $x . ',' . $y . ',';
                 }
                 $areaTag = rtrim($areaTag, ',');
+                $name = $formation["name"];
                 if (isset($urlLinks[$name])) {
-                    $baseUrl = $urlLinks[$name] . "/displayInfo.php";
+                    $baseUrl = $urlLinks[$name] . "/formations";
                     $nameEncoded = urlencode($name);
-                    $url = "$baseUrl?formation=$nameEncoded";
+                    $url = "$baseUrl/$nameEncoded";
                     $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" href="' . $url . '" alt="' . $name . '" target="_blank" title="' . $name . '">';
                 } else {
                     $areaTags[] = '<area shape="poly" coords="' . $areaTag . '" alt="' . $name . '" target="_blank" title="' . $name . '">';
@@ -161,8 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-function extractFormationNames($fileContent)
-{
+function extractFormationNames($fileContent) {
     //Look for lines that start with @D(some digit) and get formation name
     preg_match_all('/@D\d+\|[^|]*\|[^|]*\|"([^"]+)"/', $fileContent, $matches);
     if (isset($matches[1])) {
@@ -171,8 +197,7 @@ function extractFormationNames($fileContent)
     return $formationNames;
 }
 
-function generateModel($model, $geojson)
-{
+function generateModel($model, $geojson) {
     $toBeHashed = $_POST['beg_date'] . $geojson . $_POST['formation'];
     $outdirhash = md5($toBeHashed);
 
@@ -221,6 +246,9 @@ function generateModel($model, $geojson)
             case "Marcilly":
                 $cmd = 'cd pygplates && ./MarcillyModel.py ' . $_REQUEST['beg_date'] . ' ' . $outdirname . ' 2>&1';
                 $hello = exec($cmd, $output, $ending);
+                // foreach ($output as $line) {
+                //     echo $line . "<br>";
+                // }
                 break;
             case "Scotese":
                 $cmd = 'cd pygplates && ./ScoteseModel.py ' . $_REQUEST['beg_date'] .  ' ' . $outdirname . ' 2>&1';
