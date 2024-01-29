@@ -567,7 +567,7 @@ if ($auth) { ?>
       newform = document.createElement("form");
       document.body.appendChild(newform);
       newform.method = "POST";
-      newform.action = "deleteForm.php";
+      newform.action = "/deleteForm.php";
 
       var input = document.createElement("input");
       input.type = "hidden";
