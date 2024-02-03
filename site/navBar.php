@@ -92,7 +92,6 @@
       <a href="/index.php">Home</a>
       <a href="/general.php">Multi-Country Search</a> 
       <a href="/aboutPage.php">About</a> <?php
-      // <a href="macrostratparse.php">Macrostrat Search</a>
     } else { ?>
       <div class="country-logo">
         <img src="/noun_Earth_2199992.svg" alt="Logo">

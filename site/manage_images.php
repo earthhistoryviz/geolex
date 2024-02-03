@@ -4,19 +4,8 @@
 
 
 <?php
-//include("navBar.php");
+include("navBar.php");
 include_once("SqlConnection.php");
-//include("SearchBar.php");
-//$iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('/app/uploads/'));
-//$files = array();
-//var_dump($iter);
-//foreach ($iter as $file){
-//	if($file->isDir()){
-//		continue;
-//	} 	
-//	$files[] = $file->getPathname();
-//} 
-//var_dump($files);
 ?>
 <form action="delete_image.php" method="POST">
 	<select name = "Img_select">
