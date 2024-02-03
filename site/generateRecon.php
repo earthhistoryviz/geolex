@@ -82,19 +82,6 @@ if ($_REQUEST["generateImage"] == "1") {
         break;
     }
   }
-
-  function extractFormationNames($fileContent)
-  {
-    //Look for lines that start with @D(some digit) and get formation name
-    preg_match_all('/@D\d+\|[^|]*\|[^|]*\|"([^"]+)"/', $fileContent, $matches);
-    if (isset($matches[1])) {
-      $formationNames = $matches[1];
-    }
-    return $formationNames;
-  }
-
-
-
   ?>
 
   <div id="reconImg" style="text-align: center;">
@@ -145,68 +132,65 @@ if ($_REQUEST["generateImage"] == "1") {
         if ($returnCode === 0) {
             //Get names of formations from reconstructed_geom.gmt
             $formationNames = [];
-            $geojsonDecoded = json_decode($geojson, true);
+            $geojsonDecoded = json_decode($recongeojson, true);
             foreach($geojsonDecoded["features"] as $formation) {
-                $formationNames[] = $formation["properties"]["name"];
+              $formationNames[] = $formation["properties"]["name"];
             }
             //Need to get url links for formations
-            session_start();
             $urlLinks = array();
-            if (isset($_SESSION[$_POST['pageKey']])) {
-                $urlLinks = $_SESSION[$_POST['pageKey']];
-            } else {
-                set_time_limit(30);
-                $regions = [
-                    "https://macrostrat.org/api",
-                    "https://chinalex.geolex.org",
-                    "https://indplex.geolex.org",
-                    "https://thailex.geolex.org",
-                    "https://vietlex.geolex.org",
-                    "https://nigerlex.geolex.org",
-                    "https://malaylex.geolex.org",
-                    "https://africalex.geolex.org",
-                    "https://belgiumlex.geolex.org",
-                    "https://mideastlex.geolex.org",
-                    "https://panamalex.geolex.org",
-                    "https://qatarlex.geolex.org",
-                    "https://southamerlex.geolex.org",
-                ];
-                if ($_SERVER['HTTP_HOST'] == "dev") {
-                  $regions[] = "https://dev.geolex.org";
-                }
-                foreach ($formationNames as $formationName) {
-                    if (time() >= ini_get('max_execution_time')) {
-                        // Handle the situation when the script runs too long
-                        break;
-                    }
-                    foreach ($regions as $key => $region) {
-                        // Construct the API URL for searching the formation
-                        $api_url = "";
-                        if ($region == "https://macrostrat.org/api") {
-                            $api_url = "{$region}/units?strat_name=" . urlencode($formationName);
-                        } else {
-                            $api_url = "{$region}/searchAPI.php?searchquery=" . urlencode($formationName);
-                        }
-                        $response_json = file_get_contents($api_url);
-                        // Decode the JSON response
-                        $response_data = json_decode($response_json, true);
-                        // Check if the response contains data related to the formation
-                        if (isset($response_data) && is_array($response_data) && count($response_data) > 0) {
-                            if ($region == "https://macrostrat.org/api" && isset($response_data["success"])) {
-                                unset($regions[$key]);
-                                array_unshift($regions, $region);
-                            } else {
-                                $urlLinks[$formationName] = $region;
-                                // Move the region to the beginning of the array, likely other formations from same region
-                                unset($regions[$key]);
-                                array_unshift($regions, $region); 
-                            }    
+            set_time_limit(30);
+            $regions = [
+                "https://macrostrat.org/api",
+                "https://chinalex.geolex.org",
+                "https://indplex.geolex.org",
+                "https://thailex.geolex.org",
+                "https://vietlex.geolex.org",
+                "https://nigerlex.geolex.org",
+                "https://malaylex.geolex.org",
+                "https://africalex.geolex.org",
+                "https://belgiumlex.geolex.org",
+                "https://mideastlex.geolex.org",
+                "https://panamalex.geolex.org",
+                "https://qatarlex.geolex.org",
+                "https://southamerlex.geolex.org",
+            ];
+            if ($_SERVER['HTTP_HOST'] == "dev") {
+              $regions[] = "https://dev.geolex.org";
+            }
+            foreach ($formationNames as $formationName) {
+              // if (time() >= ini_get('max_execution_time')) {
+              //     // Handle the situation when the script runs too long
+              //     echo "here";
+              //     break;
+              // }
+              foreach ($regions as $key => $region) {
+                  // Construct the API URL for searching the formation
+                  $api_url = "";
+                  if ($region == "https://macrostrat.org/api") {
+                      $api_url = "{$region}/units?strat_name=" . urlencode($formationName);
+                  } else {
+                      $api_url = "{$region}/searchAPI.php?searchquery=" . urlencode($formationName);
+                  }
+                  $response_json = file_get_contents($api_url);
+                  // Decode the JSON response
+                  $response_data = json_decode($response_json, true);
+                  // Check if the response contains data related to the formation
+                  if (isset($response_data) && is_array($response_data) && count($response_data) > 0) {
+                    if ($region == "https://macrostrat.org/api") {
+                        if (isset($response_data["success"])) {
+                            unset($regions[$key]);
+                            array_unshift($regions, $region);
                             break;
                         }
-                    }
+                    } else {
+                        $urlLinks[$formationName] = $region;
+                        // Move the region to the beginning of the array, likely other formations from same region
+                        unset($regions[$key]);
+                        array_unshift($regions, $region); 
+                        break;
+                    }    
                 }
-                //Store in session so that other two models don't need to process again
-                $_SESSION[$_POST['pageKey']] = $urlLinks;
+              }
             }
             //Go through file and get pixels
             $fileContent = file_get_contents($outdirname_php . "/pixel_coordinates.txt");

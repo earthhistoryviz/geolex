@@ -3,7 +3,6 @@ include_once("constants.php");
 include_once("TimescaleLib.php");
 // Sets up the reconstruction variables: $recongeojson, etc.:
 include_once("./makeReconstruction.php");
-
 /* If we have a filterperiod and filterregion, send off the API requests */
 if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
   $didsearch = true;
@@ -88,30 +87,9 @@ if ($_REQUEST["filterperiod"] && $_REQUEST["filterregion"]) {
     $allformations = $filteredformations;
   }
 
-  // Request data from Macrostrat when users select the option
-  if (isset($_REQUEST["include-macrostrat"])) {
-    $url = "http://localhost/macrostratAPI.php"
-      ."?searchquery=".urlencode($_REQUEST["search"])
-      ."&agefilterstart=".$_REQUEST["agefilterstart"]
-      ."&agefilterend=".$_REQUEST["agefilterend"];
-
-    $raw = file_get_contents($url);
-    $response = json_decode($raw);
-    //var_dump($response);
-    foreach ($response as $fname => $finfo) {
-      $allformations = array_merge($allformations, array($finfo));
-    }
-    // echo "<pre>"."included Macrostrat\n";
-    // print_r($response);
-    // echo "</pre>";
-  }
-
   //----------------------------------------------
   // Generate the merged geojson:
-  session_start();
-  $pageKey = session_id() . '_' . uniqid();
   $recongeojson = createGeoJSONForFormations($allformations);
-  $_SESSION[$pageKey] = $recongeojson;
   //----------------------------------------------
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
@@ -221,20 +199,34 @@ include("generalSearchBar.php"); ?>
           </div>
           <script>
             document.addEventListener('DOMContentLoaded', function () {
-              var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+              let generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
               generateAllImagesBtn.addEventListener('click', function() {
-                // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
-                var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
-                var formation = <?php echo json_encode($_REQUEST["agefilterend"]); ?>;
-                var pageKey = <?php echo json_encode($pageKey); ?>;
-                // Construct the URL with query parameters
-                var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
-                encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
-                
-                // Open the new tab with the constructed URL
-                window.open(url, '_blank');
+                let data = {
+                  geojson: <?= json_encode($recongeojson) ?>,
+                  beg_date: <?= json_encode($_GET["agefilterstart"]) ?>,
+                  formation: "Multiple"
+                };
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", '/addGeojsonToFiles.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                let outdirhash = "";
+                xhr.onreadystatechange = function() {
+                  if (this.readyState === XMLHttpRequest.DONE) {
+                    if (this.status === 200) {
+                      outdirhash = this.responseText;
+                      const begDateDisplay = data["beg_date"];
+                      const url = '/generateAllImages.php?beg_date=' 
+                      + encodeURIComponent(begDateDisplay) 
+                      + '&outdirhash=' + encodeURIComponent(outdirhash);
+                      window.open(url, '_blank');
+                    } else {
+                      console.error('Error writing file:', this.responseText);
+                    }
+                  }
+                };
+                xhr.send(JSON.stringify(data));
               });
-            }); 
+            });
           </script>
         </div>
         <style>
@@ -328,6 +320,7 @@ include("generalSearchBar.php"); ?>
       NOTE: Timed out awaiting external image creation, had to re-start <?php
     }
   } /* end did search if */ ?>
+</div>
 </div>
 <?php
 include_once("footer.php");

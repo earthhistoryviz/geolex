@@ -74,11 +74,9 @@ if ($_REQUEST["filterperiod"]) {
     }
     $allFormations = $filteredformations;
   }
-  session_start();
-  $pageKey = session_id() . '_' . uniqid();
+
   // Generate the merged geojson:
   $recongeojson = createGeoJSONForFormations($allFormations);
-  $_SESSION[$pageKey] = $recongeojson;
   // Only create the output directory if we are generating an image:
   if ($_REQUEST["generateImage"]) {
     $model = $_REQUEST["selectModel"] || "Default";
@@ -191,23 +189,36 @@ if ($did_search) {
         <button id="generateAllImagesBtn">Generate All Models</button>
       </div>
       <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
-        generateAllImagesBtn.addEventListener('click', function() {
-          // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
-          var begDateDisplay = <?php echo json_encode($_REQUEST["agefilterstart"]); ?>;
-          var formation = <?php echo json_encode($midAge); ?>;
-          var pageKey = <?php echo json_encode($pageKey); ?>;
-          // Construct the URL with query parameters
-          var url = 'generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
-          encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey); 
-          
-          // Open the new tab with the constructed URL
-          window.open(url, '_blank');
+        document.addEventListener('DOMContentLoaded', function () {
+          let generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+          generateAllImagesBtn.addEventListener('click', function() {
+            let data = {
+              geojson: <?= json_encode($recongeojson) ?>,
+              beg_date: <?= json_encode($_GET["agefilterstart"]) ?>,
+              formation: "Multiple"
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/addGeojsonToFiles.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            let outdirhash = "";
+            xhr.onreadystatechange = function() {
+              if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status === 200) {
+                  outdirhash = this.responseText;
+                  const begDateDisplay = data["beg_date"];
+                  const url = '/generateAllImages.php?beg_date=' 
+                  + encodeURIComponent(begDateDisplay) 
+                  + '&outdirhash=' + encodeURIComponent(outdirhash);
+                  window.open(url, '_blank');
+                } else {
+                  console.error('Error writing file:', this.responseText);
+                }
+              }
+            };
+            xhr.send(JSON.stringify(data));
+          });
         });
-      });
-  </script>
-      <?php
+      </script> <?php
     } ?>
     <style>
       .buttonContainer {

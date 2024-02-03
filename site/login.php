@@ -80,12 +80,25 @@ if(isset($_REQUEST['submit_btn']))
             float: right;
             padding-top: 16px;
         }
+
+        .cookie-notice {
+            background-color: #ffcc00;
+            color: #000000;
+            padding: 14px 20px;
+            margin: 8px 0;
+            text-align: center;
+            font-weight: bold;
+        }
     </style>
 </body>
 <title>Admin Login Page</title>
 <form method="POST" action='login.php'>
 
     <div class="container">
+        <p class="cookie-notice">
+            Cookies are used here to retain your log-in to the Admin functions until you log-out.
+            By logging in, you agree to our use of cookies for session management. 
+        </p>
         <label for="username"><b>Username</b></label>
         <input type="text" placeholder="Enter Username" name="username" required>
 

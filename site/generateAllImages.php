@@ -1,11 +1,4 @@
 <?php
-// Start a session
-session_start();
-$pageKey = $_REQUEST['pageKey'];
-;
-// Access the JSON object from the session
-$geojson = $_SESSION[$pageKey];
-//var_dump($geojson);
 function removeOldHashDirs($pathpfx)
 {
     // Clear out any old reconstructions first
@@ -28,8 +21,74 @@ function removeOldHashDirs($pathpfx)
         }
     }
 }
-
 removeOldHashDirs("./pygplates/livedata");
+
+$outdirhash = $_GET["outdirhash"];
+$fileContent = file_get_contents("pygplates/livedata/default/$outdirhash/recon.geojson");
+$formationNames = [];
+$geojson = json_decode($fileContent, true);
+foreach($geojson["features"] as $feature) {
+    if (isset($feature["properties"]["NAME"])) {
+        $formationNames[] = $feature["properties"]["NAME"];
+    }
+}
+
+$urlLinks = array();
+set_time_limit(30);
+$regions = [
+    "https://macrostrat.org/api",
+    "https://chinalex.geolex.org",
+    "https://indplex.geolex.org",
+    "https://thailex.geolex.org",
+    "https://vietlex.geolex.org",
+    "https://nigerlex.geolex.org",
+    "https://malaylex.geolex.org",
+    "https://africalex.geolex.org",
+    "https://belgiumlex.geolex.org",
+    "https://mideastlex.geolex.org",
+    "https://panamalex.geolex.org",
+    "https://qatarlex.geolex.org",
+    "https://southamerlex.geolex.org",
+];
+if ($_SERVER['HTTP_HOST'] == "dev") {
+    $regions[] = "https://dev.geolex.org";
+}
+foreach ($formationNames as $formationName) {
+    // if (time() >= ini_get('max_execution_time')) {
+    //     echo "Here";
+    //     // Handle the situation when the script runs too long
+    //     break;
+    // }
+    foreach ($regions as $key => $region) {
+        // Construct the API URL for searching the formation
+        $api_url = "";
+        if ($region == "https://macrostrat.org/api") {
+            $api_url = "{$region}/units?strat_name=" . urlencode($formationName);
+        } else {
+            $api_url = "{$region}/searchAPI.php?searchquery=" . urlencode($formationName);
+        }
+        $response_json = file_get_contents($api_url);
+        // Decode the JSON response
+        $response_data = json_decode($response_json, true);
+        // Check if the response contains data related to the formation
+        if (isset($response_data) && is_array($response_data) && count($response_data) > 0) {
+            if ($region == "https://macrostrat.org/api") {
+                if (isset($response_data["success"])) {
+                    unset($regions[$key]);
+                    array_unshift($regions, $region);
+                    break;
+                }
+            } else {
+                $urlLinks[$formationName] = $region;
+                // Move the region to the beginning of the array, likely other formations from same region
+                unset($regions[$key]);
+                array_unshift($regions, $region); 
+                break;
+            }    
+        }
+    }
+}
+
 $pageKey = session_id() . '_' . uniqid();
 $models = ["Default", "Marcilly", "Scotese"];
 ?>
@@ -101,9 +160,10 @@ $models = ["Default", "Marcilly", "Scotese"];
                 const modelsJ = <?= json_encode($models) ?>;
                 const urlParams = new URLSearchParams(window.location.search);
                 const begDate = urlParams.get('beg_date');
-                const formation = urlParams.get('formation');
-                const geojson = <?= json_encode($geojson) ?>;
+                const outdirhash = <?= json_encode($outdirhash) ?>;
                 const pageKey = <?= json_encode($pageKey) ?>;
+                const formationNames = <?= json_encode($formationNames) ?>;
+                const urlLinks = <?= json_encode($urlLinks) ?>;
                 let currentIndex = 0;
                 let loadingTextInterval;
 
@@ -132,30 +192,9 @@ $models = ["Default", "Marcilly", "Scotese"];
                     $.ajax({
                         url: 'makeImageMap.php',
                         method: 'POST',
-                        data: { model: model, beg_date: begDate, formation: formation, geojson: geojson, pageKey: pageKey },
+                        data: { model: model, beg_date: begDate, pageKey: pageKey, outdirhash: outdirhash, formationNames: formationNames, urlLinks: urlLinks },
                         success: function (data) {
-                            // Update the webpage with the generated image
                             $('#image-container').append(data);
-                            // const $latestMap = $('#image-container map:last');
-                            // $latestMap.on('mouseenter', 'area', function () {
-                            //     if(!$(this).data('tooltip')) {
-                            //         const coords = $(this).attr('coords').split(',');
-                            //         console.log(coords);
-                            //         const position = {
-                            //             my: "left+" + (parseInt(coords[0]) + 0) + " top+" + coords[1],
-                            //             at: "left top"
-                            //         };
-                            //         $(this).tooltip({
-                            //             position: position,
-                            //         }).triggerHandler('mouseover');
-                            //     }
-                            // })
-                            // Continue to generate the next image
-                            // var areas = document.getElementsByTagName( 'area' );
-                            // for( var index = 0; index < areas.length; index++ ) {    
-                            //     areas[index].addEventListener( 'mouseover', function () {this.focus();}, false );
-                            //     areas[index].addEventListener( 'mouseout', function () {this.blur();}, false );
-                            // };
                             $('img[usemap]').rwdImageMaps();
                             currentIndex++;
                             generateNextImage();
