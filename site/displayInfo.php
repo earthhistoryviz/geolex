@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ERROR);
 include_once("navBar.php");
 $formaction = "/index.php";
 $isFixedRegion = true;
@@ -50,7 +47,7 @@ include_once("formationInfo.php");
 
 if (!$found) { ?>
   <title>No Match</title>
-  <h3>Nothing found for "<?=$formation["formation"]?>". Please search again.</h3> <?php
+  <h3>Nothing found for "<?=$formation?>". Please search again.</h3> <?php
   include("footer.php");
   exit(0);
 }
@@ -85,9 +82,6 @@ if ($dirs) {
   }
 }
 
-session_start();
-$pageKey = session_id() . '_' . uniqid();
-//var_dump($fmdata);
 $geojson = createGeoJSONForFormations(array(
   array(
     "geojson" => strip_tags($fmdata["geojson"]["display"]),
@@ -95,8 +89,6 @@ $geojson = createGeoJSONForFormations(array(
     "lithology_pattern" => strip_tags($fmdata["lithology_pattern"]["display"])
   )
 ));
-//var_dump($geojson);
-$_SESSION[$pageKey] = $geojson;
 
 // create output directory for json file to be processed by pygplates
 // (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
@@ -136,23 +128,35 @@ if ($_REQUEST["generateImage"]) {
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
-      var geojson = <?=json_encode($geojson)?>;
+      let generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
       generateAllImagesBtn.addEventListener('click', function() {
-        // Get the values of $fmdata["beg_date"]["display"] and $_REQUEST["formation"]
-        var begDateDisplay = <?php echo json_encode($fmdata["beg_date"]["display"]); ?>;
-        var formation = <?php echo json_encode($_REQUEST["formation"]); ?>;
-        var pageKey = <?php echo json_encode($pageKey); ?>;
-        var region = <?php echo json_encode($_REQUEST["region"]); ?>;
-        //location.reload();
-        // Construct the URL with query parameters
-        var url = '/generateAllImages.php?beg_date=' + encodeURIComponent(begDateDisplay) + '&formation=' + 
-        encodeURIComponent(formation) + '&pageKey=' + encodeURIComponent(pageKey);
-        window.open(url, '_blank');
+        let data = {
+          geojson: <?= json_encode($geojson) ?>,
+          beg_date: <?= json_encode($fmdata["beg_date"]["display"]) ?>,
+          formation: <?= json_encode($_REQUEST["formation"]) ?>
+        };
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/addGeojsonToFiles.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        let outdirhash = "";
+        xhr.onreadystatechange = function() {
+          if (this.readyState === XMLHttpRequest.DONE) {
+            if (this.status === 200) {
+              outdirhash = this.responseText;
+              const begDateDisplay = data["beg_date"];
+              const url = '/generateAllImages.php?beg_date=' 
+              + encodeURIComponent(begDateDisplay) 
+              + '&outdirhash=' + encodeURIComponent(outdirhash);
+              window.open(url, '_blank');
+            } else {
+              console.error('Error writing file:', this.responseText);
+            }
+          }
+        };
+        xhr.send(JSON.stringify(data));
       });
     });
-  </script>
-  <?php
+  </script> <?php
   } 
   ?>
 </div>
@@ -216,29 +220,7 @@ if ($_REQUEST["generateImage"]) {
     margin-bottom: 0px;
     margin-top: 0px;
   }
-</style> <?php
 
-if ($auth) { ?>
-  <script type="text/javascript">
-    function saveText() {
-      var xr = new XMLHttpRequest();
-      var url = "saveNewText.php";
-      idname = "\""+idname+"\"";
-      var text = document.getElementById("name").innerHTML;
-      // var id = document.getElementById("").innerHTML;
-      console.log(text);
-      var vars = "newText="+text;
-      xr.open("POST", url, true);
-      xr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xr.send(vars);
-    }
-    function editValues() {
-      alert("Form submitted!");
-      return false;
-    }
-  </script> <?php
-} ?>
-<style>
   .horiz {
     display: flex;
     flex-direction: row;
