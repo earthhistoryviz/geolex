@@ -54,7 +54,7 @@ function parseTimescale($filepath) {
   $lastperiod="";
   $lastseries="";
   // Have to go in reverse because the period/series names show up first at the bottom
-  for($i=1; $i <= count($rows) - 1; $i++) {
+  for($i = count($rows) - 1; $i >= 1; $i--) {
     $row = $rows[$i];
     // If this row has a period, use it until we see another one:
     if (strlen(trim($row[$COLPERIOD])) > 0) {
@@ -71,14 +71,17 @@ function parseTimescale($filepath) {
     }
     $series = strlen($lastseries) > 0 ? $lastseries : $row[$COLSTAGE];
     $period = strlen($lastperiod) > 0 ? $lastperiod : $lastseries;
-    array_push($stages, array(
-      "period" => $period,
-      "series" => $series,
-       "stage" => $row[$COLSTAGE],
-        "base" => $row[$COLMA],
-       "color" => $row[$COLCOLOR],
-    ));
+    if ($period != "") {
+      array_push($stages, array(
+        "period" => $period,
+        "series" => $series,
+        "stage" => $row[$COLSTAGE],
+          "base" => $row[$COLMA],
+        "color" => $row[$COLCOLOR],
+      ));
+    }
   }
+  $stages = array_reverse($stages); // re-order them top down
 
   // Now, fill in the top ages for each stage
   for($i=1; $i<count($stages); $i++) {
