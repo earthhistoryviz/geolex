@@ -47,4 +47,4 @@ Run create_db.php:
 php db/createDb.php
 ```
 If running locally the url to access website is:
-[Local Website]http://localhost:5100
+http://localhost:5100
