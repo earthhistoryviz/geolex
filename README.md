@@ -8,9 +8,9 @@ Visit existing Geologic Lexicon sites at [https://geolex.org](https://geolex.org
 
 Clone the repository to get started:
 
-\```bash
+```bash
 git clone git@github.com:earthhistoryviz/geolex.git
-\```
+```
 
 ## Operation
 
@@ -18,15 +18,15 @@ Geolex requires Docker for operation. Use the following commands based on your D
 
 ### Using Docker
 
-\```bash
+```bash
 docker-compose up -d
-\```
+```
 
 ### Using Docker Compose (Newer Version)
 
-\```bash
+```bash
 docker compose up -d
-\```
+```
 
 ### Post-Deployment Steps
 
@@ -34,27 +34,27 @@ After deployment, you'll need to enter the Docker container and run a script to 
 
 1. **List Running Containers**
 
-   \```bash
+   ```bash
    docker ps
-   \```
+   ```
 
 2. **Enter the Container**
 
-   \```bash
+   ```bash
    docker exec -it container-name bash
-   \```
+   ```
 
 3. **Navigate to the Code Directory**
 
-   \```bash
+   ```bash
    cd code
-   \```
+   ```
 
 4. **Run the Database Creation Script**
 
-   \```bash
+   ```bash
    php db/createDb.php
-   \```
+   ```
 
 5. **Accessing the Site Locally**
 
