@@ -1,50 +1,61 @@
-# geolex - Geologic Lexicon Site
----------------------------------
+# Geolex - Geologic Lexicon Site
 
-You can clone this repository to deploy a lexicon site for a single geographic region.  To initialize,
-you'll need a default_timescale.xlsx (one has been included in site/timesacles) and you will need to run `php db/createDb.php` to create the
-empty database.  Then you can upload word docs to start populating your lexicon database.
+Geolex allows you to deploy a lexicon site for a single geographic region. This repository contains everything you need to get started, including a default timescale file and a script to create an empty database. You can populate the lexicon database by uploading Word documents.
 
-You can view the existing Geologic Lexicon sites at https://geolex.org.
+Visit existing Geologic Lexicon sites at [https://geolex.org](https://geolex.org).
 
 ## Installation
----------------
 
-```bash
+Clone the repository to get started:
+
+\```bash
 git clone git@github.com:earthhistoryviz/geolex.git
-```
-
+\```
 
 ## Operation
--------------
-Requires docker.
 
-```bash
+Geolex requires Docker for operation. Use the following commands based on your Docker version:
+
+### Using Docker
+
+\```bash
 docker-compose up -d
-```
-Or potentially
+\```
 
-```bash
+### Using Docker Compose (Newer Version)
+
+\```bash
 docker compose up -d
-```
-if using a newer version.
+\```
 
-After you need to enter the container and run `php db/createDb.php`
-To list running containers:
-```bash
-docker ps
-```
-To enter container:
-```bash
-docker exec -it container-name bash
-```
-Navigate to code directory once in container:
-```bash
-cd code
-```
-Run create_db.php:
-```bash
-php db/createDb.php
-```
-If running locally the url to access website is:
-http://localhost:5100
+### Post-Deployment Steps
+
+After deployment, you'll need to enter the Docker container and run a script to create the database:
+
+1. **List Running Containers**
+
+   \```bash
+   docker ps
+   \```
+
+2. **Enter the Container**
+
+   \```bash
+   docker exec -it container-name bash
+   \```
+
+3. **Navigate to the Code Directory**
+
+   \```bash
+   cd code
+   \```
+
+4. **Run the Database Creation Script**
+
+   \```bash
+   php db/createDb.php
+   \```
+
+5. **Accessing the Site Locally**
+
+   The local URL for the site will be: [http://localhost:5100](http://localhost:5100)
