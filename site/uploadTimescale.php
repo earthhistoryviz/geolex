@@ -1,6 +1,10 @@
 <?php
-error_reporting(E_ALL);
-include_once("navBar.php");
+session_start();
+if (!$_SESSION["loggedIn"]) {
+  echo "ERROR: You must be logged in to access this page.";
+  exit(0);
+}
+include_once("adminDash.php");
 $isFixedRegion = true;
 include_once("generalSearchBar.php");
 include_once("SqlConnection.php");

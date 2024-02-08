@@ -60,7 +60,7 @@ $sql .= " \nWHERE name = '".$vars["name"]."';";
 
 if ($conn->query($sql) === TRUE) {
   // worked
-  header("location: displayInfo.php?formation=".$vars["name"]);
+  header("location: adminDisplayInfo.php?formation=".$vars["name"]);
 } else {
   // failed
   echo "Error, could not update data, error was: " . $conn->error;

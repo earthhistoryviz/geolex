@@ -252,15 +252,22 @@ if ($did_search) {
         <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);"> <?php
           if ($formation->geojson) { ?>
             <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
-          } ?>
-          <a href="formations/<?=$formation->name?>" target="_blank"><?=$formation->name ?></a>
+          } 
+          $link = "";
+          if ($auth) {
+            $link = "adminDisplayInfo.php?formation=" . $formation->name; 
+          } else {
+            $link = "formations/$formation->name";
+          }
+          ?>
+          <a href="<?= $link ?>" target="_blank"><?=$formation->name ?></a>
         </div> <?php
       } ?>
     </div> <?php
   }
 } else {
   global $period; 
-  if ($_SESSION["loggedIn"]) { ?>
+  if ($auth) { ?>
     <div style="display: flex; flex-direction: row;">
     <div style="width: 120px; padding: 5px; display: flex; flex-direction: column;"> <?php
       global $period;
@@ -271,7 +278,7 @@ if ($did_search) {
       }
       foreach ($mapperiods as $p) { ?>
         <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
-          <a href="/index.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
+          <a href="/adminIndex.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
         </div> <?php
       } ?>
     </div> <?php

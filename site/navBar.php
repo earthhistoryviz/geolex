@@ -6,8 +6,6 @@
     return;
   }
 
-  // Default navBar:
-  session_start();
   // Gives us $maps and $mapperiods
   global $maps, $mapperiods;
   include("getmaps.php");
@@ -15,7 +13,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/style.css"/>
  <?php
-  if ($_SESSION["loggedIn"]) {
+  if ($auth) {
     include("adminDash.php");
   } else { ?>
   

@@ -20,8 +20,10 @@ include_once("TimescaleLib.php");
     margin-top: 10px;
   }
 </style> <?php
-
-if (!$formaction) {
+if ($auth) {
+  $formaction = "/adminIndex.php";
+}
+else if (!$formaction) {
   $formaction = "/index.php";
 }
 

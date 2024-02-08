@@ -2,18 +2,17 @@
 <html>
 <body>
 <?php 
-error_reporting(E_ALL);
-include_once("navBar.php");
-$isFixedRegion = true;
-include_once("generalSearchBar.php");
-include_once("SqlConnection.php");
-include_once("cleanupString.php");
-
+session_start();
 #checks to see if user is logged in
 if (!$_SESSION["loggedIn"]) {
     echo "ERROR: You must be logged in to access this page.";
     exit(0);
 }
+include_once("adminDash.php");
+$isFixedRegion = true;
+include_once("generalSearchBar.php");
+include_once("SqlConnection.php");
+include_once("cleanupString.php");
 
 ?>
 <br><br> 

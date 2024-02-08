@@ -11,17 +11,13 @@ include_once("generalSearchBar.php");
 include_once("SqlConnection.php");
 include_once("./makeReconstruction.php"); // has createGeoJSONForFormations
 include_once("SimpleXLSX.php");
-// include_once("formationInfo.php");
-// $recongeoJSON = fopen("reconstruct.txt", "w"); // output file to write all geojson information to
-$formation = $_GET["formation"];
 
-if (!isset($_GET["macrostrat"])) {
-  $macrostrat = false;
-} else {
-  $macrostrat = $_GET["macrostrat"];
+$formation = $_GET["formation"];
+$macrostrat = false;
+if (isset($_GET["macrostrat"]) && $_GET["macrostrat"] == "true") {
+  $macrostrat = true;
   $col_id = $_GET["col_id"];
 }
-$auth = $_SESSION["loggedIn"];
 
 if ($formation == "") {?>
   <title>Empty Search</title>
@@ -712,7 +708,7 @@ function displayImages($images, $imtype) {
       <a href="<?php echo $i["full"]; ?>" target="_blank">
         <img src="/<?php echo $i["thumbnail"]; ?>" style="max-width: 200px; max-height: 200px;"/>
       </a>
-      <?php if ($_SESSION["loggedIn"]) { ?>
+      <?php if ($auth) { ?>
         <input
           id="<?php echo $i["full"]; ?>"
           type="button"

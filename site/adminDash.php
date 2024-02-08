@@ -1,27 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <?php
-    include_once("constants.php");
-    ?>
-    <title>Admin Suite - <?=$regionName ?> Lexicon</title>
 
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+<?php
+  session_start();
+  if (!$_SESSION["loggedIn"]) {
+    echo "ERROR: You must be logged in to access this page.";
+    exit(0);
+  }
+  include_once("constants.php");
+?>
+<link rel="stylesheet" type="text/css" href="style.css"/>
 
-</head>
 <body>
 
 <div class="container" style="height: 100%;">
     <!-- aside left -->
     <div class="left-menu">
-        <div class="item <?php if (preg_match("/index.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
-          <a class="menu-link" href="/index.php">Homepage</a>
+        <div class="item <?php if ($_SERVER["PHP_SELF"] == "/adminIndex.php" && empty($_SERVER["QUERY_STRING"])) { echo "active"; } ?>" >
+          <a class="menu-link" href="/adminIndex.php">Homepage</a>
         </div>
-        <div class="item <?php if (preg_match("/displayInfo.php/", $_SERVER["PHP_SELF"]) || preg_match("/searchFm.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
-          <a class="menu-link" href="/displayInfo.php">Manage Database</a>
+        <div class="item <?php
+        if (preg_match("/adminDisplayInfo.php/", $_SERVER["PHP_SELF"]) ||
+          ($_SERVER["PHP_SELF"] == "/adminIndex.php" && !empty($_SERVER["QUERY_STRING"]) && !preg_match("/\bperiod\b/", $_SERVER["QUERY_STRING"])) ||
+          preg_match("/deleteForm.php/", $_SERVER["PHP_SELF"])) {
+          echo "active";
+        }
+        ?>" >
+          <a class="menu-link" href="/adminDisplayInfo.php">Manage Database</a>
         </div>
-        <div class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+        <div class="item <?php if (preg_match("/fileBrowser.php/", $_SERVER["PHP_SELF"]) || preg_match("/Upload.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="/fileBrowser.php">Parse Word Document</a>
         </div>
         <div class="item <?php if (preg_match("/mapPackBrowser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
@@ -33,12 +38,9 @@
         <div class="item <?php if (preg_match("/uploadTimescale.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="/uploadTimescale.php">Timescale</a>
         </div>
-	      <div class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
+	      <div class="item <?php if (preg_match("/manageUser.php/", $_SERVER["PHP_SELF"]) || preg_match("/Signup.php/", $_SERVER["PHP_SELF"])) { echo "active"; } ?>" >
           <a class="menu-link" href="/manageUser.php">Manage User information</a>
 	      </div>
-		    <div class ="itme <?php if (preg_match("/create_db.php/",$_SERVER["PHP_SELF"])){echo "active";}?>">
-		      <a class ="menu-link" href = "/create_db.php">Clear Database </a>
-	      </div>	
   	    <div>
   	      <p class="fr user">User: <?=$_SESSION["username"]?></p>
   	    </div>
