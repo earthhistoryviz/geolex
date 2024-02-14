@@ -179,6 +179,8 @@ if (!empty($zipFiles)) {
         echo "Failed to open zip file.";
     }
 } else {
+    $cmd = "mkdir app/timescales && chown www-data timescales";
+    exec($cmd, $output, $retval);
     echo "No zip file found in directory.";
 }
 
