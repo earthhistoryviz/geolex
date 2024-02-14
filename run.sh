@@ -65,6 +65,10 @@ else
 fi
 
 
-exec supervisord -n
-
-
+supervisord -n &
+echo "Waiting for MySQL to start..."
+while ! mysqladmin ping -h"localhost" --silent; do
+    sleep 1
+done
+php code/db/create_db.php
+wait

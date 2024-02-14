@@ -13,40 +13,40 @@ if ($conn->connect_error) {
 }
 $sql8 = "USE myDB";
 if ($conn->query($sql8) === TRUE) {
-    echo "\n Database Already Exists...Dropping Tables and Database to rebuild them.<br>";
+    echo "Database Already Exists...Dropping Tables and Database to rebuild them.";
 } else {
-    echo "\n Database does not exist, rebuilding from scratch, ignore errors about dropping database " . $conn->error;
+    echo "Database does not exist, rebuilding from scratch, ignore errors about dropping database " . $conn->error;
 }
 $sql5 = "DROP TABLE IF EXISTS user_info";
 if ($conn->query($sql5) === TRUE) {
-    echo "\n Table user_info dropped successfully<br>";
+    echo "Table user_info dropped successfully";
 } else {
-    echo "\n Error dropping table user_info: " . $conn->error;
+    echo "Error dropping table user_info: " . $conn->error;
 }
 $sql6 = "DROP TABLE IF EXISTS formation";
 if ($conn->query($sql6) === TRUE) {
-    echo "Table formation dropped successfully<br>";
+    echo "Table formation dropped successfully";
 } else {
-    echo "\n Error dropping table formation: " . $conn->error;
+    echo "Error dropping table formation: " . $conn->error;
 }
 $sql7 = "DROP TABLE IF EXISTS timeperiod";
 if ($conn->query($sql7) === TRUE) {
-    echo "Table timeperiod dropped successfully<br>";
+    echo "Table timeperiod dropped successfully";
 } else {
-    echo "\n Error dropping table formation: " . $conn->error;
+    echo "Error dropping table formation: " . $conn->error;
 }
 $sql8 = "DROP TABLE IF EXISTS images";
 if ($conn->query($sql7) === TRUE) {
-    echo "Table images dropped successfully<br>";
+    echo "Table images dropped successfully";
 } else {
-    echo "\n Error dropping table formation: " . $conn->error;
+    echo "Error dropping table formation: " . $conn->error;
 }
 // drop database
 $sql = "DROP DATABASE IF EXISTS myDB";
 if ($conn->query($sql) === TRUE) {
-    echo " \n Database dropped successfully<br>";
+    echo "Database dropped successfully";
 } else {
-    echo "\n Error dropping database: " . $conn->error;
+    echo "Error dropping database: " . $conn->error;
 }
 
 $conn->close();
@@ -61,9 +61,9 @@ if ($conn->connect_error) {
 // Create database
 $sql = "CREATE DATABASE myDB";
 if ($conn->query($sql) === TRUE) {
-    echo "\n Database created successfully<br>";
+    echo "Database created successfully";
 } else {
-    echo "\n Error creating database: " . $conn->error;
+    echo "Error creating database: " . $conn->error;
 }
 
 $conn->close();
@@ -86,9 +86,9 @@ $sql = "CREATE TABLE timeperiod(
 
 )";
 if ($conn->query($sql)===TRUE) {
-    echo "table create successfully<br>";
+    echo "Timeperiod Table created successfully";
 } else {
-    echo "\n Error creating timeperiod table: " . $conn->error;
+    echo "Error creating timeperiod table: " . $conn->error;
 }
 $sql4 = "CREATE TABLE user_info(
     ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -101,9 +101,9 @@ $sql3 = "INSERT INTO user_info(uname,pasw,admin)
 VALUES
 ('root', '$rootpasw','True')";
 if ($conn->query($sql4)==TRUE && $conn->query($sql3)===TRUE) {
-    echo "table create successfully<br>";
+    echo "Users Table created successfully";
 } else {
-    echo "\n Error creating user_info table: " . $conn->error;
+    echo "Error creating user_info table: " . $conn->error;
 }
 $sql2 = "CREATE TABLE formation (
 	name Varchar(255) PRIMARY KEY NOT NULL,
@@ -133,9 +133,53 @@ $sql2 = "CREATE TABLE formation (
 )";
 
 if ($conn->query($sql2)===TRUE) {
-    echo "table formation created successfully<br>";
+    echo "Formation Table created successfully";
 } else {
-    echo "\n Error creating formation table: " . $conn->error;
+    echo " Error creating formation table: " . $conn->error;
 }
-?>
 
+$directory = "./code";
+$zipFiles = glob($directory . "/*.zip");
+$files = scandir($directory);
+if (!empty($zipFiles)) {
+    $zip = new ZipArchive();
+    $zipFilePath = $zipFiles[0];
+
+    if ($zip->open($zipFilePath) === TRUE) {
+        $tempDirectory = "./code/tempdir";
+        mkdir($tempDirectory, 0777);
+        $zip->extractTo($tempDirectory);
+        $zip->close();
+        echo "Extracted zip file.";
+
+        $sqlFiles = glob($tempDirectory . "/*.sql");
+        if (!empty($sqlFiles)) {
+            $sqlFilePath = $sqlFiles[0];
+            $sqlContent = file_get_contents($sqlFilePath);
+            if ($conn->multi_query($sqlContent)) {
+                do {
+
+                } while ($conn->next_result());
+                echo "Database populated successfully with {$sqlFilePath}.";
+            } else {
+                echo "Error occurred while populating the database.";
+            }
+        } else {
+            echo "No .sql file found in extracted contents.";
+        }
+        $cmd = "rm $tempDirectory/*.sql && cp -r $tempDirectory/* app && rm -rf $tempDirectory";
+        exec($cmd, $output, $retval);
+        if ($retval == 0) {
+            echo "Succesfully moved files.";
+        } else {
+            echo "Failed to move files with status $retval and output:";
+            print_r($output);
+        }
+    } else {
+        echo "Failed to open zip file.";
+    }
+} else {
+    echo "No zip file found in directory.";
+}
+
+$conn->close();

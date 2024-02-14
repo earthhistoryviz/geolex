@@ -28,34 +28,5 @@ docker-compose up -d
 docker compose up -d
 ```
 
-### Post-Deployment Steps
-
-After deployment, you'll need to enter the Docker container and run a script to create the database:
-
-1. **List Running Containers**
-
-   ```bash
-   docker ps
-   ```
-
-2. **Enter the Container**
-
-   ```bash
-   docker exec -it container-name bash
-   ```
-
-3. **Navigate to the Code Directory**
-
-   ```bash
-   cd code
-   ```
-
-4. **Run the Database Creation Script**
-
-   ```bash
-   php db/createDb.php
-   ```
-
-5. **Accessing the Site Locally**
-
-   The local URL for the site will be: [http://localhost:5100](http://localhost:5100)
+### Accessing the Site Locally
+The local URL for the site will be: [http://localhost:5100](http://localhost:5100)
