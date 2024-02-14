@@ -5,8 +5,6 @@ if (!$_SESSION["loggedIn"]) {
   exit(0);
 }
 include_once("adminDash.php");
-$isFixedRegion = true;
-include_once("generalSearchBar.php");
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 
@@ -79,13 +77,13 @@ if (isset($_REQUEST["existing_timescale"])) {
   try {
     $f = $_REQUEST["existing_timescale"];
     $p = dirname(__FILE__) . "/timescales/$f";
-    if (!file_exists($p)) {
+    if (!file_exists($p) && $timescaleExists) {
       throw new RuntimeException("Selected timescale file $p does not exist");
     } else {
       array_push($msgs, 'Existing timescale found');
     }
     // Set this timescale as the default
-    if (!copy($p, $DEFAULT_TIMESCALE_PATH)) {
+    if (!copy($p, $DEFAULT_TIMESCALE_PATH) && $timescaleExists) {
       throw new RuntimeException("Failed to set $f as default timescale");
     } else {
       array_push($msgs, "Successfully set $f as default timescale");
@@ -130,6 +128,9 @@ if (isset($_REQUEST["existing_timescale"])) {
     }
   } catch (RuntimeException $e) {
     array_push($msgs, $e->getMessage());
+  }
+  if (!$timescaleExists) {
+    array_push($msgs, "Reload page to update lexicon with new timescale.");
   }
 }
 

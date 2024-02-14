@@ -13,8 +13,6 @@ if (!$_SESSION["loggedIn"]) {
     <?php 
     include_once("adminDash.php");
     include_once("SqlConnection.php");
-    $isFixedRegion = true;
-    include_once("generalSearchBar.php");
     ?>
     <br><br>
     <form action="Upload.php" method="post" enctype="multipart/form-data">

@@ -10,7 +10,6 @@ if (!$_SESSION["loggedIn"]) {
 }
 include_once("adminDash.php");
 $isFixedRegion = true;
-include_once("generalSearchBar.php");
 include_once("SqlConnection.php");
 include_once("cleanupString.php");
 

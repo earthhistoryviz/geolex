@@ -2,8 +2,19 @@
 // This code is needed and commented out only because it is causing a bug.
 
 include_once("TimescaleLib.php");
+$timescaleExists = true;
+try {
+  $timescale = parseDefaultTimescale();
+} catch (RuntimeException $e) {
+  $timescaleExists = false;
+  if ($_SERVER["PHP_SELF"] != "/adminDash.php" && $_SERVER["PHP_SELF"] != "/uploadTimescale.php") {
+    include_once("navBar.php");
+    echo "A runtime exception has occurred: " . $e->getMessage();
+    echo "<br>Do you have a default_timescale.xlsx inside the timescales folder? If not sign into admin, go to Timescale, and upload a timescale called default_timescale.xlsx";
+    exit();
+  }
+}
 
-$timescale = parseDefaultTimescale();
 $periodsDate = array();
 $epochDate = array();
 
@@ -54,6 +65,7 @@ $periodsOrdered = array(
 );
 
 $regions = array(
+  array("name" => "Macrostrat", "searchurl" => "http://localhost/macrostratAPI.php", "linkurl" => null),
   array("name" => "China", "searchurl" => "http://chinalex.geolex.org/searchAPI.php", "linkurl" => "http://chinalex.geolex.org/displayInfo.php"),
   array("name" => "Indian Plate", "searchurl" => "http://indplex.geolex.org/searchAPI.php", "linkurl" => "http://indplex.geolex.org/displayInfo.php"),
   array("name" => "Thailand", "searchurl" => "http://thailex.geolex.org/searchAPI.php", "linkurl" => "http://thailex.geolex.org/displayInfo.php"),
@@ -84,7 +96,7 @@ $linksToRegions = array(
   "indplex" => "Indian Plate",
   "japanlex" => "Japan"
 );
-$regionName = isset($linksToRegions[$_SERVER['HTTP_HOST']]) ? $linksToRegions[$_SERVER['HTTP_HOST']] : 'Unknown Region';
+$regionName = isset($linksToRegions[$_SERVER['HTTP_HOST']]) ? $linksToRegions[$_SERVER['HTTP_HOST']] : '';
 
 if ($_SERVER["SERVER_NAME"] == "dev") {
   array_push($regions, array(
@@ -143,5 +155,3 @@ $macrostratLithoNames = array(
   // doesn't have a direct translation in lookup table in dropbox (temporary translation)
   "argillite" => "Claystone"
 );
-
-?>
