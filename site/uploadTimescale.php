@@ -130,7 +130,7 @@ if (isset($_REQUEST["existing_timescale"])) {
     array_push($msgs, $e->getMessage());
   }
   if (!$timescaleExists) {
-    array_push($msgs, "Reload page to update lexicon with new timescale.");
+    array_push($msgs, "Logout update lexicon with new timescale.");
   }
 }
 
