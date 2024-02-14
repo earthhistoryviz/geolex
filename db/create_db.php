@@ -11,133 +11,6 @@ $conn = new mysqli($servername, $username, $password);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-$sql8 = "USE myDB";
-if ($conn->query($sql8) === TRUE) {
-    echo "\nDatabase Already Exists...Dropping Tables and Database to rebuild them.";
-} else {
-    echo "\nDatabase does not exist, rebuilding from scratch, ignore errors about dropping database " . $conn->error;
-}
-$sql5 = "DROP TABLE IF EXISTS user_info";
-if ($conn->query($sql5) === TRUE) {
-    echo "\nTable user_info dropped successfully";
-} else {
-    echo "\nError dropping table user_info: " . $conn->error;
-}
-$sql6 = "DROP TABLE IF EXISTS formation";
-if ($conn->query($sql6) === TRUE) {
-    echo "\nTable formation dropped successfully";
-} else {
-    echo "\nError dropping table formation: " . $conn->error;
-}
-$sql7 = "DROP TABLE IF EXISTS timeperiod";
-if ($conn->query($sql7) === TRUE) {
-    echo "\nTable timeperiod dropped successfully";
-} else {
-    echo "\nError dropping table formation: " . $conn->error;
-}
-$sql8 = "DROP TABLE IF EXISTS images";
-if ($conn->query($sql7) === TRUE) {
-    echo "\nTable images dropped successfully";
-} else {
-    echo "\nError dropping table formation: " . $conn->error;
-}
-// drop database
-$sql = "DROP DATABASE IF EXISTS myDB";
-if ($conn->query($sql) === TRUE) {
-    echo "\nDatabase dropped successfully";
-} else {
-    echo "\nError dropping database: " . $conn->error;
-}
-
-$conn->close();
-
-// Create connection
-$conn = new mysqli($servername, $username, $password);
-// Check connection
-if ($conn->connect_error) {
-    die("\nConnection failed: " . $conn->connect_error);
-}
-
-// Create database
-$sql = "CREATE DATABASE myDB";
-if ($conn->query($sql) === TRUE) {
-    echo "\nDatabase created successfully";
-} else {
-    echo "\nError creating database: " . $conn->error;
-}
-
-$conn->close();
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("\nConnection failed: " . $conn->connect_error);
-
-}
-//$sql = "DROP DATABASE IF EXISTS myDB";
-//$sql = "CREATE DATABASE myDB";
-//$sql = "USE  myDB";
-
-$sql = "CREATE TABLE timeperiod(
-	ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name Varchar(255),
-	color Varchar(255)
-
-)";
-if ($conn->query($sql)===TRUE) {
-    echo "\nTimeperiod Table created successfully";
-} else {
-    echo "\nError creating timeperiod table: " . $conn->error;
-}
-$sql4 = "CREATE TABLE user_info(
-    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    uname Varchar(255),
-    pasw Varchar(255),
-    admin Varchar(255)
-)";
-$rootpasw = password_hash("TSCreator",PASSWORD_DEFAULT);
-$sql3 = "INSERT INTO user_info(uname,pasw,admin)
-VALUES
-('root', '$rootpasw','True')";
-if ($conn->query($sql4)==TRUE && $conn->query($sql3)===TRUE) {
-    echo "\nUsers Table created successfully";
-} else {
-    echo "\nError creating user_info table: " . $conn->error;
-}
-$sql2 = "CREATE TABLE formation (
-	name Varchar(255) PRIMARY KEY NOT NULL,
-	period Varchar(255),
-	age_interval text,
-	province Varchar(255),
- 	type_locality Text,
-	lithology Text,
-        lithology_pattern Varchar(255),
-	lower_contact Text,
-	upper_contact Text,
-	regional_extent Text,
-	fossils Text,
-	age Text,
-	depositional Text,
-	additional_info Text,
-	compiler text,
-	geojson longtext,
-        age_span varchar(255),
-        beginning_stage varchar(255),
-        frac_upB varchar(255),
-        beg_date varchar(255),
-        end_stage varchar(255),
-        frac_upE varchar(255),
-	end_date varchar(255),
-	depositional_pattern varchar(255)
-)";
-
-if ($conn->query($sql2)===TRUE) {
-    echo "\nFormation Table created successfully";
-} else {
-    echo "\nError creating formation table: " . $conn->error;
-}
-
 $directory = "./code";
 $zipFiles = glob($directory . "/*.zip");
 $files = scandir($directory);
@@ -161,6 +34,29 @@ if (!empty($zipFiles)) {
 
                 } while ($conn->next_result());
                 echo "\nDatabase populated successfully with {$sqlFilePath}.";
+                $truncateSql = "TRUNCATE TABLE user_info;";
+                if ($conn->query($truncateSql) === TRUE) {
+                    echo "\nUser table cleared successfully.";
+
+                    $insertSql = $conn->prepare("INSERT INTO user_info (uname, pasw, admin) VALUES (?, ?, 'True');");
+                    $passwordLexDDE = password_hash("Hangzhou", PASSWORD_DEFAULT);
+                    $passwordCAGS = password_hash("ChinaStrat", PASSWORD_DEFAULT);
+
+                    $insertSql->bind_param("ss", $userName, $password);
+                    $userName = "LexDDE";
+                    $password = $passwordLexDDE;
+                    $insertSql->execute();
+                    echo "\nUser LexDDE inserted successfully.";
+
+                    $userName = "CAGS";
+                    $password = $passwordCAGS;
+                    $insertSql->execute();
+                    echo "\nUser CAGS inserted successfully.";
+
+                    $insertSql->close();
+                } else {
+                    echo "\nError clearing user table: " . $conn->error;
+                }
             } else {
                 echo "\nError occurred while populating the database.";
             }
@@ -175,19 +71,133 @@ if (!empty($zipFiles)) {
             echo "\nFailed to move files with status $retval and output:";
             print_r($output);
         }
+        $cmd = "mkdir -p app/backups && mv $zipFilePath app/backups";
+        exec($cmd, $output, $retval);
+        if ($retval == 0) {
+            echo "\nSuccesfully moved zipfile to backups.";
+        } else {
+            echo "\nFailed to move files with status $retval and output:";
+            print_r($output);
+        }
     } else {
         echo "Failed to open zip file.";
     }
 } else {
-    $cmd = "mkdir app/timescales && chown www-data app/timescales";
-    exec($cmd, $output, $retval);
-    if ($retval == 0) {
-        echo "\nSuccesfully made timescales directory.";
-    } else {
-        echo "\nFailed to create timescales directory with status $retval and output:";
-        print_r($output);
-    }
     echo "\nNo zip file found in directory.";
+    $allTablesExist = true;
+    $tables = ["user_info", "formation", "timeperiod", "images"];
+    foreach ($tables as $table) {
+        $sql = "SELECT COUNT(*) AS count FROM information_schema.tables WHERE table_schema = '$dbname' AND table_name = '$table'";
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        if ($row['count'] == 0) {
+            $allTablesExist = false;
+            echo "Table $table does not exist.\n";
+            break;
+        }
+    }
+    if ($allTablesExist) {
+        echo "\nThe database is already formatted.";
+    } else {
+        $conn->query("USE myDB"); // Switch to the database
+        // Drop tables if they exist
+        foreach ($tables as $table) {
+            $sql = "DROP TABLE IF EXISTS $table";
+            if ($conn->query($sql) === TRUE) {
+                echo "\nTable $table dropped successfully";
+            } else {
+                echo "\nError dropping table $table: " . $conn->error;
+            }
+        }
+
+        // Drop and recreate the database
+        $sql = "DROP DATABASE IF EXISTS myDB";
+        if ($conn->query($sql) === TRUE) {
+            echo "\nDatabase dropped successfully";
+        } else {
+            echo "\nError dropping database: " . $conn->error;
+        }
+
+        $sql = "CREATE DATABASE myDB";
+        if ($conn->query($sql) === TRUE) {
+            echo "\nDatabase created successfully";
+        } else {
+            echo "\nError creating database: " . $conn->error;
+        }
+
+        // Reconnect to the new database
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            die("\nConnection failed: " . $conn->connect_error);
+        }
+
+        // Create tables
+        $createTables = [
+            "CREATE TABLE timeperiod (
+                ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                name Varchar(255),
+                color Varchar(255)
+            )",
+            "CREATE TABLE user_info (
+                ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                uname Varchar(255),
+                pasw Varchar(255),
+                admin Varchar(255)
+            )",
+            "CREATE TABLE formation (
+                name Varchar(255) PRIMARY KEY NOT NULL,
+                period Varchar(255),
+                age_interval text,
+                province Varchar(255),
+                type_locality Text,
+                lithology Text,
+                    lithology_pattern Varchar(255),
+                lower_contact Text,
+                upper_contact Text,
+                regional_extent Text,
+                fossils Text,
+                age Text,
+                depositional Text,
+                additional_info Text,
+                compiler text,
+                geojson longtext,
+                    age_span varchar(255),
+                    beginning_stage varchar(255),
+                    frac_upB varchar(255),
+                    beg_date varchar(255),
+                    end_stage varchar(255),
+                    frac_upE varchar(255),
+                end_date varchar(255),
+                depositional_pattern varchar(255)
+            )"
+        ];
+
+        foreach ($createTables as $sql) {
+            if ($conn->query($sql) === TRUE) {
+                echo "\nTable created successfully";
+            } else {
+                echo "\nError creating table: " . $conn->error;
+            }
+        }
+
+        // Insert default user
+        $rootpasw = password_hash("TSCreator", PASSWORD_DEFAULT);
+        $sql = "INSERT INTO user_info (uname, pasw, admin) VALUES ('root', '$rootpasw', 'True')";
+        if ($conn->query($sql) === TRUE) {
+            echo "\nDefault user created successfully";
+        } else {
+            echo "\nError inserting default user: " . $conn->error;
+        }
+
+        // Create directories and set permissions
+        $cmd = "mkdir -p app/timescales && mkdir -p app/uploads && chown www-data:www-data app/timescales && chown www-data:www-data app/uploads";
+        exec($cmd, $output, $retval);
+        if ($retval == 0) {
+            echo "\nSuccessfully created timescales directory.";
+        } else {
+            echo "\nFailed to create timescales directory with status $retval and output:" . print_r($output, true);
+        }
+    }
 }
 
 $conn->close();
