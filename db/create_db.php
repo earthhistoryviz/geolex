@@ -66,12 +66,12 @@ if (!empty($zipFiles)) {
         $cmd = "rm $tempDirectory/*.sql && cp -r $tempDirectory/* app && rm -rf $tempDirectory";
         exec($cmd, $output, $retval);
         if ($retval == 0) {
-            echo "\nSuccesfully moved files.";
+            echo "\nSuccesfully moved from zip file.";
         } else {
             echo "\nFailed to move files with status $retval and output:";
             print_r($output);
         }
-        $cmd = "mkdir -p app/backups && mv $zipFilePath app/backups";
+        $cmd = "mkdir -p code/db/backups && mv $zipFilePath code/db/backups";
         exec($cmd, $output, $retval);
         if ($retval == 0) {
             echo "\nSuccesfully moved zipfile to backups.";
@@ -79,26 +79,32 @@ if (!empty($zipFiles)) {
             echo "\nFailed to move files with status $retval and output:";
             print_r($output);
         }
+        echo "\nDone.";
+        echo "\n";
     } else {
         echo "Failed to open zip file.";
     }
 } else {
     echo "\nNo zip file found in directory.";
     $allTablesExist = true;
-    $tables = ["user_info", "formation", "timeperiod", "images"];
+    $tables = ["user_info", "formation"];
     foreach ($tables as $table) {
         $sql = "SELECT COUNT(*) AS count FROM information_schema.tables WHERE table_schema = '$dbname' AND table_name = '$table'";
         $result = $conn->query($sql);
         $row = $result->fetch_assoc();
         if ($row['count'] == 0) {
             $allTablesExist = false;
-            echo "Table $table does not exist.\n";
+            echo "\nTable $table does not exist.";
             break;
+        } else {
+            echo "\nTable $table does exist.";
         }
     }
     if ($allTablesExist) {
-        echo "\nThe database is already formatted.";
+        echo "\nThe database is already formatted. Done.";
+        echo "\n";
     } else {
+        echo "\nReformating database.";
         $conn->query("USE myDB"); // Switch to the database
         // Drop tables if they exist
         foreach ($tables as $table) {
@@ -133,11 +139,6 @@ if (!empty($zipFiles)) {
 
         // Create tables
         $createTables = [
-            "CREATE TABLE timeperiod (
-                ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                name Varchar(255),
-                color Varchar(255)
-            )",
             "CREATE TABLE user_info (
                 ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 uname Varchar(255),
@@ -197,6 +198,8 @@ if (!empty($zipFiles)) {
         } else {
             echo "\nFailed to create timescales directory with status $retval and output:" . print_r($output, true);
         }
+        echo "\nDone.";
+        echo "\n";
     }
 }
 
