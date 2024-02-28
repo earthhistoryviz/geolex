@@ -71,15 +71,16 @@ function parseTimescale($filepath) {
     }
     $series = strlen($lastseries) > 0 ? $lastseries : $row[$COLSTAGE];
     $period = strlen($lastperiod) > 0 ? $lastperiod : $lastseries;
-    if ($period != "") {
-      array_push($stages, array(
-        "period" => $period,
-        "series" => $series,
-        "stage" => $row[$COLSTAGE],
-          "base" => $row[$COLMA],
-        "color" => $row[$COLCOLOR],
-      ));
+    if ($period == "") {
+      $period = "Unkown";
     }
+    array_push($stages, array(
+      "period" => $period,
+      "series" => $series,
+      "stage" => $row[$COLSTAGE],
+        "base" => $row[$COLMA],
+      "color" => $row[$COLCOLOR],
+    ));
   }
   $stages = array_reverse($stages); // re-order them top down
 
