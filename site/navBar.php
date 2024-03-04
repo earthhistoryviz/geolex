@@ -88,7 +88,7 @@
         <h3 class="region-name"><?= $regionName ?></h3>
       </div>
       <a href="/index.php">Home</a>
-      <a href="/general.php">Multi-Country Search</a> 
+      <a href="https://geolex.org/">Multi-Country Search</a> 
       <a href="/aboutPage.php">About</a> <?php
     } else { ?>
       <div class="country-logo">
@@ -96,14 +96,14 @@
         <h3><?= $regionName ?></h3>
       </div>
       <a href="../index.php">Home</a>
-      <a href="../general.php">Multi-Country Search</a>
+      <a href="https://geolex.org/">Multi-Country Search</a>
       <a href="../aboutPage.php">About</a><?php
     } ?>
     <a style="margin-left: auto; padding-right: 10px;" href="/login.php">Admin Login</a>
   </div>
 
   <?php
-  if ($_SERVER['REQUEST_URI'] != '/aboutPage.php') { ?>
+  if ($_SERVER['PHP_SELF'] != '/aboutPage.php' && $_SERVER['PHP_SELF'] != '/generateAllImages.php') { ?>
     <div style="display: flex; flex-direction: row; flex: 1;">
       <div style="padding: 5px; display: flex; flex-direction: column;"> <?php
         global $period;
