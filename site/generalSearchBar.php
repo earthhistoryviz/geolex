@@ -1,6 +1,9 @@
 <?php
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ERROR);
 ?>
 <!DOCTYPE html>
 <html>
@@ -99,24 +102,33 @@ include_once("constants.php"); // gets us $periods and $regions
               <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
             } ?>
           </select>
-          <input type="checkbox" name="include-macrostrat" value="1" style="margin-left: 15px; margin-right: 5px;" <?php echo isset($_REQUEST['include-macrostrat']) ? 'checked' : ''; ?>>Include Macrostrat
         </div> <?php
       } else {
         // Show Province selection box in Home page
         $url = "http://localhost/provinceAPI.php";
         $available_provinces = json_decode(file_get_contents($url)); ?>
-        <div id="province-search" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
-          <div style="padding: 5px;">
-            Select Province to search<br>
-          </div>
+        <div style="padding: 5px;">
+          Select Province(s) to search<br>
+        </div>
+        <div id="province-search" style="padding: 5px; display: flex; justify-content: center;">
+          <?php $selected_all_provinces = !empty($_REQUEST['filterprovince']) ? ($_REQUEST['filterprovince'][0] === "All" ? true : false) : true; ?>
+          <div style="display: flex; flex-wrap: wrap; max-width: 600px;">
+              <!-- Checkbox for selecting all provinces -->
+            <div class="province-option">
+              <input type="checkbox" id="allProvinces" name="filterprovince[]" value="All" 
+                <?php echo $selected_all_provinces ? 'checked' : ''; ?>>
+              <label for="allProvinces">All</label>
+            </div>
 
-          <select name="filterprovince" style="height: auto; width: auto;"> <?php
-            $selected_all_provinces = !isset($_REQUEST['filterprovince']) || $_REQUEST['filterprovince'] == "All"; ?>
-            <option value="All" <?php echo $selected_all_provinces ? '' : 'selected'; ?>>All</option> <?php
-            foreach ($available_provinces as $p) { ?>
-              <option value="<?=$p ?>" <?php echo $_REQUEST['filterprovince'] == $p ? 'selected' : ''; ?>><?=$p ?></option> <?php
-            } ?>
-          </select>
+              <?php foreach ($available_provinces as $p): ?>
+                <div class="province-option">
+                  <input type="checkbox" id="province-<?php echo htmlspecialchars($p); ?>" 
+                    name="filterprovince[]" value="<?php echo htmlspecialchars($p); ?>" 
+                    <?php echo in_array($p, $_REQUEST['filterprovince'] ?? []) ? 'checked' : ''; ?>>
+                    <label for="province-<?php echo htmlspecialchars($p); ?>"><?php echo htmlspecialchars($p); ?></label>
+                  </div>
+              <?php endforeach; ?>
+          </div>
         </div> <?php
       } ?>
     </form>
@@ -126,7 +138,6 @@ include_once("constants.php"); // gets us $periods and $regions
     function submitFilter() {
       document.getElementById('form').submit();
     }
-    
 
     /* Change visible selection box/text box(es) based on user selection on <searchtype-select> */
     function changeFilter() {

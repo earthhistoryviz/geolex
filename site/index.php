@@ -6,20 +6,28 @@ include_once("TimescaleLib.php");
 // Sets up the reconstruction variables: $recongeojson, etc.:
 include_once("./makeReconstruction.php");
 //include_once("./searchAPI.php"); 
-if ($_REQUEST["filterperiod"]) {
+if (isset($_REQUEST["filterperiod"])) {
   $did_search = true;
 
-  $url = "http://localhost/searchAPI.php"
-    ."?searchquery=".urlencode($_REQUEST["search"])
-    ."&periodfilter=".$_REQUEST["filterperiod"]
-    ."&provincefilter=".urlencode($_REQUEST["filterprovince"])
-    ."&agefilterstart=".$_REQUEST["agefilterstart"]
-    ."&agefilterend=".$_REQUEST["agefilterend"]
-    ."&lithoSearch=".urlencode($_REQUEST["lithoSearch"])
-    ."&fossilSearch=".urlencode($_REQUEST["fossilSearch"]);
-    
+  $url = "http://localhost/searchAPI.php";
+  $queryParams = [];
+  $queryParams[] = "searchquery=" . urlencode($_REQUEST["search"]);
+  $queryParams[] = "filterperiod=" . urlencode($_REQUEST["filterperiod"]);
+  $queryParams[] = "agefilterstart=" . urlencode($_REQUEST["agefilterstart"]);
+  $queryParams[] = "agefilterend=" . urlencode($_REQUEST["agefilterend"]);
+  $queryParams[] = "lithoSearch=" . urlencode($_REQUEST["lithoSearch"]);
+  $queryParams[] = "fossilSearch=" . urlencode($_REQUEST["fossilSearch"]);
+  if (isset($_REQUEST["filterprovince"]) && is_array($_REQUEST["filterprovince"])) {
+    foreach ($_REQUEST["filterprovince"] as $period) {
+      $queryParams[] = "filterprovince[]=" . urlencode($period);
+    }
+  } else if (isset($_REQUEST["filterprovince"])) {
+    $queryParams[] = "filterprovince[]=" . urlencode($_REQUEST["filterprovince"]);
+  }
+
+  $url .= "?" . implode("&", $queryParams);
   //echo $url;
-  if ($_REQUEST["generateImage"]) {
+  if (isset($_REQUEST["generateImage"])) {
     $url .= "&generateImage=1";
   }
   $raw = file_get_contents($url);
@@ -62,7 +70,6 @@ if ($_REQUEST["filterperiod"]) {
     }
   }
   $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
-
   // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
   $midAge = ((float)$_REQUEST["agefilterstart"] + (float)$_REQUEST["agefilterend"]) / 2;
   if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
@@ -78,7 +85,7 @@ if ($_REQUEST["filterperiod"]) {
   // Generate the merged geojson:
   $recongeojson = createGeoJSONForFormations($allFormations);
   // Only create the output directory if we are generating an image:
-  if ($_REQUEST["generateImage"]) {
+  if (isset($_REQUEST["generateImage"])) {
     $model = $_REQUEST["selectModel"] || "Default";
     if ($_REQUEST["recondate_description"] == "middle") {
       $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$midAge.$_REQUEST["selectModel"];
@@ -146,6 +153,7 @@ $override_fullpath = allowCustomOverride(__FILE__);
 if (empty($override_fullpath)) {
   $titleMessage = "Welcome to the International Geology Website and Database!";
   $mapMessage = "Click on any provinces below to view detailed information";
+  $aboutMessage = "Information provided by the China Stratigraphic Commission --see About";
 } else {
   include_once($override_fullpath); // Override file will set the title message and map Message.
 }
@@ -158,9 +166,11 @@ if (empty($override_fullpath)) {
 include("navBar.php"); ?>
 
 <h2 style="text-align: center; color: blue;">
-  <?=$titleMessage ?><br>
+  <?= $titleMessage ?><br>
   Please enter a formation name or group to retrieve more information.
-</h2> <?php
+</h2> 
+<h3 style="text-align: center;"><?= $aboutMessage ?></h3><br>
+<?php
 
 $formaction = "index.php";
 $isFixedRegion = true; // For generalSearchBar.php to determine if we should display a region filter

@@ -1,9 +1,8 @@
 <?php
 include_once("SqlConnection.php");
-
 $searchquery = addslashes($_REQUEST['searchquery']);
 $periodfilter = addslashes($_REQUEST['periodfilter']);
-$provincefilter = addslashes($_REQUEST['provincefilter']);
+$filterprovince = $_REQUEST['filterprovince'];
 $agefilterstart = addslashes($_REQUEST['agefilterstart']);
 $agefilterend = addslashes($_REQUEST['agefilterend']);
 $lithofilter = addslashes($_REQUEST['lithoSearch']);
@@ -14,9 +13,6 @@ if (!$searchquery) {
 }
 if (!$periodfilter || $periodfilter == "All") {
   $periodfilter = "";
-}
-if (!$provincefilter || $provincefilter == "All") {
-  $provincefilter = "";
 }
 if (!isset($_REQUEST['agefilterend']) || $agefilterend == "" || $agefilterstart < $agefilterend) {
   $agefilterend = $agefilterstart;
@@ -40,8 +36,18 @@ if (preg_match($regex, $searchquery)) {
   }
 }
 $sql .= ") ";
-$sql .= "AND period LIKE '%$periodfilter%' "
-  ."AND province LIKE '%$provincefilter%' ";
+$sql .= "AND period LIKE '%$periodfilter%' ";
+if (!in_array("All", $filterprovince)) {
+  $provinces = array_map(function($province) use ($conn) {
+    return "province LIKE '%" . mysqli_real_escape_string($conn, $province) . "%'";
+  }, $filterprovince);
+
+  if (count($provinces) > 0) {
+    $sql .= "AND (" . implode(" OR ", $provinces) . ") ";
+  }
+} else {
+  // this is all
+}
 
 $litho = "";
 if (strcmp($lithofilter, "") === 0) {
