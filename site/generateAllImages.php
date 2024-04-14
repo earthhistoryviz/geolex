@@ -28,8 +28,8 @@ $fileContent = file_get_contents("pygplates/livedata/default/$outdirhash/recon.g
 $formationNames = [];
 $geojson = json_decode($fileContent, true);
 foreach($geojson["features"] as $feature) {
-    if (isset($feature["properties"]["NAME"])) {
-        $formationNames[] = $feature["properties"]["NAME"];
+    if (isset($feature["properties"]["name"])) {
+        $formationNames[] = $feature["properties"]["name"];
     }
 }
 
@@ -132,6 +132,7 @@ $models = ["Default", "Marcilly", "Scotese"];
             display: flex;
             justify-content: center;
             padding-bottom: 20px;
+            height: 100%;
         }
 
         #loading-text {
@@ -151,7 +152,6 @@ $models = ["Default", "Marcilly", "Scotese"];
             padding: 10px;
         }
     </style>
-</head>
 
 <body>
     <div id="image-container">
