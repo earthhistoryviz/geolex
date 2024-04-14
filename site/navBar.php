@@ -114,10 +114,12 @@
           $period = $reindexed[1]["period"];
         }
 
-        foreach ($mapperiods as $p) { ?>
+        foreach ($mapperiods as $p) { 
+          if (is_array($p)) {?>
           <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
             <a href="/index.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
           </div> <?php
+          }
         } ?>
       </div>
 
