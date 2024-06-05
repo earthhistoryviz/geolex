@@ -18,5 +18,5 @@
 
 <div style="margin-left: 10px; padding-left: 10px;">
 <br>
-For details, click on the formations below.
+For details, click on the formations below. Stratigraphic columns are only schematic.
 </div>
