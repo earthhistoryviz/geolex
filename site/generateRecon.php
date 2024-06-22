@@ -1,5 +1,4 @@
 <?php
-
 if ($_REQUEST["generateImage"] == "1") {
   $timedout = false;
 
@@ -133,8 +132,8 @@ if ($_REQUEST["generateImage"] == "1") {
             //Get names of formations from reconstructed_geom.gmt
             $formationNames = [];
             $geojsonDecoded = json_decode($recongeojson, true);
-            foreach($geojsonDecoded["features"] as $formation) {
-              $formationNames[] = $formation["properties"]["name"];
+            foreach($geojsonDecoded["features"] as $formationA) {
+              $formationNames[] = $formationA["properties"]["name"];
             }
             //Need to get url links for formations
             $urlLinks = array();
@@ -241,16 +240,16 @@ if ($_REQUEST["generateImage"] == "1") {
             //Build html to be appended to sight
             $imageHtml .= '</h1>';
             $areaTags = [];
-            foreach ($data as $formation) {
+            foreach ($data as $formationA) {
                 $areaTag = '';
-                $coordinates = $formation["coordinates"];
+                $coordinates = $formationA["coordinates"];
                 foreach ($coordinates as $coords) {
                     $x = $coords['x'];
                     $y = $coords['y'];
                     $areaTag .= $x . ',' . $y . ',';
                 }
                 $areaTag = rtrim($areaTag, ',');
-                $name = $formation["name"];
+                $name = $formationA["name"];
                 if (isset($urlLinks[$name])) {
                     $baseUrl = $urlLinks[$name] . "/formations";
                     $nameEncoded = urlencode($name);

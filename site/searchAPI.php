@@ -37,7 +37,7 @@ if (preg_match($regex, $searchquery)) {
 }
 $sql .= ") ";
 $sql .= "AND period LIKE '%$periodfilter%' ";
-if (!in_array("All", $filterprovince)) {
+if ($filterprovince && !in_array("All", $filterprovince)) {
   $provinces = array_map(function($province) use ($conn) {
     return "province LIKE '%" . mysqli_real_escape_string($conn, $province) . "%'";
   }, $filterprovince);

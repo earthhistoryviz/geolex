@@ -294,7 +294,7 @@ if ($did_search) {
     </div> <?php
   }
   if ($period) { ?>
-    <br><br>
+    <br>
     <div class="map-container" style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
       <p style="font-size: 20px; font-weight: bold;"><?=$mapMessage ?></p> <?php
       $filePath = mapForPeriod($period);

@@ -6,7 +6,7 @@ include_once("TimescaleLib.php");
 <html>
 
 <style>
-  #searchbar {
+  .searchbar {
     border: 2px solid #CC99FF;
     height: 30px;
     width: 175px;
@@ -51,7 +51,7 @@ include_once("constants.php"); // gets us $periods and $regions
     <form id='form' action="<?=$formaction?>" method="request">
       <div class="search-row">
         <input
-          id="searchbar"
+          class="searchbar"
           type="text"
           style="resize: both; overflow: auto;"
           name="search"
@@ -59,7 +59,7 @@ include_once("constants.php"); // gets us $periods and $regions
           value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>"
           onkeypress="if (event.keyCode == 13) submitFilter()">
         <input
-          id="searchbar"
+          class="searchbar"
           type="text"
           style="resize: both; overflow: auto;"
           name="lithoSearch"
@@ -67,7 +67,7 @@ include_once("constants.php"); // gets us $periods and $regions
           value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>"
           onkeypress="if (event.keyCode == 13) submitFilter()">
         <input
-          id="searchbar"
+          class="searchbar"
           type="text"
           style="resize: both; overflow: auto;"
           name="fossilSearch"
@@ -91,27 +91,6 @@ include_once("constants.php"); // gets us $periods and $regions
         <div id="selected-filter" style="padding: 5px; white-space: nowrap;"></div>
 
       </div> <?php
-      
-      if (!isset($isFixedRegion)) {
-        // Show Region selection box in Multi-Country Search page ?>
-        <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
-          <div style="padding: 5px;">
-            Select Regions to search<br>
-            Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple
-          </div> <?php
-
-          $selected_regions = $_REQUEST['filterregion'] ?? ["All"]; ?>
-          <select name="filterregion[]" size="9" style="height: auto; width: auto;" multiple> <?php
-            $selected_all_regions = in_array("All", $selected_regions); ?>
-            <option value="All" <?php echo $selected_all_regions ? 'selected' : ''; ?>>All</option> <?php
-            foreach ($regions as $r) {
-              $selected = !$selected_all_regions && in_array($r["name"], $selected_regions) ? 'selected' : ''; ?>
-              <option value="<?=$r["name"]?>" <?=$selected ?>><?=$r["name"] ?></option> <?php
-            } ?>
-          </select>
-        </div> <?php
-      } else {
-        // Show Province selection box in Home page
         $url = "http://localhost/provinceAPI.php";
         $available_provinces = json_decode(file_get_contents($url)); ?>
          <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
@@ -120,7 +99,10 @@ include_once("constants.php"); // gets us $periods and $regions
             Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple
           </div> <?php
           
-          $selected_provinces = $_REQUEST['filterprovince'] ?? ["All"]; ?>
+          $selected_provinces = $_REQUEST['filterprovince'] ?? ["All"];
+          if (!is_array($selected_provinces)) {
+            $selected_provinces = [$selected_provinces];
+          }?>
           <select name="filterprovince[]" size="5" style="height: auto; width: auto;" multiple> <?php
             $selected_all_provinces = in_array("All", $selected_provinces); ?>
             <option value="All" <?php echo $selected_all_provinces ? 'selected' : ''; ?>>All</option> <?php
@@ -129,8 +111,7 @@ include_once("constants.php"); // gets us $periods and $regions
               <option value="<?=$p?>" <?=$selected ?>><?=$p ?></option> <?php
             } ?>
           </select>
-        </div> <?php
-      } ?>
+        </div>
     </form>
   </div>
 

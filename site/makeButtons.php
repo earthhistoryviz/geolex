@@ -75,10 +75,10 @@ if (!isset($_REQUEST["generateImage"])) {
   <input type="hidden" name="generateImage" value="1" /> <?php
 
   foreach ($_REQUEST as $k => $v) {
-    if ($k == "filterregion" && is_array($v)) {
+    if ($k == "filterprovince" && is_array($v)) {
       // To ensure the selections in the Region filter is parsed as an array instead of the word "array"
       foreach ($v as $vregion) { ?>
-        <input type="hidden" name="filterregion[]" value="<?=$vregion?>" /> <?php
+        <input type="hidden" name="filterprovince[]" value="<?=$vregion?>" /> <?php
       }
     } else { ?>
       <input type="hidden" name="<?=$k?>" id="<?=$k?>" value="<?=$v?>" /> <?php

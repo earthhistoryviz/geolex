@@ -2,3 +2,12 @@ backups
 data-old
 newdata-old
 uploads1
+*.xlsx
+*.nc
+*.png
+*.rot
+*.jpg
+*.gpml
+*.csv
+*.webp
+*.cpt
