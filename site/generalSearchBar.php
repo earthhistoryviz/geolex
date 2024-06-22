@@ -7,18 +7,31 @@ include_once("TimescaleLib.php");
 
 <style>
   #searchbar {
-    border: 3px solid #CC99FF;
-    height: 40px;
-    width: 700px;
+    border: 2px solid #CC99FF;
+    height: 30px;
+    width: 175px;
+    padding-left: 8px;
+
   }
   #submitbtn {
-    height: 40px;
-    border: 3px solid #000000;
+    height: 30px;
+    width: 60px;
+    border: 2px solid #000000;
   }
   .search-container {
     text-align: center;
     margin-top: 10px;
   }
+  .search-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
 </style> <?php
 if ($auth) {
   $formaction = "/adminIndex.php";
@@ -28,7 +41,7 @@ else if (!$formaction) {
 }
 
 /* For Stage filter conversion */
-$timescale = parseDefaultTimescale();
+$timescale = parseDefaultTimescale()[0];
 
 include_once("constants.php"); // gets us $periods and $regions
 ?>
@@ -36,23 +49,39 @@ include_once("constants.php"); // gets us $periods and $regions
 <body>
   <div class="search-container">
     <form id='form' action="<?=$formaction?>" method="request">
-      <input
-        id="searchbar"
-        type="text"
-        name="search"
-        placeholder="Search Formation Name..."
-        value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>"
-        onkeypress="if (event.keyCode == 13) submitFilter()">
-      <button id="submitbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
-
-      <br><br>
-
+      <div class="search-row">
+        <input
+          id="searchbar"
+          type="text"
+          style="resize: both; overflow: auto;"
+          name="search"
+          placeholder="Search Formation Name..."
+          value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>"
+          onkeypress="if (event.keyCode == 13) submitFilter()">
+        <input
+          id="searchbar"
+          type="text"
+          style="resize: both; overflow: auto;"
+          name="lithoSearch"
+          placeholder="Lithology includes..."
+          value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>"
+          onkeypress="if (event.keyCode == 13) submitFilter()">
+        <input
+          id="searchbar"
+          type="text"
+          style="resize: both; overflow: auto;"
+          name="fossilSearch"
+          placeholder="Fossil includes..."
+          value="<?php if (isset($_REQUEST['fossilSearch'])) echo $_REQUEST['fossilSearch']; ?>"
+          onkeypress="if (event.keyCode == 13) submitFilter()">
+        <button id="submitbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
+        </div>
       <div id="filter-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
         <div style="padding: 5px;">
           Search by 
         </div>
         <div style="padding: 5px;">
-          <select id="searchtype-select" name="searchtype" onchange="changeFilter()" multiple >
+          <select id="searchtype-select" name="searchtype" onchange="changeFilter()" multiple size="3" >
             <option value="Period" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Period' || !isset($_REQUEST['searchtype'])) ? 'selected' : ''; ?>>Period</option>
             <option value="Date" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Date') ? 'selected' : ''; ?>>Date</option>
             <option value="Date Range" <?php echo (isset($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 'Date Range') ? 'selected' : ''; ?>>Date Range</option>
@@ -60,26 +89,7 @@ include_once("constants.php"); // gets us $periods and $regions
         </div>
         
         <div id="selected-filter" style="padding: 5px; white-space: nowrap;"></div>
-        <div style="padding: 5px;">
-          <span>Lithology includes:</span>
-          <input
-            id="lithoSearch"
-            type="text"
-            style="resize: both; overflow: auto;"
-            name="lithoSearch"
-            value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>"
-            onkeypress="if (event.keyCode == 13) submitFilter()">
-        </div>
-        <div style="padding: 5px;">
-          <span>Fossil includes:</span>
-          <input
-            id="fossilSearch"
-            type="text"
-            style="resize: both; overflow: auto;"
-            name="fossilSearch"
-            value="<?php if (isset($_REQUEST['fossilSearch'])) echo $_REQUEST['fossilSearch']; ?>"
-            onkeypress="if (event.keyCode == 13) submitFilter()">
-        </div>
+
       </div> <?php
       
       if (!isset($isFixedRegion)) {
@@ -104,28 +114,21 @@ include_once("constants.php"); // gets us $periods and $regions
         // Show Province selection box in Home page
         $url = "http://localhost/provinceAPI.php";
         $available_provinces = json_decode(file_get_contents($url)); ?>
-        <div style="padding: 5px;">
-          Select Province(s) to search<br>
-        </div>
-        <div id="province-search" style="padding: 5px; display: flex; justify-content: center;">
-          <?php $selected_all_provinces = !empty($_REQUEST['filterprovince']) ? ($_REQUEST['filterprovince'][0] === "All" ? true : false) : true; ?>
-          <div style="display: flex; flex-wrap: wrap; max-width: 600px;">
-              <!-- Checkbox for selecting all provinces -->
-            <div class="province-option">
-              <input type="checkbox" id="allProvinces" name="filterprovince[]" value="All" 
-                <?php echo $selected_all_provinces ? 'checked' : ''; ?>>
-              <label for="allProvinces">All</label>
-            </div>
-
-              <?php foreach ($available_provinces as $p): ?>
-                <div class="province-option">
-                  <input type="checkbox" id="province-<?php echo htmlspecialchars($p); ?>" 
-                    name="filterprovince[]" value="<?php echo htmlspecialchars($p); ?>" 
-                    <?php echo in_array($p, $_REQUEST['filterprovince'] ?? []) ? 'checked' : ''; ?>>
-                    <label for="province-<?php echo htmlspecialchars($p); ?>"><?php echo htmlspecialchars($p); ?></label>
-                  </div>
-              <?php endforeach; ?>
-          </div>
+         <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+          <div style="padding: 5px;">
+            Select Region(s) to search<br>
+            Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple
+          </div> <?php
+          
+          $selected_provinces = $_REQUEST['filterprovince'] ?? ["All"]; ?>
+          <select name="filterprovince[]" size="5" style="height: auto; width: auto;" multiple> <?php
+            $selected_all_provinces = in_array("All", $selected_provinces); ?>
+            <option value="All" <?php echo $selected_all_provinces ? 'selected' : ''; ?>>All</option> <?php
+            foreach ($available_provinces as $p) {
+              $selected = !$selected_all_provinces && in_array($p, $selected_provinces) ? 'selected' : ''; ?>
+              <option value="<?=$p?>" <?=$selected ?>><?=$p ?></option> <?php
+            } ?>
+          </select>
         </div> <?php
       } ?>
     </form>
