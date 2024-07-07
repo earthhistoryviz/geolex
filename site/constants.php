@@ -94,7 +94,9 @@ $linksToRegions = array(
   "qatarlex" => "Qatar",
   "southamerlex" => "South America",
   "indplex" => "Indian Plate",
-  "japanlex" => "Japan"
+  "japanlex" => "Japan",
+  "mozambiquelex" => "Mozambique",
+  "nigerialex" => "Nigeria"
 );
 $regionName = isset($linksToRegions[$_SERVER['HTTP_HOST']]) ? $linksToRegions[$_SERVER['HTTP_HOST']] : '';
 
