@@ -94,7 +94,7 @@ include_once("constants.php"); // gets us $periods and $regions
         $url = "http://localhost/provinceAPI.php";
         $available_provinces = json_decode(file_get_contents($url)); ?>
          <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
-          <div style="padding: 5px;">
+          <div style="padding: 5px; ">
             Select Region(s) to search<br>
             Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple
           </div> <?php
@@ -102,7 +102,12 @@ include_once("constants.php"); // gets us $periods and $regions
           $selected_provinces = $_REQUEST['filterprovince'] ?? ["All"];
           if (!is_array($selected_provinces)) {
             $selected_provinces = [$selected_provinces];
-          }?>
+          }
+          if (in_array("All", $selected_provinces)) {
+            $selected_provinces = array_merge(["All"], $available_provinces);
+          }
+          
+          ?>
           <select name="filterprovince[]" size="5" style="height: auto; width: auto;" multiple> <?php
             $selected_all_provinces = in_array("All", $selected_provinces); ?>
             <option value="All" <?php echo $selected_all_provinces ? 'selected' : ''; ?>>All</option> <?php

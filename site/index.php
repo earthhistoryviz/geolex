@@ -4,8 +4,8 @@ global $conn;
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 // Sets up the reconstruction variables: $recongeojson, etc.:
-include_once("./makeReconstruction.php");
-//include_once("./searchAPI.php"); 
+include_once("./makeReconstruction.php"); 
+$selected_provinces = $_REQUEST['filterprovince'] ?? ["All"];
 if (isset($_REQUEST["filterperiod"])) {
   $did_search = true;
 
@@ -19,6 +19,7 @@ if (isset($_REQUEST["filterperiod"])) {
   $queryParams[] = "fossilSearch=" . urlencode($_REQUEST["fossilSearch"]);
   if (isset($_REQUEST["filterprovince"]) && is_array($_REQUEST["filterprovince"])) {
     foreach ($_REQUEST["filterprovince"] as $period) {
+      // Not sure why this here is period and not province, best leave it be
       $queryParams[] = "filterprovince[]=" . urlencode($period);
     }
   } else if (isset($_REQUEST["filterprovince"])) {
@@ -26,14 +27,13 @@ if (isset($_REQUEST["filterperiod"])) {
   }
 
   $url .= "?" . implode("&", $queryParams);
-  //echo $url;
   if (isset($_REQUEST["generateImage"])) {
     $url .= "&generateImage=1";
   }
   $raw = file_get_contents($url);
-  //var_dump($raw);
   $response = json_decode($raw);
   $allFormations = array();
+  $formationsByProvince = []; // Initialize an empty array to store formations by province
 
   $isSynonym = false;
   foreach ($response as $fname => $finfo) {
@@ -42,6 +42,19 @@ if (isset($_REQUEST["filterperiod"])) {
     }
 
     $allFormations = array_merge($allFormations, array($finfo));
+    // $allFormations[] = $finfo; // if something goes wrong with original above, use this one
+
+    // # gets formations by each province
+    // Check if the formation is assigned to multiple provinces
+    $provinces = explode(',', $finfo->province); // Split the province field into an array of provinces, assuming multiple provinces are separated by a comma
+    foreach ($provinces as $province) { // Iterate over each province in the array
+      $province = trim($province); // Remove any leading or trailing whitespace from the province name
+      if (!isset($formationsByProvince[$province])) { // Check if the province key already exists in the formationsByProvince array
+        $formationsByProvince[$province] = []; // Initialize an empty array for the province if it doesn't already exist
+      }
+      $formationsByProvince[$province][] = $finfo; // Add the current formation to the array of formations for the current province
+    }
+
   }
 
   // Either sort by age or by alphabet depending on user selection (default is by alphabet)
@@ -54,6 +67,16 @@ if (isset($_REQUEST["filterperiod"])) {
     $isSortedByAge = true;
   }
 
+   // Sort formations within each province
+   foreach ($formationsByProvince as $province => &$formations) {
+    if ($isSortedByAge) {
+        uasort($formations, "sortByAge");
+    } else {
+        sort($formations);
+    }
+  }
+  unset($formations); // break the reference with the last element
+
   // Get all of the associated stage data
   $info = parseDefaultTimescale();
   $stageConversion = array();
@@ -65,7 +88,7 @@ if (isset($_REQUEST["filterperiod"])) {
         $storedStage = $val;
       }
       if ($key == "color") {
-        $stageConversion[0][$storedStage] = str_replace('/', ', ',  $val);
+        $stageConversion[0][$storedStage] = str_replace('/', ', ', $val);
       }
     }
   }
@@ -143,10 +166,117 @@ function sortByAge($a, $b) {
 <!DOCTYPE html>
 <html>
 <head>
-  <?php
-  include_once("constants.php");
-  ?>
+  <?php include_once("constants.php");?>
   <title>Home - <?=$regionName ?> Lexicon</title>
+  <style>
+    .buttonContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #generateAllImagesBtn {
+        padding: 10px 20px;
+        background-color: #e67603;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .collapsible {
+        background-color: #f9f9f9;
+        color: #444;
+        cursor: pointer;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 18px;
+        margin-top: 5px;
+        max-width: 1100px; /* Adjust region/province display width */
+        margin-left: auto;
+        margin-right: auto;
+        position: relative; /* Added */
+    }
+
+    .collapsible::after {
+        content: '\25BC'; /* Down arrow */
+        font-size: 13px;
+        color: #777;
+        position: absolute;
+        right: 10px;
+        transition: transform 0.3s;
+    }
+
+    .collapsible.active::after {
+        content: '\25B2'; /* Up arrow */
+    }
+
+    .active, .collapsible:hover {
+        background-color: #ccc;
+    }
+    
+    .content {
+        padding: 0 18px;
+        display: block;
+        overflow: hidden;
+        background-color: #f1f1f1;
+        width: 100%;
+        max-width: 1100px; /* Ensure the content matches the button width */
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box; /* Include padding in the width */
+    }
+
+    .formation-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start; /* Align items to the start */
+        width: 100%; /* Match the width of the collapsible button */
+        box-sizing: border-box; /* Include padding in the width */
+    }
+
+    .formation-item {
+        padding: 5px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        width: calc(25% - 22px); /* 4 columns layout with some margin */
+        text-align: center;
+    }
+
+    .centered-section {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .toggle-order-container {
+        display: flex;
+        justify-content: center;
+        padding-bottom: 20px;
+        width: 100%;
+    }
+
+    .toggle-order-button {
+        color: #b75f02;
+        border: 1px solid #b75f02;
+        border-radius: 3px;
+        font-size: 1em;
+        box-shadow: 5px 5px 8px #888888;
+        background-color: #FFFFFF;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    </style>
+</head>
+<body>
 <?php
 include_once("allowCustomOverride.php");
 $override_fullpath = allowCustomOverride(__FILE__);
@@ -168,112 +298,78 @@ include("navBar.php"); ?>
 <h2 style="text-align: center; color: blue;">
   <?= $titleMessage ?><br>
   Please enter a formation name or group to retrieve more information.
-</h2> 
+</h2>
 <h3 style="text-align: center;"><?= $aboutMessage ?></h3><br>
 <?php
 
 $formaction = "index.php";
 $isFixedRegion = true; // For generalSearchBar.php to determine if we should display a region filter
 include("generalSearchBar.php");
-//var_dump($allFormations);
+
 if ($did_search) {
   if (count($allFormations) == 0) { ?>
     <div class="no-results-message" style="text-align: center; padding-bottom: 20px; font-size: 20px">
       <h3>No formations found.</h3>
-    </div> <?php
+    </div>
+<?php
   } else {
     if ($isSynonym) { ?>
+     <div style="display: flex; justify-content: center;">
       <div class="synon-only-message" style="padding-bottom: 20px; font-size: 20px">
         <h3>
           No formation with name "<?=$_REQUEST["search"] ?>" was found in this Region.<br>
           However, "<?=$_REQUEST["search"] ?>" was found in Synonyms field and other occurences of Type Locality and Naming Field.
         </h3>
-      </div> <?php
+      </div>
+     </div>
+  <?php
     }
     //validGeoJSONFound comes from makeReconstruction.php
     if ($validGeoJSONFound && !empty($_REQUEST['agefilterstart'])) { ?>
-      <div class="reconstruction"> <?php
-        include_once("./makeButtons.php"); ?>
+      <div class="reconstruction"> 
+        <?php include_once("./makeButtons.php"); ?>
       </div> 
       <div class="buttonContainer">
         <button id="generateAllImagesBtn">Generate All Models</button>
       </div>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          let generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
-          generateAllImagesBtn.addEventListener('click', function() {
-            let data = {
-              geojson: <?= json_encode($recongeojson) ?>,
-              beg_date: <?= json_encode($_GET["agefilterstart"]) ?>,
-              formation: "Multiple"
-            };
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", '/addGeojsonToFiles.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            let outdirhash = "";
-            xhr.onreadystatechange = function() {
-              if (this.readyState === XMLHttpRequest.DONE) {
-                if (this.status === 200) {
-                  outdirhash = this.responseText;
-                  const begDateDisplay = data["beg_date"];
-                  const url = '/generateAllImages.php?beg_date=' 
-                  + encodeURIComponent(begDateDisplay) 
-                  + '&outdirhash=' + encodeURIComponent(outdirhash);
-                  window.open(url, '_blank');
-                } else {
-                  console.error('Error writing file:', this.responseText);
-                }
-              }
-            };
-            xhr.send(JSON.stringify(data));
-          });
-        });
-      </script> <?php
+      <?php
     } ?>
-    <style>
-      .buttonContainer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      #generateAllImagesBtn {
-        padding: 10px 20px;
-        background-color: #e67603;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-    </style>
-    <div class="toggle-order-button" style="padding-bottom: 20px; width: 100%">
-      <form method="post">
-        <input
-          type="submit"
-          style="color: #b75f02; border: 1px solid #b75f02; border-radius: 3px; font-size: 1em; box-shadow: 5px 5px 8px #888888; background-color: #FFFFFF;"
-          name="<?php echo $isSortedByAge ? 'byAlphabetButton' : 'byAgeButton'; ?>"
-          value="<?php echo $isSortedByAge ? 'Change to Alphabetical Listing' : 'Change to By-Age Listing'; ?>"
-        />
-      </form>
-    </div>
-    <link rel="stylesheet" href="style.css"/>
-    <div class="formation-container"> <?php
-      foreach ($allFormations as $formation) { ?>
-        <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);"> <?php
-          if ($formation->geojson) { ?>
-            <div style="padding-right: 10px; font-size: 13px;">&#127758</div> <?php
-          } 
-          $link = "";
-          if ($auth) {
-            $link = "adminDisplayInfo.php?formation=" . $formation->name; 
-          } else {
-            $link = "formations/$formation->name";
-          }
-          ?>
-          <a href="<?= $link ?>" target="_blank"><?=$formation->name ?></a>
-        </div> <?php
-      } ?>
-    </div> <?php
+
+      <div class="centered-section">
+        <div class="toggle-order-container">
+          <form method="post">
+            <input
+              type="submit"
+              class="toggle-order-button"
+              name="<?php echo $isSortedByAge ? 'byAlphabetButton' : 'byAgeButton'; ?>"
+              value="<?php echo $isSortedByAge ? 'Change to Alphabetical Listing' : 'Change to By-Age Listing'; ?>"
+            />
+          </form>
+        </div>
+        <!-- Display formations by province -->
+        <?php foreach ($selected_provinces as $province): ?>
+          <?php if ($province !== "All" && isset($formationsByProvince[$province])): ?>
+            <button class="collapsible"><?php echo htmlspecialchars($province); ?></button>
+            <div class="content">
+              <div class="formation-container">
+                <?php foreach ($formationsByProvince[$province] as $formation): ?>
+                  <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);">
+                    <?php if ($formation->geojson): ?>
+                      <div style="padding-right: 10px; font-size: 13px;">&#127758</div>
+                    <?php endif; ?>
+                    <?php
+                    $link = $auth ? "adminDisplayInfo.php?formation=" . $formation->name : "formations/" . $formation->name;
+                    ?>
+                    <a href="<?= $link ?>" target="_blank"><?= $formation->name ?></a>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
+
+      </div>
+    <?php
   }
 } else {
   global $period; 
@@ -304,5 +400,58 @@ if ($did_search) {
 
 }
 include_once("footer.php"); ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // make collapsible regions script
+      const coll = document.getElementsByClassName("collapsible");
+      for (let i = 0; i < coll.length; i++) {
+        // Set all collapsibles to active
+        coll[i].classList.add("active");
+
+        // Ensure their content is displayed
+        const content = coll[i].nextElementSibling;
+        content.style.display = "block";
+
+        coll[i].addEventListener("click", function () {
+          this.classList.toggle("active");
+          if (content.style.display === "block") {
+            content.style.display = "none";
+          } else {
+            content.style.display = "block";
+          }
+        });
+      }
+
+
+      // generate images script
+      let generateAllImagesBtn = document.getElementById('generateAllImagesBtn');
+      generateAllImagesBtn.addEventListener('click', function() {
+        let data = {
+          geojson: <?= json_encode($recongeojson) ?>,
+          beg_date: <?= json_encode($_GET["agefilterstart"]) ?>,
+          formation: "Multiple"
+        };
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/addGeojsonToFiles.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        let outdirhash = "";
+        xhr.onreadystatechange = function() {
+          if (this.readyState === XMLHttpRequest.DONE) {
+            if (this.status === 200) {
+              outdirhash = this.responseText;
+              const begDateDisplay = data["beg_date"];
+              const url = '/generateAllImages.php?beg_date=' 
+              + encodeURIComponent(begDateDisplay) 
+              + '&outdirhash=' + encodeURIComponent(outdirhash);
+              window.open(url, '_blank');
+            } else {
+              console.error('Error writing file:', this.responseText);
+            }
+          }
+        };
+        xhr.send(JSON.stringify(data));
+      });
+    });
+</script> 
 </body>
 </html>

@@ -19,6 +19,7 @@ include_once("./formationInfo.php");
     padding: 10px; 
     cursor: hand; 
     margin-left: 10px;
+    margin-right: 15px;
     box-shadow: 3px 3px 5px grey;
   }
   .clickedbutton {
