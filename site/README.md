@@ -11,6 +11,8 @@
 * Malaylex
 * Mideastlex
 * Nigerlex
+* NigeriaLex
+* MozambiqueLex
 * Panamalex
 * Qatarlex
 * Southamerlex
@@ -34,6 +36,9 @@ you'll need a default_timescale.xlsx and you will need to run `php db/createDb.p
 empty database.  Then you can upload word docs to start populating your lexicon database.
 
 You can view the existing Geologic Lexicon sites at https://geolex.org.
+
+Also need to manually add in the aboutPage.php because some sites have special aboutPage.php
+Any updates to these aboutPage.php need to be manually added to all other sites.
 
 #### Installation
 ---------------
