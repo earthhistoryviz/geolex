@@ -8,6 +8,7 @@
 * Chinalex
 * Indplex
 * Japanlex
+* Kazakhstan
 * Malaylex
 * Mideastlex
 * Nigerlex
