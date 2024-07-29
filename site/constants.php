@@ -71,6 +71,7 @@ $regions = array(
   array("name" => "Thailand", "searchurl" => "http://thailex.geolex.org/searchAPI.php", "linkurl" => "http://thailex.geolex.org/displayInfo.php"),
   array("name" => "Vietnam", "searchurl" => "http://vietlex.geolex.org/searchAPI.php", "linkurl" => "http://vietlex.geolex.org/displayInfo.php"),
   array("name" => "Niger", "searchurl" => "http://nigerlex.geolex.org/searchAPI.php", "linkurl" => "http://nigerlex.geolex.org/displayInfo.php"),
+  array("name" => "Kazakhstan", "searchurl" => "http://kazakhstanlex.geolex.org/searchAPI.php", "linkurl" => "http://kazakhstanlex.geolex.org/displayInfo.php"),
   array("name" => "Malaysia", "searchurl" => "http://malaylex.geolex.org/searchAPI.php", "linkurl" => "http://malaylex.geolex.org/displayInfo.php"),
   array("name" => "Africa", "searchurl" => "http://africalex.geolex.org/searchAPI.php", "linkurl" => "http://africalex.geolex.org/displayInfo.php"),
   array("name" => "Belgium", "searchurl" => "http://belgiumlex.geolex.org/searchAPI.php", "linkurl" => "http://belgiumlex.geolex.org/displayInfo.php"),
@@ -96,7 +97,8 @@ $linksToRegions = array(
   "indplex" => "Indian Plate",
   "japanlex" => "Japan",
   "mozambiquelex" => "Mozambique",
-  "nigerialex" => "Nigeria"
+  "nigerialex" => "Nigeria",
+  "kazakhstanlex" => "Kazakhstan"
 );
 $regionName = isset($linksToRegions[$_SERVER['HTTP_HOST']]) ? $linksToRegions[$_SERVER['HTTP_HOST']] : '';
 
