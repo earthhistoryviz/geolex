@@ -32,7 +32,7 @@ Each lexicon/site has a folder in `/home/aaron/live` which contains the code for
 Every single lexicon lives inside a Docker container and Docker Compose is used to manage all the containers. The containers volume mount all the folders from the server into the `/app` directory inside each container. They also volume mount the MySql database for each container. To modify the container make any changes to the Dockerfile in the dev folder and build only the dev one. You can do this by running the command `docker-compose build dev` inside the folder `/home/aaron/live` (make sure that build is commented out in the `docker-compose.yml` file). If the build is succesful you can update all the containers by running `docker-compose up`. When modifying any library in the Dockerfile, it is important you double check library compatability.
 
 ### Adding a new site
-You can clone the dev repository to deploy a lexicon site for a single geographic region.  To initialize,
+You can clone the dev repository `git clone file:///home/aaron/git-repos/geolex` to deploy a lexicon site for a single geographic region.  To initialize,
 you'll need a default_timescale.xlsx and you will need to run `php db/createDb.php` to create the
 empty database.  Then you can upload word docs to start populating your lexicon database.
 
