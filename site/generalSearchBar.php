@@ -41,7 +41,7 @@ else if (!$formaction) {
 }
 
 /* For Stage filter conversion */
-$timescale = parseDefaultTimescale()[0];
+$timescale = parseDefaultTimescale();
 
 include_once("constants.php"); // gets us $periods and $regions
 ?>
@@ -290,3 +290,6 @@ include_once("constants.php"); // gets us $periods and $regions
 
     window.onload = onLoad();
   </script>
+
+</body>
+</html>
