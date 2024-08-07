@@ -299,7 +299,6 @@ include("navBar.php"); ?>
   <?= $titleMessage ?><br>
   Please enter a formation name or group to retrieve more information.
 </h2>
-<h3 style="text-align: center;"><?= $aboutMessage ?></h3><br>
 <?php
 
 $formaction = "index.php";
@@ -390,9 +389,8 @@ if ($did_search) {
     </div> <?php
   }
   if ($period) { ?>
-    <br>
     <div class="map-container" style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
-      <p style="font-size: 20px; font-weight: bold;"><?=$mapMessage ?></p> <?php
+      <div><?=$mapMessage ?></div> <?php
       $filePath = mapForPeriod($period);
       include $filePath; ?>
     </div> <?php

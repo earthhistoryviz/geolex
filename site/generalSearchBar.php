@@ -9,7 +9,7 @@ include_once("TimescaleLib.php");
   .searchbar {
     border: 2px solid #CC99FF;
     height: 30px;
-    width: 175px;
+    width: 200px;
     padding-left: 8px;
 
   }
@@ -20,7 +20,8 @@ include_once("TimescaleLib.php");
   }
   .search-container {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 8px;
+    margin-bottom: 8px;
   }
   .search-row {
     display: flex;
@@ -29,7 +30,7 @@ include_once("TimescaleLib.php");
     justify-content: center;
     width: 100%;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 3px;
   }
 
 </style> <?php
@@ -76,7 +77,7 @@ include_once("constants.php"); // gets us $periods and $regions
           onkeypress="if (event.keyCode == 13) submitFilter()">
         <button id="submitbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
         </div>
-      <div id="filter-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+        <div id="filter-container" style="padding: 3px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
         <div style="padding: 5px;">
           Search by 
         </div>
@@ -93,7 +94,7 @@ include_once("constants.php"); // gets us $periods and $regions
       </div> <?php
         $url = "http://localhost/provinceAPI.php";
         $available_provinces = json_decode(file_get_contents($url)); ?>
-         <div id="region-container" style="padding: 5px; display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
+        <div id="region-container" style="display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
           <div style="padding: 5px; ">
             Select Region(s) to search<br>
             Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple

@@ -1,5 +1,6 @@
 <?php
   include_once("allowCustomOverride.php");
+  include_once("OVERRIDE_index.php");
   $override_fullpath = allowCustomOverride(__FILE__);
   if (!empty($override_fullpath)) {
     include($override_fullpath); // had override
@@ -105,7 +106,8 @@
   <?php
   if ($_SERVER['PHP_SELF'] != '/aboutPage.php' && $_SERVER['PHP_SELF'] != '/generateAllImages.php') { ?>
     <div style="display: flex; flex-direction: row; flex: 1;">
-      <div style="padding: 5px; display: flex; flex-direction: column;"> <?php
+      <div style="padding: 5px; display: flex; flex-direction: column; width: 120px;">
+        <?php
         global $period;
         if (isset($_GET["period"])) {
           $period = $_GET["period"];
@@ -121,6 +123,8 @@
           </div> <?php
           }
         } ?>
+        <p><?=$providerMessage?></p> 
+        <!-- provider message might not exist, this is set in a file you need to make called OVERRIDE_index.php -->
       </div>
 
       <div class="mainBody" style=" width: 100%;"> <?php

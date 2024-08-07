@@ -10,6 +10,10 @@ $page = "allformations_new";
 include("../formationheader.php");
 ?>
 
+<!--
+In the below code, you need to change <h2> and </h2> to <div> and </div>
+if they are lots of white spaces(border) in the image uploaded
+-->
 <h2><img src="Mapinfo/Devonian_China_provinces.jpg" width="800" height="625" border="0" usemap="#Map" />
   <map name="Map" id="Map">
     <area shape="poly" id="Xinjiang" coords="247,65,328,187,276,219,273,243,235,253,246,276,226,285,194,275,149,281,111,267,87,277,63,275,38,175,181,88" href="#Devonian_Xinjiang"/>
