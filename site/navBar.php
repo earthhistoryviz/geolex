@@ -104,7 +104,7 @@
   </div>
 
   <?php
-  if ($_SERVER['PHP_SELF'] != '/aboutPage.php' && $_SERVER['PHP_SELF'] != '/generateAllImages.php') { ?>
+  if ($_SERVER['PHP_SELF'] != '/aboutPage.php' && $_SERVER['PHP_SELF'] != '/bibliography.php' && $_SERVER['PHP_SELF'] != '/generateAllImages.php') { ?>
     <div style="display: flex; flex-direction: row; flex: 1;">
       <div style="padding: 5px; display: flex; flex-direction: column; width: 120px;">
         <?php
