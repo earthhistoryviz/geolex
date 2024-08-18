@@ -211,11 +211,6 @@ if ($_REQUEST["generateImage"]) {
     padding-left: 20px;
     padding-right: 20px;
   }
-  {
-    text-indent: 2em;
-    margin-bottom: 0px;
-    margin-top: 0px;
-  }
 
   .horiz {
     display: flex;

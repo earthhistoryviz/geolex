@@ -18,9 +18,8 @@ if (isset($_REQUEST["filterperiod"])) {
   $queryParams[] = "lithoSearch=" . urlencode($_REQUEST["lithoSearch"]);
   $queryParams[] = "fossilSearch=" . urlencode($_REQUEST["fossilSearch"]);
   if (isset($_REQUEST["filterprovince"]) && is_array($_REQUEST["filterprovince"])) {
-    foreach ($_REQUEST["filterprovince"] as $period) {
-      // Not sure why this here is period and not province, best leave it be
-      $queryParams[] = "filterprovince[]=" . urlencode($period);
+    foreach ($_REQUEST["filterprovince"] as $province) {
+      $queryParams[] = "filterprovince[]=" . urlencode($province);
     }
   } else if (isset($_REQUEST["filterprovince"])) {
     $queryParams[] = "filterprovince[]=" . urlencode($_REQUEST["filterprovince"]);

@@ -75,9 +75,9 @@ if (!$macrostrat) {
 
   $result = mysqli_query($conn, $sql);
 
-  // This function finds formations in a string and replaces them with hyperlinked versions.
+  // This function finds formations or fossils in a string and replaces them with hyperlinked versions.
   // It ensures that each formation is linked only once and prioritizes longer formations over shorter overlapping ones.
-  function findAndMakeFormationLinks($str, $nameregexes, $auth) {
+  function findAndMakeLinks($str, $regexes, $auth, $baseUrl) {
     // This could potentially be optimized but the page loads fast enough
     // This code collects all regex matches and figures out the end positions of the matches. It then sorts them by the end and only considers the first instance since any
     // other instance represents a shorter string match (since the array $nameregex is sorted from longest to smallest).
@@ -87,14 +87,10 @@ if (!$macrostrat) {
     $allMatches = [];
 
     // Collect all matches with their start and end positions
-    foreach ($nameregexes as $n) {
+    foreach ($regexes as $n) {
       if (preg_match_all($n["regex"], $str, $matches, PREG_OFFSET_CAPTURE)) {
         foreach ($matches[0] as $match) {
-          if (!$auth) {
-            $replacement = "<a href=\"/formations/".$n["name"]."\">".$n["name"]."</a>";
-          } else {
-            $replacement = "<a href=\"/adminDisplayInfo.php?formation=".$n["name"]."\">".$n["name"]."</a>";
-          }
+          $replacement = "<a href=\"$baseUrl" . $n["name"] . "\">" . $n["name"] . "</a>";
           $allMatches[] = [
             'start' => $match[1],
             'end' => $match[1] + strlen($match[0]),
@@ -137,12 +133,36 @@ if (!$macrostrat) {
       $fmdata[$varname]["raw"] = trim($rowval);
       $fmdata[$varname]["display"] = trim($rowval);
       if ($varvalue["needlinks"]) {
-        $fmdata[$varname]["display"] = findAndMakeFormationLinks($rowval, $nameregexes, $auth);
+        $fmdata[$varname]["display"] = findAndMakeLinks($rowval, $nameregexes, $auth, "/formations/");
       }
     }
   }
 
+  // Initialize the fossil data
+  $fossilSites = array("brachiopod", "echinoderm"); // Add more fossil groups as needed
+  $allGenusHashmap = array();
+  foreach ($fossilSites as $site) {
+      // Construct the API URL for the current fossil site
+      $apiUrl = "https://{$site}.treatise.geolex.org/searchAPI.php?genusOnly=true";
+      $jsonData = file_get_contents($apiUrl);
+      $dataArray = json_decode($jsonData, true);
+      foreach ($dataArray as $key => $value) {
+        $allGenusHashmap[] = array(
+          "name" => $key,
+          "regex" => "/\b(" . preg_quote($key, '/') . ")\b/i"
+        );
+      }
+  }
+
+  // Replace fossils with links if they exist in the hashmap
+  if (isset($fmdata['fossils']['display'])) {
+    $fmdata['fossils']['display'] = findAndMakeLinks($fmdata['fossils']['display'], $allGenusHashmap, $auth, "https://brachiopod.treatise.geolex.org/displayInfo.php?genera=");
+  }
+
 } else {
+  // for macrostrat. Note: Functionality for fossil searching does not exist, since macrostrat API does not have fossils
+  // The fossil shown currently on macrostrat formations was added with another API by Aditya
+  // You can't search for fossils in macrostrat formations, and it also doesn't have links to fossil pages
   $found = false;
   $formationEncoded = urlencode(trim(explode(" ", $formation)[0]));
   $colEncoded = urlencode($col_id);
