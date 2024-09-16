@@ -17,7 +17,7 @@ $conn = new mysqli($servername, $username, $password);
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-} 
+}
 
 // drop database
 /*$sql = "DROP DATABASE IF EXISTS myDB";
@@ -34,11 +34,11 @@ $conn = new mysqli($servername, $username, $password);
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-} 
+}
 
 // Create database
 $sql = "CREATE DATABASE myDB";
-if ($conn->query($sql) === TRUE) {
+if ($conn->query($sql) === true) {
     echo "Database created successfully<br>";
 } else {
     echo "Error creating database: " . $conn->error;
@@ -69,12 +69,12 @@ $sql4 = "CREATE TABLE user_info(
     pasw Varchar(255),
     admin Varchar(255)
 )";
-$rootpasw = password_hash("TSCreator",PASSWORD_DEFAULT);
+$rootpasw = password_hash("TSCreator", PASSWORD_DEFAULT);
 $salt = "SALT";
 $sql3 = "INSERT INTO user_info(uname,pasw,admin)
 VALUES 
 ('root', '$rootpasw.$salt','True')";
-if ($conn->query($sql3)&&$conn->query($sql4) === TRUE) {
+if ($conn->query($sql3) && $conn->query($sql4) === true) {
     echo "table create successfully<br>";
 } else {
     echo "Error creating user_info table: " . $conn->error;
@@ -97,7 +97,7 @@ $sql2 = "CREATE TABLE formation(
 	compiler Varchar(255),
 )";
 
-if ($conn->query($sql)&&$conn->query($sql2) === TRUE) {
+if ($conn->query($sql) && $conn->query($sql2) === true) {
     echo "table create successfully<br>";
 } else {
     echo "Error creating table: " . $conn->error;
@@ -154,7 +154,7 @@ VALUES
 	'Wang Shitao2'
 )";
 
-if ($conn->query($sql)&&$conn->query($sql2) === TRUE) {
+if ($conn->query($sql) && $conn->query($sql2) === true) {
     echo "Insert successfully<br>";
 } else {
     echo "Error insert: " . $conn->error;
@@ -171,36 +171,35 @@ $result = mysqli_query($conn,$sql);
                 echo "color = $color<br>";
             }*/
 $sql = "SELECT * FROM formation";
-$result = mysqli_query($conn,$sql);
- while ($row = mysqli_fetch_array($result))
-            {
-                $name  = $row['name'];
-                echo "name = $name<br>";
-                $period = $row['period'];
-                echo "period = $period<br>";
-                $age_interval = $row['age_interval'];
-                echo "age_interval = $age_interval<br>";
-                $province = $row['province'];
-                echo "province = $province<br>";
-                $type_locality = $row['type_locality'];
-                echo "type_locality = $type_locality<br>";
-                $lithology = $row['lithology'];
-                echo "lithology = $lithology<br>";
-                $lower_contact = $row['lower_contact'];
-                echo "lower_contact = $lower_contact<br>";
-                $upper_contact = $row['upper_contact'];
-                echo "upper_contact = $upper_contact<br>";
-                $regional_extent = $row['regional_extent'];
-                echo "regional_extent = $regional_extent<br>";
-                $fossils = $row['fossils'];
-                echo "fossils = $fossils<br>";
-                $depositional = $row['depositional'];
-                echo "depositional = $depositional<br>";
-                $additional_info = $row['additional_info'];
-                echo "additional_info = $additional_info<br>";
-                $compiler = $row['compiler'];
-                echo "compiler = $compiler<br><br><br>";
-            }
+$result = mysqli_query($conn, $sql);
+while ($row = mysqli_fetch_array($result)) {
+    $name  = $row['name'];
+    echo "name = $name<br>";
+    $period = $row['period'];
+    echo "period = $period<br>";
+    $age_interval = $row['age_interval'];
+    echo "age_interval = $age_interval<br>";
+    $province = $row['province'];
+    echo "province = $province<br>";
+    $type_locality = $row['type_locality'];
+    echo "type_locality = $type_locality<br>";
+    $lithology = $row['lithology'];
+    echo "lithology = $lithology<br>";
+    $lower_contact = $row['lower_contact'];
+    echo "lower_contact = $lower_contact<br>";
+    $upper_contact = $row['upper_contact'];
+    echo "upper_contact = $upper_contact<br>";
+    $regional_extent = $row['regional_extent'];
+    echo "regional_extent = $regional_extent<br>";
+    $fossils = $row['fossils'];
+    echo "fossils = $fossils<br>";
+    $depositional = $row['depositional'];
+    echo "depositional = $depositional<br>";
+    $additional_info = $row['additional_info'];
+    echo "additional_info = $additional_info<br>";
+    $compiler = $row['compiler'];
+    echo "compiler = $compiler<br><br><br>";
+}
 
 $conn->close();
 ?>

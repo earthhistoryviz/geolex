@@ -35,10 +35,9 @@ include_once("TimescaleLib.php");
 
 </style> <?php
 if ($auth) {
-  $formaction = "/adminIndex.php";
-}
-else if (!$formaction) {
-  $formaction = "/index.php";
+    $formaction = "/adminIndex.php";
+} elseif (!$formaction) {
+    $formaction = "/index.php";
 }
 
 /* For Stage filter conversion */
@@ -57,7 +56,9 @@ include_once("constants.php"); // gets us $periods and $regions
           style="resize: both; overflow: auto;"
           name="search"
           placeholder="Search Formation Name..."
-          value="<?php if (isset($_REQUEST['search'])) echo $_REQUEST['search']; ?>"
+          value="<?php if (isset($_REQUEST['search'])) {
+              echo $_REQUEST['search'];
+          } ?>"
           onkeypress="if (event.keyCode == 13) submitFilter()">
         <input
           class="searchbar"
@@ -65,7 +66,9 @@ include_once("constants.php"); // gets us $periods and $regions
           style="resize: both; overflow: auto;"
           name="lithoSearch"
           placeholder="Lithology includes..."
-          value="<?php if (isset($_REQUEST['lithoSearch'])) echo $_REQUEST['lithoSearch']; ?>"
+          value="<?php if (isset($_REQUEST['lithoSearch'])) {
+              echo $_REQUEST['lithoSearch'];
+          } ?>"
           onkeypress="if (event.keyCode == 13) submitFilter()">
         <input
           class="searchbar"
@@ -73,7 +76,9 @@ include_once("constants.php"); // gets us $periods and $regions
           style="resize: both; overflow: auto;"
           name="fossilSearch"
           placeholder="Fossil includes..."
-          value="<?php if (isset($_REQUEST['fossilSearch'])) echo $_REQUEST['fossilSearch']; ?>"
+          value="<?php if (isset($_REQUEST['fossilSearch'])) {
+              echo $_REQUEST['fossilSearch'];
+          } ?>"
           onkeypress="if (event.keyCode == 13) submitFilter()">
         <button id="submitbtn" value="filter" type="button" onclick="submitFilter()">Submit</button>
         </div>
@@ -93,29 +98,29 @@ include_once("constants.php"); // gets us $periods and $regions
 
       </div> <?php
         $url = "http://localhost/provinceAPI.php";
-        $available_provinces = json_decode(file_get_contents($url)); ?>
+$available_provinces = json_decode(file_get_contents($url)); ?>
         <div id="region-container" style="display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center">
           <div style="padding: 5px; ">
             Select Region(s) to search<br>
             Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple
           </div> <?php
-          
-          $selected_provinces = $_REQUEST['filterprovince'] ?? ["All"];
-          if (!is_array($selected_provinces)) {
-            $selected_provinces = [$selected_provinces];
-          }
-          if (in_array("All", $selected_provinces)) {
-            $selected_provinces = array_merge(["All"], $available_provinces);
-          }
-          
-          ?>
+
+  $selected_provinces = $_REQUEST['filterprovince'] ?? ["All"];
+if (!is_array($selected_provinces)) {
+    $selected_provinces = [$selected_provinces];
+}
+if (in_array("All", $selected_provinces)) {
+    $selected_provinces = array_merge(["All"], $available_provinces);
+}
+
+?>
           <select name="filterprovince[]" size="5" style="height: auto; width: auto;" multiple> <?php
-            $selected_all_provinces = in_array("All", $selected_provinces); ?>
+  $selected_all_provinces = in_array("All", $selected_provinces); ?>
             <option value="All" <?php echo $selected_all_provinces ? 'selected' : ''; ?>>All</option> <?php
-            foreach ($available_provinces as $p) {
-              $selected = !$selected_all_provinces && in_array($p, $selected_provinces) ? 'selected' : ''; ?>
+  foreach ($available_provinces as $p) {
+      $selected = !$selected_all_provinces && in_array($p, $selected_provinces) ? 'selected' : ''; ?>
               <option value="<?=$p?>" <?=$selected ?>><?=$p ?></option> <?php
-            } ?>
+  } ?>
           </select>
         </div>
     </form>
@@ -141,10 +146,10 @@ include_once("constants.php"); // gets us $periods and $regions
             <option value='All' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == 'All') ? 'selected' : ''; ?>>All</option> \
           <?php
           foreach ($periodsDate as $p => $d) {
-            if ($p) { ?> \
+              if ($p) { ?> \
               <option value='<?=$p?>' <?php echo (isset($_REQUEST['filterperiod']) && $_REQUEST['filterperiod'] == $p) ? 'selected' : ''; ?>><?=$p?> (<?=number_format($d["begDate"], 2)?> - <?=number_format($d["endDate"], 2)?>)</option> \
-            <?php 
-            } 
+            <?php
+              }
           } ?> \
           </select> \
           and Stage \
@@ -161,13 +166,19 @@ include_once("constants.php"); // gets us $periods and $regions
         changePeriod();
       } else if (chosen == "Date") {
         var dateHTML = 
-          "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'> \
+          "Enter Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) {
+              echo $_REQUEST['agefilterstart'];
+          } ?>'> \
           <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = dateHTML;
       } else if (chosen == "Date Range") {
         var rangeHTML = 
-          "Beginning Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) echo $_REQUEST['agefilterstart']; ?>'> \
-          Ending Date: <input id='endDate' type='number' style='width: 90px' name='agefilterend' min='0' value='<?php if (isset($_REQUEST['agefilterend'])) echo $_REQUEST['agefilterend']; ?>'> \
+          "Beginning Date: <input id='begDate' type='number' style='width: 90px' name='agefilterstart' min='0' value='<?php if (isset($_REQUEST['agefilterstart'])) {
+              echo $_REQUEST['agefilterstart'];
+          } ?>'> \
+          Ending Date: <input id='endDate' type='number' style='width: 90px' name='agefilterend' min='0' value='<?php if (isset($_REQUEST['agefilterend'])) {
+              echo $_REQUEST['agefilterend'];
+          } ?>'> \
           <input id='selectPeriod' name='filterperiod' type='hidden' value='All'>";
         searchForm.innerHTML = rangeHTML;
       }

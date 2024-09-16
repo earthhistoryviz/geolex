@@ -4,162 +4,167 @@ global $conn;
 include_once("SqlConnection.php");
 include_once("TimescaleLib.php");
 // Sets up the reconstruction variables: $recongeojson, etc.:
-include_once("./makeReconstruction.php"); 
+include_once("./makeReconstruction.php");
 $selected_provinces = $_REQUEST['filterprovince'] ?? ["All"];
 if (isset($_REQUEST["filterperiod"])) {
-  $did_search = true;
+    $did_search = true;
 
-  $url = "http://localhost/searchAPI.php";
-  $queryParams = [];
-  $queryParams[] = "searchquery=" . urlencode($_REQUEST["search"]);
-  $queryParams[] = "filterperiod=" . urlencode($_REQUEST["filterperiod"]);
-  $queryParams[] = "agefilterstart=" . urlencode($_REQUEST["agefilterstart"]);
-  $queryParams[] = "agefilterend=" . urlencode($_REQUEST["agefilterend"]);
-  $queryParams[] = "lithoSearch=" . urlencode($_REQUEST["lithoSearch"]);
-  $queryParams[] = "fossilSearch=" . urlencode($_REQUEST["fossilSearch"]);
-  if (isset($_REQUEST["filterprovince"]) && is_array($_REQUEST["filterprovince"])) {
-    foreach ($_REQUEST["filterprovince"] as $province) {
-      $queryParams[] = "filterprovince[]=" . urlencode($province);
-    }
-  } else if (isset($_REQUEST["filterprovince"])) {
-    $queryParams[] = "filterprovince[]=" . urlencode($_REQUEST["filterprovince"]);
-  }
-
-  $url .= "?" . implode("&", $queryParams);
-  if (isset($_REQUEST["generateImage"])) {
-    $url .= "&generateImage=1";
-  }
-  $raw = file_get_contents($url);
-  $response = json_decode($raw);
-  $allFormations = array();
-  $formationsByProvince = []; // Initialize an empty array to store formations by province
-
-  $isSynonym = false;
-  foreach ($response as $fname => $finfo) {
-    if ($finfo->isSynonym) {
-      $isSynonym = true;
+    $url = "http://localhost/searchAPI.php";
+    $queryParams = [];
+    $queryParams[] = "searchquery=" . urlencode($_REQUEST["search"]);
+    $queryParams[] = "filterperiod=" . urlencode($_REQUEST["filterperiod"]);
+    $queryParams[] = "agefilterstart=" . urlencode($_REQUEST["agefilterstart"]);
+    $queryParams[] = "agefilterend=" . urlencode($_REQUEST["agefilterend"]);
+    $queryParams[] = "lithoSearch=" . urlencode($_REQUEST["lithoSearch"]);
+    $queryParams[] = "fossilSearch=" . urlencode($_REQUEST["fossilSearch"]);
+    if (isset($_REQUEST["filterprovince"]) && is_array($_REQUEST["filterprovince"])) {
+        foreach ($_REQUEST["filterprovince"] as $province) {
+            $queryParams[] = "filterprovince[]=" . urlencode($province);
+        }
+    } elseif (isset($_REQUEST["filterprovince"])) {
+        $queryParams[] = "filterprovince[]=" . urlencode($_REQUEST["filterprovince"]);
     }
 
-    $allFormations = array_merge($allFormations, array($finfo));
-    // $allFormations[] = $finfo; // if something goes wrong with original above, use this one
+    $url .= "?" . implode("&", $queryParams);
+    if (isset($_REQUEST["generateImage"])) {
+        $url .= "&generateImage=1";
+    }
+    $raw = file_get_contents($url);
+    $response = json_decode($raw);
+    $allFormations = array();
+    $formationsByProvince = []; // Initialize an empty array to store formations by province
 
-    // # gets formations by each province
-    // Check if the formation is assigned to multiple provinces
-    $provinces = explode(',', $finfo->province); // Split the province field into an array of provinces, assuming multiple provinces are separated by a comma
-    foreach ($provinces as $province) { // Iterate over each province in the array
-      $province = trim($province); // Remove any leading or trailing whitespace from the province name
-      if (!isset($formationsByProvince[$province])) { // Check if the province key already exists in the formationsByProvince array
-        $formationsByProvince[$province] = []; // Initialize an empty array for the province if it doesn't already exist
-      }
-      $formationsByProvince[$province][] = $finfo; // Add the current formation to the array of formations for the current province
+    $isSynonym = false;
+    foreach ($response as $fname => $finfo) {
+        if ($finfo->isSynonym) {
+            $isSynonym = true;
+        }
+
+        $allFormations = array_merge($allFormations, array($finfo));
+        // $allFormations[] = $finfo; // if something goes wrong with original above, use this one
+
+        // # gets formations by each province
+        // Check if the formation is assigned to multiple provinces
+        $provinces = explode(',', $finfo->province); // Split the province field into an array of provinces, assuming multiple provinces are separated by a comma
+        foreach ($provinces as $province) { // Iterate over each province in the array
+            $province = trim($province); // Remove any leading or trailing whitespace from the province name
+            if (!isset($formationsByProvince[$province])) { // Check if the province key already exists in the formationsByProvince array
+                $formationsByProvince[$province] = []; // Initialize an empty array for the province if it doesn't already exist
+            }
+            $formationsByProvince[$province][] = $finfo; // Add the current formation to the array of formations for the current province
+        }
+
     }
 
-  }
-
-  // Either sort by age or by alphabet depending on user selection (default is by alphabet)
-  $isSortedByAge = true;
-  if (isset($_REQUEST["byAlphabetButton"])) {
-    sort($allFormations);
-    $isSortedByAge = false;
-  } else {
-    uasort($allFormations, "sortByAge");
+    // Either sort by age or by alphabet depending on user selection (default is by alphabet)
     $isSortedByAge = true;
-  }
-
-   // Sort formations within each province
-   foreach ($formationsByProvince as $province => &$formations) {
-    if ($isSortedByAge) {
-        uasort($formations, "sortByAge");
+    if (isset($_REQUEST["byAlphabetButton"])) {
+        sort($allFormations);
+        $isSortedByAge = false;
     } else {
-        sort($formations);
-    }
-  }
-  unset($formations); // break the reference with the last element
-
-  // Get all of the associated stage data
-  $info = parseDefaultTimescale();
-  $stageConversion = array();
-  $storedStage = "none";
-  foreach ($info as $element) {
-    foreach ($element as $key => $val) {
-      if ($key == "stage") {
-        array_push($stageConversion, array($val => "none"));
-        $storedStage = $val;
-      }
-      if ($key == "color") {
-        $stageConversion[0][$storedStage] = str_replace('/', ', ', $val);
-      }
-    }
-  }
-  $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
-  // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
-  $midAge = ((float)$_REQUEST["agefilterstart"] + (float)$_REQUEST["agefilterend"]) / 2;
-  if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
-    $filteredformations = array();
-    foreach ($allFormations as $f) {
-      if ($midAge <= $f->begAge || $midAge >= $f->endAge) {
-        array_push($filteredformations, $f);
-      }
-    }
-    $allFormations = $filteredformations;
-  }
-
-  // Generate the merged geojson:
-  $recongeojson = createGeoJSONForFormations($allFormations);
-  // Only create the output directory if we are generating an image:
-  if (isset($_REQUEST["generateImage"])) {
-    $model = $_REQUEST["selectModel"] || "Default";
-    if ($_REQUEST["recondate_description"] == "middle") {
-      $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$midAge.$_REQUEST["selectModel"];
-    } else {
-      $toBeHashed = $_REQUEST["agefilterstart"]. $recongeojson . "null";
+        uasort($allFormations, "sortByAge");
+        $isSortedByAge = true;
     }
 
-    $outdirhash = md5($toBeHashed);
-    // outdirname is what pygplates should see
-    switch ($_REQUEST["selectModel"]) {
-      case  "Default": $outdirname = "livedata/default/$outdirhash";  break;
-      case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
-      case  "Scotese": $outdirname = "livedata/scotese/$outdirhash";  break;
-      default:         $outdirname = "livedata/unknown/$outdirhash";  break;
+    // Sort formations within each province
+    foreach ($formationsByProvince as $province => &$formations) {
+        if ($isSortedByAge) {
+            uasort($formations, "sortByAge");
+        } else {
+            sort($formations);
+        }
+    }
+    unset($formations); // break the reference with the last element
+
+    // Get all of the associated stage data
+    $info = parseDefaultTimescale();
+    $stageConversion = array();
+    $storedStage = "none";
+    foreach ($info as $element) {
+        foreach ($element as $key => $val) {
+            if ($key == "stage") {
+                array_push($stageConversion, array($val => "none"));
+                $storedStage = $val;
+            }
+            if ($key == "color") {
+                $stageConversion[0][$storedStage] = str_replace('/', ', ', $val);
+            }
+        }
+    }
+    $stageArray = $stageConversion[0]; // stores the stages as well as the lookup in RGB
+    // Filter any formations that should not exist (i.e. if we're searching by the middle instead of the base age)
+    $midAge = ((float)$_REQUEST["agefilterstart"] + (float)$_REQUEST["agefilterend"]) / 2;
+    if (isset($_REQUEST["agefilterstart"]) && isset($_REQUEST["agefilterend"])) {
+        $filteredformations = array();
+        foreach ($allFormations as $f) {
+            if ($midAge <= $f->begAge || $midAge >= $f->endAge) {
+                array_push($filteredformations, $f);
+            }
+        }
+        $allFormations = $filteredformations;
     }
 
-    // and php is running one level up:
-    $outdirname_php = "pygplates/$outdirname";
-    $initial_creation_outdir = false; // did we have to make the output hash directory name?
-    if ($_REQUEST["debug"]) {
-      $initial_creation_outdir = true;
-    }
+    // Generate the merged geojson:
+    $recongeojson = createGeoJSONForFormations($allFormations);
+    // Only create the output directory if we are generating an image:
+    if (isset($_REQUEST["generateImage"])) {
+        $model = $_REQUEST["selectModel"] || "Default";
+        if ($_REQUEST["recondate_description"] == "middle") {
+            $toBeHashed = $recongeojson.$_REQUEST["agefilterstart"].$midAge.$_REQUEST["selectModel"];
+        } else {
+            $toBeHashed = $_REQUEST["agefilterstart"]. $recongeojson . "null";
+        }
 
-    if (!file_exists($outdirname_php)) {
-      $initial_creation_outdir = true;
-      mkdir($outdirname_php, 0777, true);
-    }
-    $reconfilename = "$outdirname_php/recon.geojson";
+        $outdirhash = md5($toBeHashed);
+        // outdirname is what pygplates should see
+        switch ($_REQUEST["selectModel"]) {
+            case  "Default": $outdirname = "livedata/default/$outdirhash";
+                break;
+            case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash";
+                break;
+            case  "Scotese": $outdirname = "livedata/scotese/$outdirhash";
+                break;
+            default:         $outdirname = "livedata/unknown/$outdirhash";
+                break;
+        }
 
-    if ($_REQUEST["debug"]) {
-      echo "The directory path for this reconstruction is: $outdirname";
-    }
+        // and php is running one level up:
+        $outdirname_php = "pygplates/$outdirname";
+        $initial_creation_outdir = false; // did we have to make the output hash directory name?
+        if ($_REQUEST["debug"]) {
+            $initial_creation_outdir = true;
+        }
 
-    if (!file_exists($reconfilename) || $_REQUEST["debug"]) {
-      if ($_REQUEST["debug"]) {
-        echo "Debugging mode, writing geojson file to $reconfilename";
-      }
-      file_put_contents($reconfilename, $recongeojson);
+        if (!file_exists($outdirname_php)) {
+            $initial_creation_outdir = true;
+            mkdir($outdirname_php, 0777, true);
+        }
+        $reconfilename = "$outdirname_php/recon.geojson";
+
+        if ($_REQUEST["debug"]) {
+            echo "The directory path for this reconstruction is: $outdirname";
+        }
+
+        if (!file_exists($reconfilename) || $_REQUEST["debug"]) {
+            if ($_REQUEST["debug"]) {
+                echo "Debugging mode, writing geojson file to $reconfilename";
+            }
+            file_put_contents($reconfilename, $recongeojson);
+        }
     }
-  }
 }
 
-function sortByAge($a, $b) {
-  $a1 = $a->begAge;
-  $a1 = str_replace(",", "", $a1);
-  $b1 = $b->begAge;
-  $b1 = str_replace(",", "", $b1);
+function sortByAge($a, $b)
+{
+    $a1 = $a->begAge;
+    $a1 = str_replace(",", "", $a1);
+    $b1 = $b->begAge;
+    $b1 = str_replace(",", "", $b1);
 
-  if ($a1 == $b1) {
-    return 0;
-  }
-  return $a1 < $b1 ? -1 : 1;
+    if ($a1 == $b1) {
+        return 0;
+    }
+    return $a1 < $b1 ? -1 : 1;
 } ?>
 
 <!DOCTYPE html>
@@ -280,11 +285,11 @@ function sortByAge($a, $b) {
 include_once("allowCustomOverride.php");
 $override_fullpath = allowCustomOverride(__FILE__);
 if (empty($override_fullpath)) {
-  $titleMessage = "Welcome to the International Geology Website and Database!";
-  $mapMessage = "Click on any provinces below to view detailed information";
-  $aboutMessage = "Information provided by the China Stratigraphic Commission --see About";
+    $titleMessage = "Welcome to the International Geology Website and Database!";
+    $mapMessage = "Click on any provinces below to view detailed information";
+    $aboutMessage = "Information provided by the China Stratigraphic Commission --see About";
 } else {
-  include_once($override_fullpath); // Override file will set the title message and map Message.
+    include_once($override_fullpath); // Override file will set the title message and map Message.
 }
 
 // Default welcome page:
@@ -305,13 +310,13 @@ $isFixedRegion = true; // For generalSearchBar.php to determine if we should dis
 include("generalSearchBar.php");
 
 if ($did_search) {
-  if (count($allFormations) == 0) { ?>
+    if (count($allFormations) == 0) { ?>
     <div class="no-results-message" style="text-align: center; padding-bottom: 20px; font-size: 20px">
       <h3>No formations found.</h3>
     </div>
 <?php
-  } else {
-    if ($isSynonym) { ?>
+    } else {
+        if ($isSynonym) { ?>
      <div style="display: flex; justify-content: center;">
       <div class="synon-only-message" style="padding-bottom: 20px; font-size: 20px">
         <h3>
@@ -321,9 +326,9 @@ if ($did_search) {
       </div>
      </div>
   <?php
-    }
-    //validGeoJSONFound comes from makeReconstruction.php
-    if ($validGeoJSONFound && !empty($_REQUEST['agefilterstart'])) { ?>
+        }
+        //validGeoJSONFound comes from makeReconstruction.php
+        if ($validGeoJSONFound && !empty($_REQUEST['agefilterstart'])) { ?>
       <div class="reconstruction"> 
         <?php include_once("./makeButtons.php"); ?>
       </div> 
@@ -331,7 +336,7 @@ if ($did_search) {
         <button id="generateAllImagesBtn">Generate All Models</button>
       </div>
       <?php
-    } ?>
+        } ?>
 
       <div class="centered-section">
         <div class="toggle-order-container">
@@ -356,7 +361,7 @@ if ($did_search) {
                       <div style="padding-right: 10px; font-size: 13px;">&#127758</div>
                     <?php endif; ?>
                     <?php
-                    $link = $auth ? "adminDisplayInfo.php?formation=" . $formation->name : "formations/" . $formation->name;
+                        $link = $auth ? "adminDisplayInfo.php?formation=" . $formation->name : "formations/" . $formation->name;
                     ?>
                     <a href="<?= $link ?>" target="_blank"><?= $formation->name ?></a>
                   </div>
@@ -368,32 +373,32 @@ if ($did_search) {
 
       </div>
     <?php
-  }
+    }
 } else {
-  global $period; 
-  if ($auth) { ?>
+    global $period;
+    if ($auth) { ?>
     <div style="display: flex; flex-direction: row;">
     <div style="width: 120px; padding: 5px; display: flex; flex-direction: column;"> <?php
-      global $period;
-      if (isset($_GET["period"])) {
-        $period = $_GET["period"];
-      } else {
-        $period = "Cenozoic";
-      }
-      foreach ($mapperiods as $p) { ?>
+        global $period;
+        if (isset($_GET["period"])) {
+            $period = $_GET["period"];
+        } else {
+            $period = "Cenozoic";
+        }
+        foreach ($mapperiods as $p) { ?>
         <div style="background-color: #<?php echo $p["color"] ?>; padding: 5px;">
           <a href="/adminIndex.php?period=<?php echo $p["period"] ?>" style="text-decoration: none; font-family: Arial;"><?php echo $p["period"] ?></a>
         </div> <?php
-      } ?>
+        } ?>
     </div> <?php
-  }
-  if ($period) { ?>
+    }
+    if ($period) { ?>
     <div class="map-container" style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
       <div><?=$mapMessage ?></div> <?php
-      $filePath = mapForPeriod($period);
-      include $filePath; ?>
+        $filePath = mapForPeriod($period);
+        include $filePath; ?>
     </div> <?php
-  }
+    }
 
 }
 include_once("footer.php"); ?>

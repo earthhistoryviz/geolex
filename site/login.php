@@ -2,32 +2,29 @@
 include_once("SqlConnection.php");
 ?>
 <?php
-if(isset($_REQUEST['submit_btn']))
-{
-    
+if(isset($_REQUEST['submit_btn'])) {
+
     $uname = $_REQUEST['username'];
     $pass = $_REQUEST['password'];
     $sql = "SELECT uname,pasw from user_info";
-    $result = mysqli_query($conn,$sql);
-    if(mysqli_num_rows($result)>0) {
+    $result = mysqli_query($conn, $sql);
+    if(mysqli_num_rows($result) > 0) {
         while ($row = $result->fetch_assoc()) {
-           $hsh = $row['pasw'];
-           $uname =$row['uname'];
-           if(password_verify($pass,$hsh)) {
-               session_start();
-               $_SESSION['loggedIn'] = True;
-               $_SESSION['username'] = $uname;
-               session_write_close();
-               header('location:adminDash.php');
-               exit;
-           }
-           else{
-               //echo"no match";
-           }
+            $hsh = $row['pasw'];
+            $uname = $row['uname'];
+            if(password_verify($pass, $hsh)) {
+                session_start();
+                $_SESSION['loggedIn'] = true;
+                $_SESSION['username'] = $uname;
+                session_write_close();
+                header('location:adminDash.php');
+                exit;
+            } else {
+                //echo"no match";
+            }
         }
         echo "Incorrect Username or Password";
-    }
-    else{
+    } else {
         echo "Database empty or does not exist";
     }
 }

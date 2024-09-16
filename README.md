@@ -30,3 +30,8 @@ docker compose up -d
 
 ### Accessing the Site Locally
 The local URL for the site will be: [http://localhost:5100](http://localhost:5100)
+
+# Prettier command
+```bash
+docker run -it --rm -v $(pwd):/code ghcr.io/php-cs-fixer/php-cs-fixer:3.57-php8.0 fix site
+```

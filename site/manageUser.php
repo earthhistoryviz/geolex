@@ -71,16 +71,16 @@ include_once("SqlConnection.php");
             </tr>
             <?php
             $sql = "SELECT * FROM user_info";
-            $result = mysqli_query($conn, $sql);
-            while($row = mysqli_fetch_array($result)) {
-                $user = $row['uname'];
-                $adm = $row['admin'];
-                echo "<tr>";
-                echo "<td>" . htmlspecialchars($user) . "</td>";
-                echo "<td>" . htmlspecialchars($adm) . "</td>";
-                echo "</tr>";
-            }
-            ?>
+$result = mysqli_query($conn, $sql);
+while($row = mysqli_fetch_array($result)) {
+    $user = $row['uname'];
+    $adm = $row['admin'];
+    echo "<tr>";
+    echo "<td>" . htmlspecialchars($user) . "</td>";
+    echo "<td>" . htmlspecialchars($adm) . "</td>";
+    echo "</tr>";
+}
+?>
         </table>
         <button onclick="window.location.href='/Signup.php'">Add a user</button>
     </div>

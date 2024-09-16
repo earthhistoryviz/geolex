@@ -1,4 +1,5 @@
 <?php
+
 include_once("SqlConnection.php");
 
 $sql = "SELECT DISTINCT province FROM formation";
@@ -21,5 +22,3 @@ while ($row = mysqli_fetch_array($results)) {
 
 sort($output);
 echo json_encode($output);
-
-?>

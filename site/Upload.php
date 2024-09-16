@@ -1,4 +1,5 @@
 <?php
+
 include("adminDash.php");
 include "docx_read.php";
 try {
@@ -64,4 +65,3 @@ try {
 } catch (RuntimeException $e) {
     echo $e->getMessage();
 }
-?>

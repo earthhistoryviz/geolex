@@ -1,4 +1,5 @@
 <?php
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -18,7 +19,7 @@ if (!empty($zipFiles)) {
     $zip = new ZipArchive();
     $zipFilePath = $zipFiles[0];
 
-    if ($zip->open($zipFilePath) === TRUE) {
+    if ($zip->open($zipFilePath) === true) {
         $tempDirectory = "./code/tempdir";
         mkdir($tempDirectory, 0777);
         $zip->extractTo($tempDirectory);
@@ -35,7 +36,7 @@ if (!empty($zipFiles)) {
                 } while ($conn->next_result());
                 echo "\nDatabase populated successfully with {$sqlFilePath}.";
                 $truncateSql = "TRUNCATE TABLE user_info;";
-                if ($conn->query($truncateSql) === TRUE) {
+                if ($conn->query($truncateSql) === true) {
                     echo "\nUser table cleared successfully.";
 
                     $insertSql = $conn->prepare("INSERT INTO user_info (uname, pasw, admin) VALUES (?, ?, 'True');");
@@ -109,7 +110,7 @@ if (!empty($zipFiles)) {
         // Drop tables if they exist
         foreach ($tables as $table) {
             $sql = "DROP TABLE IF EXISTS $table";
-            if ($conn->query($sql) === TRUE) {
+            if ($conn->query($sql) === true) {
                 echo "\nTable $table dropped successfully";
             } else {
                 echo "\nError dropping table $table: " . $conn->error;
@@ -118,14 +119,14 @@ if (!empty($zipFiles)) {
 
         // Drop and recreate the database
         $sql = "DROP DATABASE IF EXISTS myDB";
-        if ($conn->query($sql) === TRUE) {
+        if ($conn->query($sql) === true) {
             echo "\nDatabase dropped successfully";
         } else {
             echo "\nError dropping database: " . $conn->error;
         }
 
         $sql = "CREATE DATABASE myDB";
-        if ($conn->query($sql) === TRUE) {
+        if ($conn->query($sql) === true) {
             echo "\nDatabase created successfully";
         } else {
             echo "\nError creating database: " . $conn->error;
@@ -174,7 +175,7 @@ if (!empty($zipFiles)) {
         ];
 
         foreach ($createTables as $sql) {
-            if ($conn->query($sql) === TRUE) {
+            if ($conn->query($sql) === true) {
                 echo "\nTable created successfully";
             } else {
                 echo "\nError creating table: " . $conn->error;
@@ -184,7 +185,7 @@ if (!empty($zipFiles)) {
         // Insert default user
         $rootpasw = password_hash("TSCreator", PASSWORD_DEFAULT);
         $sql = "INSERT INTO user_info (uname, pasw, admin) VALUES ('root', '$rootpasw', 'True')";
-        if ($conn->query($sql) === TRUE) {
+        if ($conn->query($sql) === true) {
             echo "\nDefault user created successfully";
         } else {
             echo "\nError inserting default user: " . $conn->error;

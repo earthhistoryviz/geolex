@@ -1,4 +1,5 @@
 <?php
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedModel = $_POST['model'];
     $outdirhash = $_POST['outdirhash'];
@@ -59,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($mapType == 'Polar') {
                             $x += 2.5;
                             $y -= 70;
-                        } else if ($mapType == 'Mollweide') {
+                        } elseif ($mapType == 'Mollweide') {
                             $x += 10;
                             $y -= 35;
                         } else {
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $coordinates[] = ['x' => $x, 'y' => $y];
                     }
                 }
-                $data[] = array (
+                $data[] = array(
                     "name" => $formationNames[$formationIndex],
                     "coordinates" => $coordinates
                 );
@@ -126,7 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-function generateModel($model, $outdirhash, $begdate) {
+function generateModel($model, $outdirhash, $begdate)
+{
     switch ($model) {
         case "Default":
             $outdirname = "livedata/default/$outdirhash";
@@ -174,4 +176,3 @@ function generateModel($model, $outdirhash, $begdate) {
     }
     return $outdirname_php;
 }
-?>

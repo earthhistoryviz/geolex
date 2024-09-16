@@ -43,29 +43,29 @@ if (!isset($_REQUEST["generateImage"]) && ($_REQUEST["filterperiod"] != "All" ||
 
 // coordiantes the generation of the different buttons depending on the search type (period, date, date range)
 if (!isset($_REQUEST["generateImage"])) {
-  if ($_REQUEST["searchtype"] == "Date") {
-    reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'on date');
-    createOptions();
-  } else if ($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterperiod"] != "All") {
-    reconbutton("<b>Base</b> of $name<br/>($basepretty Ma)", "reconbutton-base", $baseraw, 'base');
-    reconbutton("<b>Middle</b> of $name<br/>($middlepretty Ma)", "reconbutton-middle", $middleraw, 'middle');
-    createOptions();
-  } else if (isset($_REQUEST["formation"])) {
-    reconbutton($_REQUEST["formation"]." base reconstruction", "reconbutton-base", $fmdata["beg_date"]["display"], 'base');
-    createOptions();
-  } else if ($_REQUEST["searchtype"] == "Date Range") {
-    reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'base');
-    reconbutton("$middlepretty Ma", "reconbutton-middle", $middleraw, 'middle');
-    createOptions();
-  } else if (isset($_REQUEST["searchtypelist"])) {
-    if ($_REQUEST['searchtypelist'] == 'formation name') {
-      reconbutton($_REQUEST['SearchFm']." base reconstruction", "reconbutton-base", $fmdata["beg_date"]['display'], 'base');
-      createOptions();
-    } else if ($_REQUEST['searchtypelist'] == 'formation id') {
-      reconbutton("Formation id ".$_REQUEST['SearchFm']." base reconstruction", "reconbutton-base", $fmdata["beg_date"]["display"], 'base');
-      createOptions();
+    if ($_REQUEST["searchtype"] == "Date") {
+        reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'on date');
+        createOptions();
+    } elseif ($_REQUEST["searchtype"] == "Period" && $_REQUEST["filterperiod"] != "All") {
+        reconbutton("<b>Base</b> of $name<br/>($basepretty Ma)", "reconbutton-base", $baseraw, 'base');
+        reconbutton("<b>Middle</b> of $name<br/>($middlepretty Ma)", "reconbutton-middle", $middleraw, 'middle');
+        createOptions();
+    } elseif (isset($_REQUEST["formation"])) {
+        reconbutton($_REQUEST["formation"]." base reconstruction", "reconbutton-base", $fmdata["beg_date"]["display"], 'base');
+        createOptions();
+    } elseif ($_REQUEST["searchtype"] == "Date Range") {
+        reconbutton("$basepretty Ma", "reconbutton-base", $baseraw, 'base');
+        reconbutton("$middlepretty Ma", "reconbutton-middle", $middleraw, 'middle');
+        createOptions();
+    } elseif (isset($_REQUEST["searchtypelist"])) {
+        if ($_REQUEST['searchtypelist'] == 'formation name') {
+            reconbutton($_REQUEST['SearchFm']." base reconstruction", "reconbutton-base", $fmdata["beg_date"]['display'], 'base');
+            createOptions();
+        } elseif ($_REQUEST['searchtypelist'] == 'formation id') {
+            reconbutton("Formation id ".$_REQUEST['SearchFm']." base reconstruction", "reconbutton-base", $fmdata["beg_date"]["display"], 'base');
+            createOptions();
+        }
     }
-  }
 } ?>
 </div> <?php /* end div for id=recon-entire-area */ ?>
 
@@ -76,14 +76,14 @@ if (!isset($_REQUEST["generateImage"])) {
   <input type="hidden" name="generateImage" value="1" /> <?php
 
   foreach ($_REQUEST as $k => $v) {
-    if ($k == "filterprovince" && is_array($v)) {
-      // To ensure the selections in the Region filter is parsed as an array instead of the word "array"
-      foreach ($v as $vregion) { ?>
+      if ($k == "filterprovince" && is_array($v)) {
+          // To ensure the selections in the Region filter is parsed as an array instead of the word "array"
+          foreach ($v as $vregion) { ?>
         <input type="hidden" name="filterprovince[]" value="<?=$vregion?>" /> <?php
-      }
-    } else { ?>
+          }
+      } else { ?>
       <input type="hidden" name="<?=$k?>" id="<?=$k?>" value="<?=$v?>" /> <?php
-    }
+      }
   } ?>
 </div>
 </form>
@@ -97,7 +97,8 @@ if (!isset($_REQUEST["generateImage"])) {
 </script>
 
 <?php
-function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
+function reconbutton($text, $id, $recondate, $recondate_desc)
+{ ?>
   <div class="reconbutton" id="<?=$id?>"
     onmousedown="
       document.getElementById('<?=$id?>').className = 'reconbutton clickedbutton';
@@ -116,19 +117,26 @@ function reconbutton($text, $id, $recondate, $recondate_desc) { ?>
     <div id="<?=$id?>-text" style="margin-left: 5px; flex-grow: 0; color: #E67603; font-family: arial">
       <?=$text?>
     </div>
-  </div> <?php 
+  </div> <?php
 }
 
-function createOptions() { ?>
+function createOptions()
+{ ?>
   <div id="model-selections">
     <select id="selectModel"  name="selectModel" size="3" style="overflow: auto">
-      <option value="Default" <?php if ($_REQUEST["selectModel"] == "Default" || !$_REQUEST["selectModel"]) echo "SELECTED"; ?>>
+      <option value="Default" <?php if ($_REQUEST["selectModel"] == "Default" || !$_REQUEST["selectModel"]) {
+          echo "SELECTED";
+      } ?>>
         Reconstruction Model: GPlates Default (Merdith, Williams, et al., 2021)
       </option>
-      <option value="Marcilly" <?php if ($_REQUEST["selectModel"] == "Marcilly") echo "SELECTED"; ?>>
+      <option value="Marcilly" <?php if ($_REQUEST["selectModel"] == "Marcilly") {
+          echo "SELECTED";
+      } ?>>
         Reconstruction Model: Continental flooding model (Marcilly, Torsvik et al., 2021)
       </option> 
-      <option value="Scotese" <?php if ($_REQUEST["selectModel"] == "Scotese") echo "SELECTED"; ?>>
+      <option value="Scotese" <?php if ($_REQUEST["selectModel"] == "Scotese") {
+          echo "SELECTED";
+      } ?>>
         Reconstruction Model: Paleo-topography (Chris Scotese, 2018)
       </option> 
     </select> 

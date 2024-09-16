@@ -14,19 +14,19 @@ include_once("SqlConnection.php");
 $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('/app/uploads/'));
 $files = array();
 var_dump($iter);
-foreach ($iter as $file){
-	if($file->isDir()){
-		continue;
-	}
-	$files[] = $file->getPathname();
+foreach ($iter as $file) {
+    if($file->isDir()) {
+        continue;
+    }
+    $files[] = $file->getPathname();
 }
 var_dump($files);
-		foreach ($files as $file){
-			?>
+foreach ($files as $file) {
+    ?>
 		<option value = "<?php echo strtolower($file); ?>"><?php echo $file;
-?></option>
+    ?></option>
 <?php
-		}
+}
 ?>
 	</select>
 	<input type = "submit" value = "Submit" name = "Action">

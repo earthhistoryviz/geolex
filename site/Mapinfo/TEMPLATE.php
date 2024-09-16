@@ -1,8 +1,8 @@
 <?php
-/* 
+/*
  * Copy this file to Period_China_Map.php, then change the .jpg filename below and fix coords for your new image.
  * This file is the main one on the homepage of the site.
- * Name the file as: Order_Period_Color_whatever_Country_Map.php 
+ * Name the file as: Order_Period_Color_whatever_Country_Map.php
  *   for example: 1_Quaternary_FF3322_China_Country_Map.php
  */
 

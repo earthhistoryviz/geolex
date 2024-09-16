@@ -1,4 +1,5 @@
 <?php
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $json = file_get_contents('php://input');
@@ -6,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $geojson = $data["geojson"];
     $beg_date = $data["beg_date"];
     $formation = $data["formation"];
-    $toBeHashed = $beg_date . $geojson. $formation;   
+    $toBeHashed = $beg_date . $geojson. $formation;
     $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name
     $paths = [
         "pygplates/livedata/default/$outdirhash",
@@ -31,4 +32,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     echo $outdirhash;
 }
-?>

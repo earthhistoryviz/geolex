@@ -15,15 +15,15 @@ include_once("SimpleXLSX.php");
 $formation = $_GET["formation"];
 $macrostrat = false;
 if (isset($_GET["macrostrat"]) && $_GET["macrostrat"] == "true") {
-  $macrostrat = true;
-  $col_id = $_GET["col_id"];
+    $macrostrat = true;
+    $col_id = $_GET["col_id"];
 }
 
 if ($formation == "") {?>
   <title>Empty Search</title>
   <h3 style="text-align: center;">Please type in the search box and click "Submit" to search for Formations<br>Click on "View All Formations" to view the list of all Formations</h3> <?php
   include("footer.php");
-  exit(0);
+    exit(0);
 }
 
 $formationName = str_replace('Fm', 'Formation', $formation);
@@ -45,7 +45,7 @@ if (!$found) { ?>
   <title>No Match</title>
   <h3>Nothing found for "<?=$formation?>". Please search again.</h3> <?php
   include("footer.php");
-  exit(0);
+    exit(0);
 }
 
 $name = $fmdata["name"]["display"];
@@ -53,29 +53,29 @@ $name = $fmdata["name"]["display"];
 $dirs = scandir("./uploads/$name");
 $images = array();
 if ($dirs) {
-  foreach ($dirs as $type) {
-    if (preg_match("/^\./", $type)) {
-      continue;
+    foreach ($dirs as $type) {
+        if (preg_match("/^\./", $type)) {
+            continue;
+        }
+        $files = scandir("./uploads/$name/$type");
+        if ($files) {
+            foreach ($files as $f) {
+                if (preg_match("/^\./", $f)) {
+                    continue;
+                }
+                if (preg_match("/^thumb_/", $f)) {
+                    continue;
+                }
+                if (!$images[$type]) {
+                    $images[$type] = array();
+                }
+                array_push($images[$type], array(
+                  "full" => "/uploads/$name/$type/$f",
+                  "thumbnail" => "uploads/$name/$type/$f",
+                ));
+            }
+        }
     }
-    $files = scandir("./uploads/$name/$type");
-    if ($files) {
-      foreach ($files as $f) {
-        if (preg_match("/^\./", $f)) {
-          continue;
-        }
-        if (preg_match("/^thumb_/", $f)) {
-          continue;
-        }
-        if (!$images[$type]) {
-          $images[$type] = array();
-        }
-        array_push($images[$type], array(
-          "full" => "/uploads/$name/$type/$f",
-          "thumbnail" => "uploads/$name/$type/$f",
-        ));
-      }
-    }
-  }
 }
 
 $geojson = createGeoJSONForFormations(array(
@@ -90,35 +90,38 @@ $geojson = createGeoJSONForFormations(array(
 // (each output directory corresponds to a different formation that is clicked and has a beginning date and geoJSON info to reconstruct from)
 
 if ($_REQUEST["generateImage"]) {
-  $toBeHashed = $fmdata["beg_date"]["display"]. $geojson. $_REQUEST["formation"];   
-  $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name
-  switch ($_REQUEST["selectModel"]) {
-    case  "Default": $outdirname = "livedata/default/$outdirhash"; break;
-    case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash"; break;
-    case  "Scotese": $outdirname = "livedata/scotese/$outdirhash"; break;
-    default:         $outdirname = "livedata/unknown/$outdirhash";
-  }
+    $toBeHashed = $fmdata["beg_date"]["display"]. $geojson. $_REQUEST["formation"];
+    $outdirhash = md5($toBeHashed); // md5 hashing for the output directory name
+    switch ($_REQUEST["selectModel"]) {
+        case  "Default": $outdirname = "livedata/default/$outdirhash";
+            break;
+        case "Marcilly": $outdirname = "livedata/marcilly/$outdirhash";
+            break;
+        case  "Scotese": $outdirname = "livedata/scotese/$outdirhash";
+            break;
+        default:         $outdirname = "livedata/unknown/$outdirhash";
+    }
 
-  // outdirname is what pygplates should see
-  // and php is running one level up:
-  $outdirname_php = "pygplates/$outdirname";
-  $initial_creation_outdir = false; // did we have to make the output hash directory name?
-  if (!file_exists($outdirname_php)) {
-    $initial_creation_outdir = true;
-    mkdir($outdirname_php, 0777, true);
-  }
+    // outdirname is what pygplates should see
+    // and php is running one level up:
+    $outdirname_php = "pygplates/$outdirname";
+    $initial_creation_outdir = false; // did we have to make the output hash directory name?
+    if (!file_exists($outdirname_php)) {
+        $initial_creation_outdir = true;
+        mkdir($outdirname_php, 0777, true);
+    }
 
-  $reconfilename = "$outdirname_php/recon.geojson";
-  if (!file_exists($reconfilename)) {
-    file_put_contents($reconfilename, $geojson);
-  };
+    $reconfilename = "$outdirname_php/recon.geojson";
+    if (!file_exists($reconfilename)) {
+        file_put_contents($reconfilename, $geojson);
+    };
 } ?>
 
 <div class="reconstruction"> <?php
   // only want to make the buttons if there is valid geojson for the formation
   if (json_decode($fmdata["geojson"]["display"])) {
-    include("./makeButtons.php");
-  ?>
+      include("./makeButtons.php");
+      ?>
   <div class="buttonContainer">
     <button id="generateAllImagesBtn">Generate All Models</button>
   </div>
@@ -153,11 +156,11 @@ if ($_REQUEST["generateImage"]) {
       });
     });
   </script> <?php
-  } 
-  ?>
+  }
+?>
 </div>
 
-<?php // display information below ?>
+<?php // display information below?>
 <style>
   [contenteditable="true"] {
     font-family: "Rajdhani";
@@ -230,23 +233,23 @@ if ($_REQUEST["generateImage"]) {
 </style>
 
 <div style="font-family: 'Times New Roman', Times, Arial, serif;"> <?php
-  if ($auth) { ?>
+if ($auth) { ?>
     <input id="Edit" type ="button" value = "Edit">
     <input id="Save" type="button" value="Save" disabled>
     <input id="AddNewFile" type="button" value="Add new files" disabled>
     <input id="Delete" type="button" value="Delete" name="Delete Formation" onclick="deleteform()"/> <?php
-  } ?>
+} ?>
 
   <div>
     <h1 id="name_value">
       <b><?=$fmdata["name"]["display"]?></b>
     </h1> <?php
-    if ($auth) { ?>
+  if ($auth) { ?>
       <input type="file" name="title_image" id="title_image"/>
       <input id="Addtitle" type="button" name="add_title_image" value="Add Chosen Title Image" onclick="addImageClicked('title')"/> <?php
-    } ?>
+  } ?>
     <div style="display: flex; flex-direction: row;"> <?php
-      displayImages($images, "title"); ?>
+    displayImages($images, "title"); ?>
     </div>
     <hr>
   </div>
@@ -281,11 +284,11 @@ if ($_REQUEST["generateImage"]) {
       <?=$fmdata["type_locality"]["display"] ?>
     </div>
     <br> <?php
-    if ($auth) { ?>
+  if ($auth) { ?>
       <input type="file" name="locality_image" id="locality_image"/>
       <input id="Addlocality" type="button" name="add_locality_image" value="Add Chosen Locality Image" onclick="addImageClicked('locality')"/> <?php
-    }
-    displayImages($images, "locality"); ?>
+  }
+displayImages($images, "locality"); ?>
   </div>
 
   <div id="lithology">
@@ -294,11 +297,11 @@ if ($_REQUEST["generateImage"]) {
       <?=$fmdata["lithology"]["display"] ?>
     </div>
     <br> <?php
-    if ($auth) { ?>
+if ($auth) { ?>
       <input type="file" name="lithology_image" id="lithology_image"/>
       <input id="Addlithology" type="button" name="add_lithology_image" value="Add Chosen Lithology Image" onclick="addImageClicked('lithology')"/> <?php
-    }
-    displayImages($images, "lithology") ?>
+}
+displayImages($images, "lithology") ?>
   </div>
 
   <div id="Lithology-pattern" class="horiz">
@@ -307,11 +310,11 @@ if ($_REQUEST["generateImage"]) {
       <?=eliminateParagraphs($fmdata["lithology_pattern"]["display"]) ?>
     </div>
     <br> <?php
-    if ($auth) { ?>
+if ($auth) { ?>
       <input type="file" name="lithology_pattern_image" id="lithology_pattern_image"/>
       <input id="AddlithologyPattern" type="button" name="add_lithology_pattern_image" value="Add Chosen Lithology Pattern Image" onclick="addImageClicked('Lithology-pattern')"/> <?php
-    }
-    displayImages($images, "Lithology-pattern"); ?>
+}
+displayImages($images, "Lithology-pattern"); ?>
   </div>
   </strong>
   <div id="relationships_distribution">
@@ -321,11 +324,11 @@ if ($_REQUEST["generateImage"]) {
       <div id="lower_contact_value" class="minwidth">
         <?=$fmdata["lower_contact"]["display"] ?>
       </div> <?php
-      if ($auth) { ?>
+  if ($auth) { ?>
         <input type="file" name="lowercontact_image" id="lowercontact_image"/>
         <input id="Addlowercontact" type="button" name="add_lowercontact_image" value="Add Chosen Lower Contact Image" onclick="addImageClicked('lowercontact')"/> <?php
-      }
-      displayImages($images, "lowercontact"); ?>
+  }
+displayImages($images, "lowercontact"); ?>
     </div>
 
     <div id="upper_contact">
@@ -333,11 +336,11 @@ if ($_REQUEST["generateImage"]) {
       <div id="upper_contact_value" class="minwidth">
         <?=$fmdata["upper_contact"]["display"] ?>
       </div> <?php
-      if ($auth) { ?>
+if ($auth) { ?>
         <input type="file" name="uppercontact_image" id="uppercontact_image"/>
         <input id="Adduppercontact" type="button" name="add_uppercontact_image" value="Add Chosen Upper Contact Image" onclick="addImageClicked('uppercontact')"/> <?php
-      }
-      displayImages($images, "uppercontact"); ?>
+}
+displayImages($images, "uppercontact"); ?>
     </div>
 
     <div id="regional_extent">
@@ -346,11 +349,11 @@ if ($_REQUEST["generateImage"]) {
         <?=$fmdata["regional_extent"]["display"] ?>
       </div>
       <br> <?php
-      if ($auth) { ?>
+if ($auth) { ?>
         <input type="file" name="regionalcontact_image" id="regionalextent_image"/>
         <input id="Addregionalextent" type="button" name="add_regionalextent_image" value="Add Chosen Regional Extent Image" onclick="addImageClicked('regionalextent')"/> <?php
-      }
-      displayImages($images, "regionalextent"); ?>
+}
+displayImages($images, "regionalextent"); ?>
     </div>
   </div>
 
@@ -364,51 +367,50 @@ if ($_REQUEST["generateImage"]) {
       <input type="file" name="GeoJSON_image" id="GeoJSON_image"/>
       <input id="GeoJSON" type="button" name="add_GeoJSON_image" value="Add Chosen GeoJSON Image" onclick="addImageClicked('GeoJSON')"/> <?php
     }
-    displayImages($images, "GeoJSON"); ?>
+displayImages($images, "GeoJSON"); ?>
   </div>
 
   <div id="fossils">
     <h3><b>Fossils</b></h3>
     <div id="fossils_value" class="minwidth">
       <?php
-        $fossilString = $fmdata["fossils"]["display"];
-        $xlsx = SimpleXLSX::parse("Treatise_FossilGenera-URL_lookup.xlsx");
-        if ($xlsx === false) {
-          echo $fossilString;
-        }
-        else {
-          $rows = $xlsx->rows(0);
-          $links = [];
-          foreach ($rows as $row) {
-            if (isset($row[0]) && isset($row[1])) {
-              $name = trim($row[0]);
-              $link = trim($row[1]);
-              if (!empty($name)) {
-                  $links[$name] = $link;
-              }
+    $fossilString = $fmdata["fossils"]["display"];
+$xlsx = SimpleXLSX::parse("Treatise_FossilGenera-URL_lookup.xlsx");
+if ($xlsx === false) {
+    echo $fossilString;
+} else {
+    $rows = $xlsx->rows(0);
+    $links = [];
+    foreach ($rows as $row) {
+        if (isset($row[0]) && isset($row[1])) {
+            $name = trim($row[0]);
+            $link = trim($row[1]);
+            if (!empty($name)) {
+                $links[$name] = $link;
             }
-          }
-          preg_match_all('/<em>(.*?)<\/em>/', $fossilString, $matches);
-          $italicizedWords = $matches[1];
-          foreach ($italicizedWords as $italicizedWord) {
-            $charactersToRemove = array('.', ',');
-            $italicizedWord = str_replace($charactersToRemove, '', $italicizedWord);
-            $italicizedWordFirst = explode(' ', $italicizedWord)[0];
-            if (isset($links[$italicizedWordFirst])) {
-              $link = '<em> <a href="' . htmlspecialchars($links[$italicizedWordFirst]) . '" target="_blank">' . htmlspecialchars($italicizedWord) . '</a> </em>';
-              $fossilString = str_replace('<em>' . $italicizedWord . '</em>', $link, $fossilString);
-            }
-          }
-          echo $fossilString;
         }
-      ?>
+    }
+    preg_match_all('/<em>(.*?)<\/em>/', $fossilString, $matches);
+    $italicizedWords = $matches[1];
+    foreach ($italicizedWords as $italicizedWord) {
+        $charactersToRemove = array('.', ',');
+        $italicizedWord = str_replace($charactersToRemove, '', $italicizedWord);
+        $italicizedWordFirst = explode(' ', $italicizedWord)[0];
+        if (isset($links[$italicizedWordFirst])) {
+            $link = '<em> <a href="' . htmlspecialchars($links[$italicizedWordFirst]) . '" target="_blank">' . htmlspecialchars($italicizedWord) . '</a> </em>';
+            $fossilString = str_replace('<em>' . $italicizedWord . '</em>', $link, $fossilString);
+        }
+    }
+    echo $fossilString;
+}
+?>
     </div>
     <br> <?php
     if ($auth) { ?>
       <input type="file" name="fossil_image" id="fossil_image"/>
       <input id="Addfossil" type="button" name="add_fossil_image" value="Add Chosen Fossil Image" onclick="addImageClicked('fossil')"/> <?php
     }
-    displayImages($images, "fossil"); ?>
+displayImages($images, "fossil"); ?>
   </div>
 
   </strong> <!-- this fixes any dangling strong tag that happens for age -->
@@ -418,11 +420,11 @@ if ($_REQUEST["generateImage"]) {
       <?=eliminateParagraphs($fmdata["age"]["display"]) ?>
     </div>
     <br> <?php
-    if ($auth) { ?>
+if ($auth) { ?>
       <input type="file" name="age_image" id="age_image"/>
       <input id="Addage" type="button" name="add_age_image" value="Add Chosen Age Image" onclick="addImageClicked('age')"/> <?php
-    }
-    displayImages($images, "age"); ?>
+}
+displayImages($images, "age"); ?>
   </div>
 
   <div id="age_span" class="horiz">
@@ -452,7 +454,7 @@ if ($_REQUEST["generateImage"]) {
   <div id="beg_date" class="horiz">
     <b>&nbsp;&nbsp;&nbsp;&nbsp;Beginning date (Ma):&nbsp;</b>
     <div id="beg_date_value" class="minwidth">
-      <?=number_format(str_replace(",","",eliminateParagraphs($fmdata["beg_date"]["display"])), 2) ?>
+      <?=number_format(str_replace(",", "", eliminateParagraphs($fmdata["beg_date"]["display"])), 2) ?>
     </div>
     <br>
   </div>
@@ -476,7 +478,7 @@ if ($_REQUEST["generateImage"]) {
   <div id="end_date" class="horiz">
     <b>&nbsp;&nbsp;&nbsp;&nbsp;Ending date (Ma): &nbsp;</b>
     <div id="end_date_value" class="minwidth">
-      <?=number_format(str_replace(",","",eliminateParagraphs($fmdata["end_date"]["display"])), 2) ?>
+      <?=number_format(str_replace(",", "", eliminateParagraphs($fmdata["end_date"]["display"])), 2) ?>
     </div>
     <br>
   </div>
@@ -487,11 +489,11 @@ if ($_REQUEST["generateImage"]) {
       <?=$fmdata["depositional"]["display"] ?>
     </div>
     <br> <?php
-    if ($auth) { ?>
+if ($auth) { ?>
       <input type="file" name="depositional_image" id="depositional_image"/>
       <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('depositional')"/> <?php
-    }
-    displayImages($images, "depositional"); ?>
+}
+displayImages($images, "depositional"); ?>
   </div>
 
   <div id="depositional_pattern" class="horiz">
@@ -500,11 +502,11 @@ if ($_REQUEST["generateImage"]) {
       <?=eliminateParagraphs($fmdata["depositional_pattern"]["display"]) ?>
     </div>
     <br> <?php
-    if ($auth) { ?>
+if ($auth) { ?>
       <input type="file" name="Depositional-pattern_image" id="Depositional-pattern_image"/>
       <input id="Adddepo" type="button" name="add_depositional_image" value="Add Chosen Depositional Image" onclick="addImageClicked('Depositional-pattern')"/> <?php
-    }
-    displayImages($images, "Depositional-pattern"); ?>
+}
+displayImages($images, "Depositional-pattern"); ?>
   </div>
 
   <div id="additional_info">
@@ -513,11 +515,11 @@ if ($_REQUEST["generateImage"]) {
       <?=$fmdata["additional_info"]["display"] ?>
     </div>
     <br> <?php
-    if ($auth) { ?>
+if ($auth) { ?>
       <input type="file" name="additional_image" id="additional_image"/>
       <input id="Addaddl" type="button" name="add_additional_image" value="Add Chosen Additional Image" onclick="addImageClicked('additional')"/> <?php
-    }
-    displayImages($images, "additional"); ?>
+}
+displayImages($images, "additional"); ?>
   </div>
 
   <div id="compiler" class="horiz">
@@ -694,11 +696,12 @@ include("footer.php"); ?>
 
 <?php
 
-function displayImages($images, $imtype) {
-  global $fmdata;
+function displayImages($images, $imtype)
+{
+    global $fmdata;
 
-  foreach ($images[$imtype] as $i) {
-    $id = "image_".$imtype."_".$imagedisplaycount; ?>
+    foreach ($images[$imtype] as $i) {
+        $id = "image_".$imtype."_".$imagedisplaycount; ?>
     <div id="<?php echo $fmdata["name"]["display"]; ?>">
       <a href="<?php echo $i["full"]; ?>" target="_blank">
         <img src="/<?php echo $i["thumbnail"]; ?>" style="max-width: 200px; max-height: 200px;"/>
@@ -712,14 +715,15 @@ function displayImages($images, $imtype) {
         /> <?php
       } ?>
     </div> <?php
-  }
+    }
 }
 
-function eliminateParagraphs($str) {
-  while (preg_match("/<p>.*<\/p>/", $str)) {
-    $str = preg_replace("/<p>(.*)<\/p>/", "\\1", $str);
-  }
-  return $str;
+function eliminateParagraphs($str)
+{
+    while (preg_match("/<p>.*<\/p>/", $str)) {
+        $str = preg_replace("/<p>(.*)<\/p>/", "\\1", $str);
+    }
+    return $str;
 }
 
 ?>

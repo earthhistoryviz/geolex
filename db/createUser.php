@@ -1,4 +1,5 @@
 <?php
+
 // This file gives you the $conn variable:
 include("../site/SqlConnection.php");
 
@@ -21,10 +22,8 @@ $sql5 = "INSERT INTO user_info(uname,pasw,admin)
   VALUES 
   ('root2', '$rootpasw','True')
 ";
-if ($conn->query($sql4) && $conn->query($sql3) && $conn->query($sql5) === TRUE) {
-  echo "table create successfully<br>";
+if ($conn->query($sql4) && $conn->query($sql3) && $conn->query($sql5) === true) {
+    echo "table create successfully<br>";
 } else {
-  echo "Error creating user_info table: " . $conn->error;
+    echo "Error creating user_info table: " . $conn->error;
 }
-
-

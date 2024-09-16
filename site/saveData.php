@@ -1,4 +1,5 @@
 <?php
+
 include_once("SqlConnection.php");
 
 $vars = array(
@@ -32,37 +33,36 @@ $vars = array(
 
 
 foreach ($vars as $vname => $vval) {
-  $vars[$vname] = mysqli_real_escape_string($conn,$_POST[$vname]);
+    $vars[$vname] = mysqli_real_escape_string($conn, $_POST[$vname]);
 }
 
 $sql = "UPDATE formation SET ";
 
 $firstone = true;
 foreach ($vars as $vname => $vval) {
-  if (!$firstone) {
-    $sql .= ", \n"; // only put the commas on before the stuff that isn't the first one
-  }
-  $firstone = false;
-  if ($vname == 'geojson') {
-    $position = strpos($vval, '{');
-    $lastPosition = strrpos($vval, '}');
-    if ($position !== false && $lastPosition !== false) {
-      $length = $lastPosition - $position + 1;
-      $vval = substr($vval, $position, $length);
-    } else {
-        // '{' not found, handle accordingly
-        $vval = $vval;
+    if (!$firstone) {
+        $sql .= ", \n"; // only put the commas on before the stuff that isn't the first one
     }
-  }
-  $sql .= "$vname = '$vval'";
+    $firstone = false;
+    if ($vname == 'geojson') {
+        $position = strpos($vval, '{');
+        $lastPosition = strrpos($vval, '}');
+        if ($position !== false && $lastPosition !== false) {
+            $length = $lastPosition - $position + 1;
+            $vval = substr($vval, $position, $length);
+        } else {
+            // '{' not found, handle accordingly
+            $vval = $vval;
+        }
+    }
+    $sql .= "$vname = '$vval'";
 }
 $sql .= " \nWHERE name = '".$vars["name"]."';";
 
-if ($conn->query($sql) === TRUE) {
-  // worked
-  header("location: adminDisplayInfo.php?formation=".$vars["name"]);
+if ($conn->query($sql) === true) {
+    // worked
+    header("location: adminDisplayInfo.php?formation=".$vars["name"]);
 } else {
-  // failed
-  echo "Error, could not update data, error was: " . $conn->error;
+    // failed
+    echo "Error, could not update data, error was: " . $conn->error;
 }
-?>

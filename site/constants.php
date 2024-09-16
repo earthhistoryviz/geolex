@@ -1,60 +1,61 @@
 <?php
+
 // This code is needed and commented out only because it is causing a bug.
 
 include_once("TimescaleLib.php");
 $timescaleExists = true;
 try {
-  $timescale = parseDefaultTimescale();
+    $timescale = parseDefaultTimescale();
 } catch (RuntimeException $e) {
-  $timescaleExists = false;
-  if ($_SERVER["PHP_SELF"] != "/adminDash.php" && $_SERVER["PHP_SELF"] != "/uploadTimescale.php") {
-    include_once("navBar.php");
-    echo "A runtime exception has occurred: " . $e->getMessage();
-    echo "<br>Do you have a default_timescale.xlsx inside the timescales folder? If not sign into admin, go to Timescale, and upload a timescale called default_timescale.xlsx";
-    exit();
-  }
+    $timescaleExists = false;
+    if ($_SERVER["PHP_SELF"] != "/adminDash.php" && $_SERVER["PHP_SELF"] != "/uploadTimescale.php") {
+        include_once("navBar.php");
+        echo "A runtime exception has occurred: " . $e->getMessage();
+        echo "<br>Do you have a default_timescale.xlsx inside the timescales folder? If not sign into admin, go to Timescale, and upload a timescale called default_timescale.xlsx";
+        exit();
+    }
 }
 
 $periodsDate = array();
 $epochDate = array();
 
 foreach ($timescale as $stage) {
-  if (!array_key_exists($stage["period"], $periodsDate)) {
-    $periodsDate[$stage["period"]] = array(
-      "begDate" => $stage["base"],
-      "endDate" => $stage["top"],
-      "period" => $stage["period"]
-    );
-  } else {
-    if ($periodsDate[$stage["period"]]["begDate"] < $stage["base"]) {
-      $periodsDate[$stage["period"]]["begDate"] = $stage["base"];
-    } else if ($periodsDate[$stage["period"]]["endDate"] > $stage["top"]) {  
-      $periodsDate[$stage["period"]]["endDate"] = $stage["top"];
+    if (!array_key_exists($stage["period"], $periodsDate)) {
+        $periodsDate[$stage["period"]] = array(
+          "begDate" => $stage["base"],
+          "endDate" => $stage["top"],
+          "period" => $stage["period"]
+        );
+    } else {
+        if ($periodsDate[$stage["period"]]["begDate"] < $stage["base"]) {
+            $periodsDate[$stage["period"]]["begDate"] = $stage["base"];
+        } elseif ($periodsDate[$stage["period"]]["endDate"] > $stage["top"]) {
+            $periodsDate[$stage["period"]]["endDate"] = $stage["top"];
+        }
     }
-  }
 
-  // get Epoch information
-  if (!array_key_exists($stage["series"], $epochDate)) {
-    $epochDate[$stage["series"]] = array(
-      "begDate" => $stage["base"],
-      "endDate" => $stage["top"],
-    );
-  } else {
-    if ($epochDate[$stage["series"]]["begDate"] < $stage["base"]) {
-      $epochDate[$stage["series"]]["begDate"] = $stage["base"];
-    } else if ($epochDate[$stage["series"]]["endDate"] > $stage["top"]) {
-      $epochDate[$stage["series"]]["endDate"] = $stage["top"];
+    // get Epoch information
+    if (!array_key_exists($stage["series"], $epochDate)) {
+        $epochDate[$stage["series"]] = array(
+          "begDate" => $stage["base"],
+          "endDate" => $stage["top"],
+        );
+    } else {
+        if ($epochDate[$stage["series"]]["begDate"] < $stage["base"]) {
+            $epochDate[$stage["series"]]["begDate"] = $stage["base"];
+        } elseif ($epochDate[$stage["series"]]["endDate"] > $stage["top"]) {
+            $epochDate[$stage["series"]]["endDate"] = $stage["top"];
+        }
     }
-  }
 }
- 
+
 $periodsOrdered = array(
   0 => "QUATERNARY",
   1 => "NEOGENE",
   2 => "PALEOGENE",
   3 => "CRETACEOUS",
   4 => "JURASSIC",
-	5 => "TRIASSIC",
+    5 => "TRIASSIC",
   6 => "PERMIAN",
   7 => "CARBONIFEROUS",
   8 => "DEVONIAN",
@@ -103,12 +104,14 @@ $linksToRegions = array(
 $regionName = isset($linksToRegions[$_SERVER['HTTP_HOST']]) ? $linksToRegions[$_SERVER['HTTP_HOST']] : '';
 
 if ($_SERVER["SERVER_NAME"] == "dev") {
-  array_push($regions, array(
+    array_push(
+        $regions,
+        array(
     "name" => "Dev",
     "searchurl" => "http://dev.geolex.org/searchAPI.php",
     "linkurl" => "http://dev.geolex.org/displayInfo.php"
   )
-  );
+    );
 }
 
 $macrostratLithoNames = array(

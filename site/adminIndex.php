@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 if ($_SESSION["loggedIn"]) {
     $auth = true;

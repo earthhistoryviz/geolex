@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copy this file, name it as Period_Region.php, then fix the "wells_pic/<image>.jpg" at the top.
  * Then fix the map areas below to your new image.
  */

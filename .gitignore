@@ -11,3 +11,5 @@ uploads1
 *.csv
 *.webp
 *.cpt
+.php-cs-fixer.cache
+.vscode

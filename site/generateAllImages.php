@@ -82,9 +82,9 @@ foreach ($formationNames as $formationName) {
                 $urlLinks[$formationName] = $region;
                 // Move the region to the beginning of the array, likely other formations from same region
                 unset($regions[$key]);
-                array_unshift($regions, $region); 
+                array_unshift($regions, $region);
                 break;
-            }    
+            }
         }
     }
 }
