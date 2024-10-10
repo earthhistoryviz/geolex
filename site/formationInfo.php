@@ -94,7 +94,7 @@ if (!$macrostrat) {
         foreach ($regexes as $n) {
             if (preg_match_all($n["regex"], $str, $matches, PREG_OFFSET_CAPTURE)) {
                 foreach ($matches[0] as $match) {
-                    $replacement = "<a href=\"" . $n["baseUrl"] . $n["name"] . "\">" . $n["name"] . "</a>";
+                    $replacement = "<a href=\"$baseUrl" . $n["name"] . "\">" . $n["name"] . "</a>";
                     $allMatches[] = [
                       'start' => $match[1],
                       'end' => $match[1] + strlen($match[0]),
@@ -153,15 +153,14 @@ if (!$macrostrat) {
         foreach ($dataArray as $key => $value) {
             $allGenusHashmap[] = array(
               "name" => $key,
-              "regex" => "/\b(" . preg_quote($key, '/') . ")\b/i",
-              "baseUrl" => "https://{$site}.treatise.geolex.org/displayInfo.php?genera="
+              "regex" => "/\b(" . preg_quote($key, '/') . ")\b/i"
             );
         }
     }
 
     // Replace fossils with links if they exist in the hashmap
     if (isset($fmdata['fossils']['display'])) {
-        $fmdata['fossils']['display'] = findAndMakeLinks($fmdata['fossils']['display'], $allGenusHashmap, $auth, "");
+        $fmdata['fossils']['display'] = findAndMakeLinks($fmdata['fossils']['display'], $allGenusHashmap, $auth, "https://{$site}.treatise.geolex.org/displayInfo.php?genera=");
     }
 
 } else {
