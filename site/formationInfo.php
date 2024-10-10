@@ -143,7 +143,7 @@ if (!$macrostrat) {
     }
 
     // Initialize the fossil data
-    $fossilSites = array("brachiopod", "echinoderm", "porifera", "graptolite"); // Add more fossil groups as needed
+    $fossilSites = array("brachiopod", "echinoderm", "porifera", "graptolite"); // Add more fossil groups as neededs
     $allGenusHashmap = array();
     foreach ($fossilSites as $site) {
         // Construct the API URL for the current fossil site
