@@ -156,11 +156,11 @@ if (!$macrostrat) {
               "regex" => "/\b(" . preg_quote($key, '/') . ")\b/i"
             );
         }
-    }
 
-    // Replace fossils with links if they exist in the hashmap
-    if (isset($fmdata['fossils']['display'])) {
-        $fmdata['fossils']['display'] = findAndMakeLinks($fmdata['fossils']['display'], $allGenusHashmap, $auth, "https://{$site}.treatise.geolex.org/displayInfo.php?genera=");
+        // Replace fossils with links if they exist in the hashmap
+        if (isset($fmdata['fossils']['display'])) {
+            $fmdata['fossils']['display'] = findAndMakeLinks($fmdata['fossils']['display'], $allGenusHashmap, $auth, "https://{$site}.treatise.geolex.org/displayInfo.php?genera=");
+        }
     }
 
 } else {
