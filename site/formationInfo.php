@@ -152,15 +152,24 @@ if (!$macrostrat) {
         $dataArray = json_decode($jsonData, true);
         foreach ($dataArray as $key => $value) {
             $allGenusHashmap[] = array(
-              "name" => $key,
-              "regex" => "/\b(" . preg_quote($key, '/') . ")\b/i"
+                "name" => $key,
+                "regex" => "/\b(" . preg_quote($key, '/') . ")\b/i",
+                "site" => $site  // Store the site info for each genus
             );
         }
+    }
 
-        // Replace fossils with links if they exist in the hashmap
-        if (isset($fmdata['fossils']['display'])) {
-            $fmdata['fossils']['display'] = findAndMakeLinks($fmdata['fossils']['display'], $allGenusHashmap, $auth, "https://{$site}.treatise.geolex.org/displayInfo.php?genera=");
+    // Check if fossil data exists and process it
+    if (isset($fmdata['fossils']['display'])) {
+        // Modify the findAndMakeLinks function call to use the correct site for each genus
+        $displayText = $fmdata['fossils']['display'];
+        
+        // Loop through each genus in the hashmap and update the display text with appropriate links
+        foreach ($allGenusHashmap as $genus) {
+            $siteLink = "https://{$genus['site']}.treatise.geolex.org/displayInfo.php?genera=";
+            $displayText = findAndMakeLinks($displayText, array($genus), $auth, $siteLink);
         }
+        $fmdata['fossils']['display'] = $displayText;
     }
 
 } else {
