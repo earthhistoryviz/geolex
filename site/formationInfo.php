@@ -80,7 +80,7 @@ if (!$macrostrat) {
 
     // This function finds formations or fossils in a string and replaces them with hyperlinked versions.
     // It ensures that each formation is linked only once and prioritizes longer formations over shorter overlapping ones.
-    function findAndMakeLinks($str, $regexes, $auth, $baseUrl)
+    function findAndMakeLinks($str, $regexes, $baseUrl)
     {
         // This could potentially be optimized but the page loads fast enough
         // This code collects all regex matches and figures out the end positions of the matches. It then sorts them by the end and only considers the first instance since any
@@ -137,7 +137,7 @@ if (!$macrostrat) {
             $fmdata[$varname]["raw"] = trim($rowval);
             $fmdata[$varname]["display"] = trim($rowval);
             if ($varvalue["needlinks"]) {
-                $fmdata[$varname]["display"] = findAndMakeLinks($rowval, $nameregexes, $auth, "/formations/");
+                $fmdata[$varname]["display"] = findAndMakeLinks($rowval, $nameregexes, "/formations/");
             }
         }
     }
@@ -167,7 +167,7 @@ if (!$macrostrat) {
         // Loop through each genus in the hashmap and update the display text with appropriate links
         foreach ($allGenusHashmap as $genus) {
             $siteLink = "https://{$genus['site']}.treatise.geolex.org/displayInfo.php?genera=";
-            $displayText = findAndMakeLinks($displayText, array($genus), $auth, $siteLink);
+            $displayText = findAndMakeLinks($displayText, array($genus), $siteLink);
         }
         $fmdata['fossils']['display'] = $displayText;
     }
