@@ -33,7 +33,7 @@ SCOTESE_STATIC_POLYGON_FILE = './config/Scotese/PALEOMAP_PlatePolygons.gpml'
 SCOTESE_ROT_MODEL_FILE = './config/Scotese/PALEOMAP_PlateModel.rot'
 SCOTESE_DOC_DIR = './config/Scotese'
 SCOTESE_CPT_FILE = '/Scotese.cpt'
-SCOTESE_AGE_DURATION_FILE = '/Age_Duration_Of_Scotese_DEM_High_Resolution_GST2020_V3_28Nov22.csv'
+SCOTESE_AGE_DURATION_FILE = '/Age_duration_of_Scoteses_DEM_high_resolution_GST2020_V4.csv'
 SCOTESE_DEFAULT_DEM_FILE = '/Map01_PALEOMAP_6min_Holocene_0Ma.nc'
 SCOTESE_DEM_DIR = '/Scotese_DEM_high_resolution'
 

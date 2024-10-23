@@ -69,6 +69,7 @@ def get_gridfile(age):
         gridfile = SCOTESE_DEFAULT_DEM_FILE 
         corrected_age = 0
     else:
+        print(os.listdir("./config/Scotese"))
         with open(SCOTESE_DOC_DIR + SCOTESE_AGE_DURATION_FILE, 'r') as file:
             lookup = csv.reader(file)
             next(lookup, None) 
@@ -76,7 +77,7 @@ def get_gridfile(age):
                 if row[0] == '':
                     break
                 if age <= float(row[1]) and age >= float(row[2]):
-                    gridfile = row[0]
+                    gridfile = row[0].strip()
                     corrected_age = float(row[1])
                     break
     

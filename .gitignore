@@ -8,7 +8,6 @@ uploads1
 *.rot
 *.jpg
 *.gpml
-*.csv
 *.webp
 *.cpt
 .php-cs-fixer.cache

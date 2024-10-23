@@ -79,7 +79,7 @@ if ($_REQUEST["generateImage"] == "1") {
                 //   print_r($output);
                 //   echo " And here is the command that generated it: $cmd</pre>";
                 // }
-                break;
+                // break;
         }
     }
     ?>
