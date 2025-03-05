@@ -12,7 +12,7 @@ $conn = new mysqli($servername, $username, $password);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-$directory = "./code";
+$directory = "./db";
 $zipFiles = glob($directory . "/*.zip");
 $files = scandir($directory);
 if (!empty($zipFiles)) {
@@ -20,7 +20,7 @@ if (!empty($zipFiles)) {
     $zipFilePath = $zipFiles[0];
 
     if ($zip->open($zipFilePath) === true) {
-        $tempDirectory = "./code/tempdir";
+        $tempDirectory = "./db/tempdir";
         mkdir($tempDirectory, 0777);
         $zip->extractTo($tempDirectory);
         $zip->close();
@@ -64,18 +64,10 @@ if (!empty($zipFiles)) {
         } else {
             echo "\nNo .sql file found in extracted contents.";
         }
-        $cmd = "rm $tempDirectory/*.sql && cp -r $tempDirectory/* app && rm -rf $tempDirectory";
+        $cmd = "rm $tempDirectory/*.sql && cp -r $tempDirectory/* ../app && rm -rf $tempDirectory";
         exec($cmd, $output, $retval);
         if ($retval == 0) {
             echo "\nSuccesfully moved from zip file.";
-        } else {
-            echo "\nFailed to move files with status $retval and output:";
-            print_r($output);
-        }
-        $cmd = "mkdir -p code/db/backups && mv $zipFilePath code/db/backups";
-        exec($cmd, $output, $retval);
-        if ($retval == 0) {
-            echo "\nSuccesfully moved zipfile to backups.";
         } else {
             echo "\nFailed to move files with status $retval and output:";
             print_r($output);
