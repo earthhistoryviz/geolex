@@ -124,7 +124,8 @@ $result = mysqli_query($conn, $sql);
 /* ---------- Debugging ---------- */
 
 $isSynonym = false;
-if (mysqli_num_rows($result) == 0) {
+
+if ($result == false || mysqli_num_rows($result) == 0) {
     $isSynonym = true; // all things found here will be isSynonym = true
     // if formation name is not found, search Synonymns
     $sql = "SELECT * "
