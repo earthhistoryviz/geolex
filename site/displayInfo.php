@@ -699,6 +699,7 @@ include("footer.php"); ?>
 function displayImages($images, $imtype)
 {
     global $fmdata;
+    global $auth;
 
     foreach ($images[$imtype] as $i) {
         $id = "image_".$imtype."_".$imagedisplaycount; ?>
