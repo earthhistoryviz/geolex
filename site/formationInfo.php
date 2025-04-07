@@ -148,13 +148,21 @@ if (!$macrostrat) {
     foreach ($fossilSites as $site) {
         // Construct the API URL for the current fossil site
         $apiUrl = "https://{$site}.treatise.geolex.org/searchAPI.php?genusOnly=true";
-        $jsonData = file_get_contents($apiUrl);
-        $dataArray = json_decode($jsonData, true);
+        $jsonData = json_decode(file_get_contents($apiUrl), true);
+        $dataArray = $jsonData["data"];
         foreach ($dataArray as $key => $value) {
+            $allNames = [$key];
+            if (isset($value['Synonyms'])) {
+                $allNames[] = $value['Synonyms'];
+            }
+            $escapedNames = array_map(function ($name) {
+                return preg_quote($name, '/');
+            }, $allNames);
+            $regexPattern = "/\b(" . implode('|', $escapedNames) . ")\b/i";
             $allGenusHashmap[] = array(
                 "name" => $key,
-                "regex" => "/\b(" . preg_quote($key, '/') . ")\b/i",
-                "site" => $site  // Store the site info for each genus
+                "regex" => $regexPattern,
+                "site" => $site
             );
         }
     }
