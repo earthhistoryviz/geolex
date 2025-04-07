@@ -113,6 +113,7 @@ if ($_REQUEST["generateImage"] == "1") {
         $projection = trim($projectionMatch[1]);
         $region = trim($regionMatch[1]);
         $mapType = trim($mapTypeMatch[1]);
+        $selectedModel = $_REQUEST["selectModel"];
         $imageHtml = '<div class="model" id="' . $selectedModel . '">';
         $imageHtml .= '<h1>';
         $cmd = "cd " . $outdirname_php . " && gmt mapproject -R" . $region .
