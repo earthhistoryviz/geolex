@@ -41,6 +41,7 @@ $regions = [
     "https://indplex.geolex.org",
     "https://thailex.geolex.org",
     "https://vietlex.geolex.org",
+    "https://nigerialex.geolex.org",
     "https://nigerlex.geolex.org",
     "https://malaylex.geolex.org",
     "https://africalex.geolex.org",

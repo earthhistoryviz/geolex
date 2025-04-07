@@ -145,6 +145,7 @@ if ($_REQUEST["generateImage"] == "1") {
                 "https://indplex.geolex.org",
                 "https://thailex.geolex.org",
                 "https://vietlex.geolex.org",
+                "https://nigerialex.geolex.org",
                 "https://nigerlex.geolex.org",
                 "https://malaylex.geolex.org",
                 "https://africalex.geolex.org",
@@ -211,7 +212,7 @@ if ($_REQUEST["generateImage"] == "1") {
                         //Need to adjust due to inset, boundaries, etc...
                         if ($mapType == 'Polar') {
                             $x += 2.5;
-                            $y -= 28;
+                            $y -= 92;
                         } elseif ($mapType == 'Mollweide') {
                             $x += 10;
                             $y -= 35;
@@ -225,7 +226,7 @@ if ($_REQUEST["generateImage"] == "1") {
                                 $y -= 315;
                             }
                             if ($mapType == 'Polar') {
-                                $y += 20;
+                                $y += 85;
                             }
                         }
                         $coordinates[] = ['x' => $x, 'y' => $y];
