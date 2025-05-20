@@ -275,7 +275,8 @@ function sortByAge($a, $b)
         box-shadow: 5px 5px 8px #888888;
         background-color: #FFFFFF;
         cursor: pointer;
-        margin-top: 10px;
+        margin-top: 5px;
+        margin: 5px;
     }
 
     </style>
@@ -304,10 +305,23 @@ include("navBar.php"); ?>
   Please enter a formation name or group to retrieve more information.
 </h2>
 <?php
+  session_start();
+  $formaction = "index.php";
+  $isFixedRegion = true; // For generalSearchBar.php to determine if we should display a region filter
+  include("generalSearchBar.php");
 
-$formaction = "index.php";
-$isFixedRegion = true; // For generalSearchBar.php to determine if we should display a region filter
-include("generalSearchBar.php");
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["groupButton"])) {
+        $_SESSION["isGroup"] = true;
+    } elseif (isset($_POST["ungroupButton"])) {
+        $_SESSION["isGroup"] = false;
+    } elseif (isset($_POST["isGroup"])) {
+        $_SESSION["isGroup"] = $_POST["isGroup"] === '1';
+    }
+}
+
+  
+$isGrouped = $_SESSION["isGroup"] ?? false;
 
 if ($did_search) {
     if (count($allFormations) == 0) { ?>
@@ -340,6 +354,7 @@ if ($did_search) {
 
       <div class="centered-section">
         <div class="toggle-order-container">
+          <!-- Sorting -->
           <form method="post">
             <input
               type="submit"
@@ -347,29 +362,56 @@ if ($did_search) {
               name="<?php echo $isSortedByAge ? 'byAlphabetButton' : 'byAgeButton'; ?>"
               value="<?php echo $isSortedByAge ? 'Change to Alphabetical Listing' : 'Change to By-Age Listing'; ?>"
             />
+            <input type="hidden" name="isGroup" value="<?= $isGrouped ? '1' : '0' ?>" />
+          </form>
+
+            <!-- Grouping Button (Now Styled the Same Way) -->
+          <form method="post">
+            <input
+              type="submit"
+              class="toggle-order-button"
+              name="<?php echo $isGrouped ? 'ungroupButton' : 'groupButton'; ?>"
+              value="<?php echo $isGrouped ? 'Show Non-Grouped View' : 'Show Grouped View'; ?>"
+            />
           </form>
         </div>
         <!-- Display formations by province -->
-        <?php foreach ($selected_provinces as $province): ?>
-          <?php if ($province !== "All" && isset($formationsByProvince[$province])): ?>
-            <button class="collapsible"><?php echo htmlspecialchars($province); ?></button>
-            <div class="content">
-              <div class="formation-container">
-                <?php foreach ($formationsByProvince[$province] as $formation): ?>
-                  <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);">
-                    <?php if ($formation->geojson): ?>
-                      <div style="padding-right: 10px; font-size: 13px;">&#127758</div>
-                    <?php endif; ?>
-                    <?php
-                        $link = $auth ? "adminDisplayInfo.php?formation=" . $formation->name : "formations/" . $formation->name;
-                    ?>
-                    <a href="<?= $link ?>" target="_blank"><?= $formation->name ?></a>
-                  </div>
-                <?php endforeach; ?>
+        <?php if ($_SESSION["isGroup"]): ?>
+          <?php foreach ($selected_provinces as $province): ?>
+            <?php if ($province !== "All" && isset($formationsByProvince[$province])): ?>
+              <button class="collapsible"><?php echo htmlspecialchars($province); ?></button>
+              <div class="content">
+                <div class="formation-container">
+                  <?php foreach ($formationsByProvince[$province] as $formation): ?>
+                    <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);">
+                      <?php if ($formation->geojson): ?>
+                        <div style="padding-right: 10px; font-size: 13px;">&#127758</div>
+                      <?php endif; ?>
+                      <?php
+                          $link = $auth ? "adminDisplayInfo.php?formation=" . $formation->name : "formations/" . $formation->name;
+                      ?>
+                      <a href="<?= $link ?>" target="_blank"><?= $formation->name ?></a>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
               </div>
-            </div>
-          <?php endif; ?>
-        <?php endforeach; ?>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="formation-container">
+            <?php foreach ($allFormations as $formation): ?>
+              <div class="formation-item" style="background-color: rgb(<?=$stageArray[$formation->stage] ?>, 0.8);">
+                <?php if ($formation->geojson): ?>
+                  <div style="padding-right: 10px; font-size: 13px;">&#127758</div>
+                <?php endif; ?>
+                <?php
+                    $link = $auth ? "adminDisplayInfo.php?formation=" . $formation->name : "formations/" . $formation->name;
+                ?>
+                <a href="<?= $link ?>" target="_blank"><?= $formation->name ?></a>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
 
       </div>
     <?php
