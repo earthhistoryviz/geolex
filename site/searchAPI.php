@@ -15,9 +15,6 @@ if (!$searchquery) {
 if (!$periodfilter || $periodfilter == "All") {
     $periodfilter = "";
 }
-if (!isset($_REQUEST['agefilterend']) || $agefilterend == "" || $agefilterstart < $agefilterend) {
-    $agefilterend = $agefilterstart;
-}
 
 $apostrophes = array(
   "’",  // fancy apostrophe
@@ -109,13 +106,22 @@ $sql .= $fossil;
 
 preg_replace("/\+/", "%", $searchquery);
 
-// In case of Date/Date Range search
+$age_query = "";
 if ($agefilterstart != "") {
-    $sql .= "AND NOT (beg_date < $agefilterend " // the cast make sure a float is compared with a float
-        ."OR end_date > $agefilterstart) "
-        ."AND beg_date != '' " // with 0 Ma formations without a beginning date and end date get returned (this avoids that)
-      ."AND end_date != '' "; // same comment as line above
+    if ($agefilterend == "") {
+        $age_query .= "AND ($agefilterstart BETWEEN " 
+            ."CAST(REPLACE(end_date, ',', '') AS DECIMAL(10,2)) AND CAST(REPLACE(beg_date, ',', '') AS DECIMAL(10,2))) "
+            ."AND beg_date != '' "
+            ."AND end_date != '' ";
+    } else {
+        $age_query .= "AND NOT (CAST(REPLACE(beg_date, ',', '') AS DECIMAL(10,2)) < $agefilterend "
+            ."OR CAST(REPLACE(end_date, ',', '') AS DECIMAL(10,2)) > $agefilterstart) "
+            ."AND beg_date != '' "
+            ."AND end_date != '' ";
+    }
 }
+
+$sql .= $age_query;
 
 $result = mysqli_query($conn, $sql);
 /* ---------- Debugging ---------- */
@@ -134,13 +140,8 @@ if ($result == false || mysqli_num_rows($result) == 0) {
       ."AND period LIKE '%$periodfilter%' "
       ."AND province LIKE '%$provincefilter%' "
       .$litho
-      .$fossil;
-    if ($agefilterstart != "") {
-        $sql .= "AND NOT (beg_date < $agefilterend "
-          ."OR end_date > $agefilterstart) "
-          ."AND beg_date != '' "
-          ."AND end_date != '' ";
-    }
+      .$fossil
+      .$age_query;
     $result = mysqli_query($conn, $sql);
     /* ---------- Debugging ---------- */
     // echo '<pre>'."HERE'S THE SQL QUERY".'</pre>';
