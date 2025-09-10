@@ -700,6 +700,11 @@ function displayImages($images, $imtype)
 {
     global $fmdata;
     global $auth;
+    
+    if (!is_array($images) || !isset($images[$imtype]) || !is_array($images[$imtype])) {
+        return;
+    }
+    $imagedisplaycount = 0;
 
     foreach ($images[$imtype] as $i) {
         $id = "image_".$imtype."_".$imagedisplaycount; ?>
