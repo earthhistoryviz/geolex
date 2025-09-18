@@ -14,7 +14,8 @@ services:
       - .:/code
       - ./run.sh:/run.sh
       - dev_mysqldata:/var/lib/mysql
-      - ./resources/pygplates_config:/app/pygplates/config
-
+      # - ./resources/pygplates_config:/app/pygplates/config # prob dont need
+      - ./site/pygplates/config:/app/pygplates/config # when for dev
+      # - ../dev/site/pygplates/config:/app/pygplates/config # for non dev site
 volumes:
   dev_mysqldata:
