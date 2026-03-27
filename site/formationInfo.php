@@ -178,14 +178,6 @@ if (!$macrostrat) {
         foreach ($allGenusHashmap as $genus) {
 
             $siteLink = "https://{$genus['site']}.treatise.geolex.org/displayInfo.php?genera=";
-            //debug
-            if ($genus['name'] === 'Leptochondria') {
-            file_put_contents('/tmp/debug_leptochondria.txt', 
-                "regex: {$genus['regex']}\n" .
-                "text: $displayText\n" .
-                "match: " . (preg_match($genus['regex'], $displayText) ? 'YES' : 'NO') . "\n"
-            );
-        }
             $displayText = findAndMakeLinks($displayText, array($genus), $siteLink);
         }
         $fmdata['fossils']['display'] = $displayText;
