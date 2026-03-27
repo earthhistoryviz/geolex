@@ -143,11 +143,14 @@ if (!$macrostrat) {
     }
 
     // Initialize the fossil data
-    $fossilSites = array("brachiopod", "echinoderm", "porifera", "graptolite", "ammonoid", "charophyte", "trilobite"); // Add more fossil groups as needed
+    // Add more fossil groups as needed
+    $fossilSites = array("brachiopod", "echinoderm", "porifera", "graptolite", "ammonoid", "charophyte", "trilobite",
+        "conodonts", "bivalves", "bryozoa", "forams", "arthropods", "radiolaria", "cnidaria", "molluscs", "crustaceans",
+        "tracefossils", "worms");
     $allGenusHashmap = array();
     foreach ($fossilSites as $site) {
         // Construct the API URL for the current fossil site
-        $apiUrl = "https://{$site}.treatise.geolex.org/searchAPI.php?genusOnly=true";
+        $apiUrl = "https://{$site}.treatise.geolex.org/searchAPI.php?genusOnly=true"; #
         $jsonData = json_decode(file_get_contents($apiUrl), true);
         $dataArray = $jsonData["data"];
         foreach ($dataArray as $key => $value) {
@@ -170,11 +173,19 @@ if (!$macrostrat) {
     // Check if fossil data exists and process it
     if (isset($fmdata['fossils']['display'])) {
         // Modify the findAndMakeLinks function call to use the correct site for each genus
-        $displayText = $fmdata['fossils']['display'];
-        
+        $displayText = $fmdata['fossils']['display'];      
         // Loop through each genus in the hashmap and update the display text with appropriate links
         foreach ($allGenusHashmap as $genus) {
+
             $siteLink = "https://{$genus['site']}.treatise.geolex.org/displayInfo.php?genera=";
+            //debug
+            if ($genus['name'] === 'Leptochondria') {
+            file_put_contents('/tmp/debug_leptochondria.txt', 
+                "regex: {$genus['regex']}\n" .
+                "text: $displayText\n" .
+                "match: " . (preg_match($genus['regex'], $displayText) ? 'YES' : 'NO') . "\n"
+            );
+        }
             $displayText = findAndMakeLinks($displayText, array($genus), $siteLink);
         }
         $fmdata['fossils']['display'] = $displayText;
