@@ -12,3 +12,4 @@ uploads1
 *.cpt
 .php-cs-fixer.cache
 .vscode
+.DS_Store
